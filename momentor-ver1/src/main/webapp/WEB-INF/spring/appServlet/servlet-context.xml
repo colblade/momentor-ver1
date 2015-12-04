@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="1"></property>
+		<property name="prefix" value="/WEB-INF/views/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<mvc:annotation-driven />
+	<context:component-scan base-package="org.kosta.momentor.*.controller"></context:component-scan>
+	<!-- Tile Framework 연동 설정 -->
+	<bean id="tilesConfig" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+	 <property name="definitions">
+	  <list>
+	   <value>/WEB-INF/spring/appServlet/tiles-*.xml</value>
+	  </list>
+	 </property>
+	</bean>
+	<!-- Tiles ViewResolver 설정: order를 0으로 setting -->
+	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	 <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
+	 <property name="order" value="0" />
+	</bean>
+	
+	
+	 <!-- Handler Interceptor 설정 -->
+<mvc:interceptors>
+<mvc:interceptor>
+<!-- login 하고 나서 실행되는 모든 컨트롤러 requestMapping은 my_로 시작해야 한다. -->
+<mvc:mapping path="/login_home.do"/>
+<mvc:mapping path="/my_*.do"/>
+<bean class = "org.kosta.momentor.member.controller.LoginCheckInterceptor"/>
+</mvc:interceptor>
+<mvc:interceptor>
+<mvc:mapping path="/admin_*.do"/>
+<bean class = "org.kosta.momentor.contents.controller.AdminCheckInterceptor"></bean>
+</mvc:interceptor>
+</mvc:interceptors>
+</beans>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="plan">   
+ <resultMap type="planvo" id="plvomap">
+ <result column="MEMBERID" property="momentorMemberVO.memberId"/>
+<result column="EXERCISENAME" property="exerciseVO.exerciseName"/>
+<result column = "PLANNER_DATE" property="plannerDate"/>
+ </resultMap>
+ <select id="getPlannerList" resultType="planvo" parameterType="string" resultMap="plvomap">
+	SELECT MEMBERID, EXERCISENAME, TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') AS PLANNER_DATE, TARGETSET, ACHIEVEMENT
+	FROM EXERCISE_PLANNER WHERE MEMBERID = #{momentorMemberVO.memberId}
+</select>
+ 
+ 
+	<!-- <select id="getPlannerByDate" parameterType="planvo" resultType="planvo" resultMap="plvomap">
+		SELECT MEMBERID,EXERCISEID,TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') AS PLANNER_DATE ,TARGETSET,
+		ACHIEVEMENT
+		FROM EXERCISE_PLANNER
+		WHERE MEMBERID =#{momentorMemberVO.memberId}
+ 		AND EXERCISEID = #{exerciseVO.exerciseId}
+		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</select> -->
+	
+	<!-- getPlannerListByDate -->
+	<select id="getPlannerListByDate" parameterType="planvo" resultType="planvo" resultMap="plvomap">
+		SELECT MEMBERID, EXERCISENAME, TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') AS PLANNER_DATE, TARGETSET, ACHIEVEMENT 
+		FROM  EXERCISE_PLANNER
+		WHERE MEMBERID = #{momentorMemberVO.memberId}
+		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</select>
+	
+	<insert id="registerExerciseInPlanner" parameterType="planvo">
+		INSERT INTO EXERCISE_PLANNER
+		(MEMBERID, EXERCISENAME, PLANNER_DATE, TARGETSET) VALUES
+		(#{momentorMemberVO.memberId}, #{exerciseVO.exerciseName}, #{plannerDate}, #{targetSet})
+	</insert>
+	
+	<!-- <update id="updateTargetSetInPlanner" parameterType="planvo">
+	UPDATE EXERCISE_PLANNER SET TARGETSET =#{targetSet}
+	 WHERE MEMBERID =#{momentorMemberVO.memberId}
+	  AND EXERCISENAME = #{exerciseVO.exerciseName}
+		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</update> -->
+	
+	<select id="getPlannerContentByDate" resultMap="plvomap">
+		SELECT PLANNERCONTENT FROM EXERCISE_PLANNERCONTENT
+		WHERE MEMBERID =#{momentorMemberVO.memberId}
+		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</select>
+	
+	<update id="updateCommentInPlanner" parameterType="planvo">
+		UPDATE EXERCISE_PLANNERCONTENT SET PLANNERCONTENT =#{plannerContent}
+		WHERE MEMBERID =#{momentorMemberVO.memberId}
+		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</update>
+	
+	<insert id="registerCommentInPlanner" parameterType="planvo">
+		insert into EXERCISE_PLANNERCONTENT(MEMBERID, PLANNER_DATE, PLANNERCONTENT)
+		values(#{momentorMemberVO.memberId}, #{plannerDate}, #{plannerContent})
+	</insert>
+	
+	<update id="updateAchievementInPlanner" parameterType="planvo">
+		UPDATE EXERCISE_PLANNER SET ACHIEVEMENT =#{achievement}
+	 WHERE MEMBERID =#{momentorMemberVO.memberId}
+	  AND EXERCISENAME = #{exerciseVO.exerciseName}
+	  	AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</update>
+	
+	
+	<delete id="deleteExerciseInPlanner" parameterType="planvo">
+	DELETE FROM EXERCISE_PLANNER 
+	WHERE MEMBERID =#{momentorMemberVO.memberId}
+	  AND EXERCISENAME = #{exerciseVO.exerciseName}
+	 	AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
+	</delete>
+ </mapper>

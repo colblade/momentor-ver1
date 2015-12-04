@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+
+.loginForm{
+	width:100%;
+	padding:5%;
+}
+.headerForm{
+	padding: 5px;
+    height: 100px;
+    width: 100%;
+}
+.idFindCheck{
+	padding: 100px;
+	width: 500px;
+}

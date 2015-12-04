@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- MyBatis에서 namespace는 필수적으로 명시해야 함 -->
+ <mapper namespace="content">
+ <resultMap type="cbvo" id="cbvoMap" >
+ 	<result column="MEMBER_NO" property="boardNo"/>
+ 	<result column="MEMBERID" property="momentorMemberVO.memberId"/>
+ 	<result column="NICKNAME" property="momentorMemberVO.nickName"/>
+ 	<result column="TITLE" property="boardTitle"/>
+ 	<result column="MEMBER_DATE" property="boardWdate"/>
+ 	<result column="CONTENT" property="boardContent"/>
+ 	<result column="MEMBER_HITS" property="memberHits"/>
+ 	<result column="RECOMMEND" property="recommend"/>
+ 	<result column="NOTRECOMMEND" property="notRecommend"/>
+ </resultMap>
+ <!-- 커뮤니티 게시판 글쓰기 -->
+	<insert id="postingCommunity" parameterType="cbvo">
+	INSERT INTO MEMBER_BOARD
+	(MEMBER_NO,MEMBERID,TITLE,MEMBER_DATE,CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND)
+	VALUES(MEMBER_SEQ.NEXTVAL,#{momentorMemberVO.memberId},#{boardTitle},SYSDATE,#{boardContent},0,0,0)
+	</insert>
+	<!-- 작성한 글의 번호를 가져온다 -->
+	<select id="getPostingNumber" resultType="int">
+	SELECT MEMBER_SEQ.CURRVAL FROM DUAL
+	</select>
+	<!-- 모든 글 리스트 출력 -->
+	<select id="getAllPostingList" resultMap="cbvoMap">
+	 select b.MEMBER_NO,b.MEMBERID,b.TITLE,b.MEMBER_DATE,b.CONTENT,b.MEMBER_HITS,b.RECOMMEND,b.NOTRECOMMEND from (
+			select MEMBER_NO,MEMBERID,TITLE,MEMBER_DATE,CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,ceil(rownum/5) as page from (
+					select MEMBER_NO,MEMBERID,TITLE,to_char(MEMBER_DATE,'YYYY.MM.DD HH24:MI:SS') as MEMBER_DATE,
+					CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND from MEMBER_BOARD  order by MEMBER_DATE desc
+		     )
+       ) b,MOMENTOR_MEMBER m where b.MEMBERID=m.MEMBERID and page=#{value}
+	</select>
+	<!-- 아이디로 닉네임 검색 -->
+	<select id="findNicknameById" resultType="mvo" parameterType="String">
+	SELECT MEMBERID,NICKNAME
+	FROM MOMENTOR_MEMBER
+	WHERE MEMBERID=#{value}
+	</select>
+	<!-- 글 번호로 커뮤니티 글 삭제 -->
+	<delete id="deleteCommunity" parameterType="int">
+	DELETE FROM MEMBER_BOARD
+	WHERE MEMBER_NO=#{value}
+	</delete>
+	<!-- 커뮤니티 글 수정 -->
+	<update id="updateCommunity" parameterType="cbvo">
+	UPDATE MEMBER_BOARD set TITLE=#{boardTitle},MEMBER_DATE=SYSDATE,CONTENT=#{boardContent}
+	WHERE MEMBER_NO=#{boardNo}
+	</update>
+
+	
+	<!-- reply board result map -->
+	<resultMap type="rvo" id="rvoMap">
+		<result column="memberid" property="momentorMemberVO.memberId" />
+		<result column="MEMBER_NO" property="communityBoardVO.boardNo" />
+		<result column="reply_no" property="replyNo" />
+		<result column="reply_date" property="replyDate" />
+		<result column="title" property="communityBoardVO.boardTitle" />
+	</resultMap>
+	
+		<!-- 내가 쓴 커뮤니티 글 리스트를 보여준다. -->
+	<select id="getMyCommnunityBoardList" resultType="cbvo"
+		resultMap="cbvoMap" >
+		SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/5) AS PAGE
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM MEMBER_BOARD
+		ORDER BY MEMBER_DATE DESC)
+		) WHERE MEMBERID = #{memberId}
+		AND PAGE = #{pageNo}
+	</select>
+ 	
+
+ 	<!-- 커뮤니티 글 상세보기 -->
+ 	<select id="getCommunityByNo" resultType="cbvo" resultMap="cbvoMap"
+	parameterType="int">
+	SELECT B.MEMBER_NO, B.MEMBERID, B.TITLE, TO_CHAR(B.MEMBER_DATE,'YYYY.MM.DD') AS
+	MEMBER_DATE, B.CONTENT, B.MEMBER_HITS, B.RECOMMEND, B.NOTRECOMMEND, M.NICKNAME
+	FROM MEMBER_BOARD B, MOMENTOR_MEMBER M 
+	WHERE MEMBER_NO =#{value}
+	AND B.MEMBERID = M.MEMBERID
+	</select>
+
+ 	<!-- 내가 쓴 댓글 리스트 보여주기 -->
+	<select id="getMyReplyList"  resultType="rvo" resultMap="rvoMap">
+	SELECT R.REPLY_NO, R.MEMBER_NO, R.MEMBERID, R.CONTENT, R.REPLY_DATE, M.TITLE FROM
+	(SELECT REPLY_NO, MEMBER_NO, MEMBERID, CONTENT, REPLY_DATE, CEIL(ROWNUM/5) AS PAGE FROM
+	(SELECT REPLY_NO, MEMBER_NO, MEMBERID, CONTENT, TO_CHAR(REPLY_DATE,'YYYY.MM.DD HH:MI') AS REPLY_DATE
+	FROM MEMBER_REPLY ORDER BY REPLY_DATE DESC)
+	) R, MEMBER_BOARD M
+	WHERE M.MEMBERID = #{memberId}
+	AND R.MEMBER_NO=M.MEMBER_NO
+	AND PAGE = #{pageNo}
+	</select>
+	<!-- 토탈 -->
+     <select id="totalContent" resultType="int">
+		select count(*) from MEMBER_BOARD
+	</select>
+	
+	<!-- 해당글의 모든 덧글을 가지고 오는 q -->
+	<select id="getReplyListByNo" resultType="rvo" resultMap="rvoMap">
+		SELECT REPLY_NO,MEMBER_NO,MEMBERID,CONTENT,TO_CHAR(REPLY_DATE,'YYYY.MM.DD') AS REPLY_DATE FROM MEMBER_REPLY WHERE MEMBER_NO = #{boardNo}
+	
+	ORDER BY REPLY_DATE ASC
+	
+	<!-- 조회수 증가 -->
+	</select>
+ 	<update id="updateHits" parameterType="int">
+ 	UPDATE MEMBER_BOARD SET MEMBER_HITS = MEMBER_HITS +1 WHERE MEMBER_NO = ${value}
+ 	</update>
+ 	
+ 	
+ 	<!-- - - - - - - - - - - - -2015-11-28- - - - - - - - - - -->
+ 	<!-- 총 컨텐츠 수 구해야합니다. -->
+ 	
+ 	
+ 	<!-- 운동게시물 resultMap -->
+ 	<resultMap type="ebvo" id="ebvoMap">
+ 	
+ 	 	<result column="EXERCISENAME" property="exerciseVO.exerciseName"/>
+ 	 	<result column="EXERCISE_NO" property="boardNo"/>
+ 	 	<result column="TITLE" property="boardTitle"/>
+ 	 	<result column="EXERCISE_DATE" property="boardWdate"/>
+ 	 	<result column="MEMBERID" property="momentorMemberVO.memberId"/>
+ 	 	<result column="MEMBERNAME" property="momentorMemberVO.memberName"/>
+ 	 		 	<result column="AUTH" property="momentorMemberVO.auth"/>
+ 		<result column="CONTENT" property="boardContent"/>
+ 		<result column="EXERCISE_HITS" property="exerciseHits"/>
+ 
+ 
+ 	</resultMap>
+ 	<!-- 운동 게시물 보여주기 -->
+ 	<select id="getExerciseBoardList" resultType="ebvo" resultMap="ebvoMap">
+ 	
+ 	SELECT B.EXERCISENAME,B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.MEMBERID,B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH FROM(
+SELECT EXERCISE_NO, TITLE, EXERCISE_DATE, CEIL(ROWNUM/5) AS PAGE, MEMBERID,EXERCISENAME ,EXERCISE_HITS FROM(
+SELECT EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE, MEMBERID,EXERCISENAME,EXERCISE_HITS
+FROM EXERCISE_BOARD ORDER BY EXERCISE_NO DESC
+)
+) B, MOMENTOR_MEMBER M,EXERCISE E
+WHERE B.EXERCISENAME = E.EXERCISENAME AND
+M.MEMBERID = B.MEMBERID AND PAGE  =#{value}
+ 	</select>
+ 	
+ 	
+ 	<!-- 2015-11-30 -->
+ 	
+ 	<!-- 전체 운동 게시물 수 조회 -->
+ 	<select id="countAllExerciseBoard" resultType="int">
+ 	SELECT COUNT(*) FROM EXERCISE_BOARD
+ 	</select>
+ 	<!-- 운동이름이 존재유무 검사하는 q -->
+ 	<select id="checkExerciseByExerciseName" resultType="int">
+ 	SELECT COUNT(*) FROM EXERCISE_BOARD WHERE EXERCISENAME = #{value}
+ 	</select>
+ 	
+ 	<!-- 운동 등록하기 -->
+ <insert id="registerExercise">
+ 
+ INSERT INTO EXERCISE (EXERCISENAME, EXERCISEBODY) VALUES (#{exerciseName},#{exerciseBody})
+ </insert>
+ 	
+ 	<!-- 운동 게시물 등록하기 -->
+ 	<insert id="postingExerciseByAdmin" parameterType="ebvo">
+ 	
+ 	INSERT INTO EXERCISE_BOARD (EXERCISE_NO,EXERCISENAME,MEMBERID,TITLE,EXERCISE_DATE,CONTENT)
+ 	VALUES(EXERCISE_SEQ.NEXTVAL,#{exerciseVO.exerciseName},#{momentorMemberVO.memberId},#{boardTitle},SYSDATE,#{boardContent})
+ 	 <selectKey keyProperty="boardNo" order="AFTER" resultType="int">
+ 	SELECT EXERCISE_SEQ.CURRVAL FROM DUAL
+ 	</selectKey> 
+ 	</insert>
+ 	
+ 	
+ 	<!-- 운동 게시물 상세보기 -->
+  <select id="getExerciseByNo" resultType="ebvo" resultMap="ebvoMap">
+  SELECT EXERCISENAME, EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE , CONTENT,MEMBERID
+  FROM EXERCISE_BOARD
+  WHERE EXERCISE_NO = #{value}
+  </select>
+ 
+ 	<!-- 운동게시판 조회수 증가 -->
+ 	<update id="updateExerciseHits" parameterType="int">
+ 	UPDATE EXERCISE_BOARD SET EXERCISE_HITS = EXERCISE_HITS +1 WHERE EXERCISE_NO =#{value}
+ 	</update>
+ 	
+ 	
+ 	<!-- 운동게시물 삭제 -->
+ 	<delete id="deleteExerciseBoardByAdmin" parameterType="int">
+ 	DELETE FROM EXERCISE_BOARD WHERE EXERCISE_NO = #{value}
+ 	</delete>
+ 	
+ 	<!-- 운동 삭제 -->
+ 	<delete id="deleteExerciseByAdmin" parameterType="string">
+ 	DELETE FROM EXERCISE WHERE EXERCISENAME = #{value}
+ 	</delete>
+ 	<!-- 운동 게시물 수정 -->
+ 	<update id="updateExerciseBoardByAdmin" >
+ 	UPDATE EXERCISE_BOARD SET TITLE = #{boardTitle}, CONTENT = #{boardContent}
+ 	WHERE EXERCISE_NO = #{boardNo}
+ 	</update>
+ 	<update id="updateExerciseByAdmin">
+ 	UPDATE EXERCISE SET EXERCISEBODY = #{exerciseBody}
+ 	WHERE EXERCISENAME = #{exerciseName}
+ 	</update>
+ 	
+ 	
+ 	<!-- 2015-12-01 -->
+ 	
+ 	<!-- 커뮤니티 게시판 추천수 TOP5  -->
+ 	<select id="getCommunityBoardListBestTop5ByRecommend" resultType="cbvo" resultMap="cbvoMap">
+ <![CDATA[
+	SELECT MEMBER_NO, TITLE,  MEMBER_DATE, MEMBER_HITS, RECOMMEND,NOTRECOMMEND,RANKING,NICKNAME FROM
+(SELECT B.MEMBER_NO, B.TITLE, TO_CHAR(B.MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE,
+B.MEMBER_HITS, B.RECOMMEND,B.NOTRECOMMEND,M.NICKNAME,
+RANK() OVER(ORDER BY RECOMMEND DESC) AS RANKING 
+FROM MEMBER_BOARD B, MOMENTOR_MEMBER M 
+WHERE B.MEMBERID=M.MEMBERID)
+WHERE RANKING<=5 ]]>
+</select>
+ 
+ 	<!-- 운동 게시판 조회수 TOP5 -->
+ 	
+ 	<select id="getExerciseBoardListBestTop5ByHits" resultType="ebvo" resultMap="ebvoMap">
+ 	 <![CDATA[
+	SELECT EXERCISE_NO,EXERCISENAME,TITLE,EXERCISE_HITS,MEMBERID,EXERCISE_DATE, RANKING FROM
+(SELECT EXERCISE_NO,EXERCISENAME,TITLE,  EXERCISE_HITS,MEMBERID, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE,
+RANK() OVER(ORDER BY EXERCISE_HITS DESC) AS RANKING FROM EXERCISE_BOARD)
+WHERE RANKING<=5 ]]>
+ 	
+ 	</select>
+ 	
+ 	
+ 	<!-- 2015-12-03 -->
+ 	
+ 	<!-- 내가 쓴 글 전체 게시물 수 -->
+ 	
+ 	<select id="countAllMyCommnunityBoard" resultType="int">
+ 	SELECT COUNT(*) FROM MEMBER_BOARD WHERE MEMBERID = #{value}
+ 	</select>
+ 	
+ 	<!-- 내가 쓴 전체 덧글 수 -->
+ 	<select id="countAllMyReply" resultType="int">
+ 	
+ 	SELECT COUNT(*) FROM MEMBER_REPLY WHERE MEMBERID = #{value}
+ 	</select>
+<resultMap type="nvo" id="nvoMap">
+		<result column="notice_No" property="boardNo" />
+		<result column="title" property="boardTitle" />
+		<result column="notice_Date" property="boardWdate" />
+		<result column="memberId" property="momentorMemberVO.memberId" />	
+		<result column="content" property="boardContent" />			
+	</resultMap>
+
+	<select id="getAllNoticeList" resultType="nvo" resultMap="nvoMap"> 
+		select notice_No, title,notice_Date,memberId from (
+		select notice_No,Title,notice_Date,ceil(rownum/5) as page, memberId from (
+			select notice_No,Title,TO_CHAR(notice_Date,'YYYY.MM.DD HH:MM:SS') AS notice_Date,
+				memberId from NOTICE_BOARD order by notice_Date DESC
+		     )
+       ) where page=#{value}
+	
+	</select>
+	<select id="totalNoticeContent" resultType="int">
+		select count(*) from NOTICE_BOARD
+	</select>
+	<select id="getNoticeByNo" resultType="nvo" resultMap="nvoMap">
+		select notice_No, title, notice_Date, memberId, content 
+		from NOTICE_BOARD
+		where notice_No = #{value}
+	</select>
+	<insert id="writeNoticeByAdmin" parameterType="nvo">
+		insert into NOTICE_BOARD(NOTICE_NO, MEMBERID, TITLE, NOTICE_DATE,CONTENT)
+		values(NOTICE_SEQ.nextVal, #{momentorMemberVO.memberId}, #{boardTitle},sysdate,#{boardContent})
+	</insert>
+ </mapper>
