@@ -126,7 +126,12 @@ public class MomentorMemberController {
         }	
 		return mvo;
 	}
-	
+	@RequestMapping("my_getPlannerList.do")
+	@ResponseBody
+	public ArrayList<PlannerVO> getPlannerList(PlannerVO pvo){
+		ArrayList<PlannerVO> list = (ArrayList<PlannerVO>) plannerService.getPlannerList(pvo);
+		return list;
+	}
 	@RequestMapping("my_planner.do")
 	public ModelAndView planner(HttpServletRequest request){
 		return new ModelAndView("my_planner", "plannerDate", request.getParameter("plannerDate"));

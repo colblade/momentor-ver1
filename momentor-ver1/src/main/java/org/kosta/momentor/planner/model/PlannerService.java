@@ -30,4 +30,5 @@ public interface PlannerService {
 	public List<CartVO> getCartList(String id);
 	// 카트 내 운동 삭제하기
 	public void deleteExcerciseInCart(CartVO cvo);
+	public List<PlannerVO> getPlannerList(PlannerVO pvo);
 }

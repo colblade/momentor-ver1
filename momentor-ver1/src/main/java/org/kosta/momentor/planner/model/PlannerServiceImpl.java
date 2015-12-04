@@ -134,4 +134,8 @@ public class PlannerServiceImpl implements PlannerService {
 	public void deleteExcerciseInCart(CartVO cvo) {
 		cartDAO.deleteExcerciseInCart(cvo);
 	}
+	@Override
+	public List<PlannerVO> getPlannerList(PlannerVO pvo) {
+		return plannerDAO.getPlannerList(pvo);		
+	}
 }

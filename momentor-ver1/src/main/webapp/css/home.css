@@ -1,31 +1,31 @@
    #container{
       width: 100%; /* container 경계선 1 , left  200 padding 5+5 ,
                                  main 600 padding 5+5 ,  border-left: 1   */
-      border: 1px solid black;
+      /* border: 1px solid black; */
       margin-left: auto;
       margin-right: auto;/*  좌우 여백 동일하게 해서 중앙정렬 */
    }
    #header{
       padding: 1%;
       height: 80px;
-      border-bottom: 1px solid black;
+     /*  border-bottom: 1px solid black; */
    }
    #left{
       padding: 1%;
-      height:500px;
+      height:auto;
       width:15%;
       float: left; /* left로 부유위치를 지정해 left와 main이 수평 배치하도록 한다    */
    }
    #main{
       padding: 1%;
       width:80%;
-      height: 700px;      
+      height: auto;      
       float: left; /* left로 부유위치를 지정해 left와 main이 수평 배치하도록 한다    */
-      border-left: 1px solid black;
+      /* border-left: 1px solid black; */
    }
    #footer{
       padding: 2%;
       height: 30px;
-      border-top: 1px solid black;
+      /* border-top: 1px solid black; */
       clear:both; /* float 속성 요소 아래에 배치하기 위해 float 속성 초기화(clear)   */
    }

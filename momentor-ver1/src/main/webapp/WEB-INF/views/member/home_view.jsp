@@ -1,11 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- DatePicker(jQuery UI) -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 
+<!-- FullCalendar(jQuery API) -->
+<link href='${initParam.root}fullcalendar/fullcalendar.css' rel='stylesheet' />
+<script src='${initParam.root}fullcalendar/fullcalendar.js'></script>
 
-
+<script>
+   // FullCalnedar
+   $(document).ready(function() {
+      $('#calendar').fullCalendar({
+         height: 500,
+      });
+   });
+</script>
+<style type="text/css">
+#wrap{margin: 0 auto; padding: 20px;}
+.calendar_body{width: 650px; float: center; margin-left: 100px;}
+</style>
+<body>
 <div class="row marketing">
 	<div class="col-lg-6">
 		<h4>운동 게시판 조회수 TOP5!</h4>
@@ -61,7 +76,7 @@
 					<c:forEach items="${requestScope.communityTop5List }" var="list">
 						<tr>
 							<td>${list.ranking }</td>
-							<td>${list.boardTitle }</a></td>
+							<td>${list.boardTitle }</td>
 							<td>${list.momentorMemberVO.nickName }</td>
 							<td>${list.memberHits }</td>
 							<td>${list.recommend }</td>
@@ -77,66 +92,19 @@
 	</div>
 
 </div>
-
-
-
-
-
-<!-- <p>
-	<a class="btn btn-primary" href="#" role="button">커뮤니티 게시판 가기
-		&raquo;</a>
-</p> -->
-
-
-
-
-<%-- 
-<!-- FullCalendar(jQuery API) -->
-<link href='${initParam.root}fullcalendar/fullcalendar.css' rel='stylesheet' />
-<script src='${initParam.root}fullcalendar/fullcalendar.js'></script>
-<script>
-   // FullCalnedar
-   $(document).ready(function() {
-      $('#calendar').fullCalendar({
-         height: 400,
-         editable: true,
-         events: "json-events.jsp",
-         dayClick: function() { // 날짜 클릭시 알럿.
-			  alert('경고창뜨네요.' + $(this).text());
-         } 
-      });
-      
-   // DatePicker
-      $( ".datepicker" ).datepicker({
-         dateFormat: 'yy-mm-dd' 
-      });
-   });
-</script>
-<!-- <style type="text/css">
-#wrap{margin: 0 auto; padding: 20px;}
-.calendar_body{width: 750px; float: center; margin-left: 100px;}
-</style>
-</head> -->
-<body>
-<div id="calendar"></div>
-   <!-- <div id="wrap">
-      FullCalendar body
+   <div id="wrap">
       <div class="calendar_body">
          <div id="calendar"></div>
       </div>
-      
-      Input/Output Form
       <div class="cal_input_table">
          <form action="./CalendarAdd.cl" method="post">
             <table border="1">
             </table>
-
          </form>
          <form action="./CalendarDel.cl" method="post">
-            <table border="1">
-            
+            <table border="1">            
             </table>
          </form>
       </div>   
-   </div> -->
-</body> --%>
+   </div>
+</body>

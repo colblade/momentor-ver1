@@ -8,29 +8,20 @@
 	</definition>
 	
 	<definition name="admin_*_*" extends="home">
-		<put-attribute name="left" value="/WEB-INF/views/templates/ok_login/left.jsp"/>
+		<put-attribute name="header" value="/WEB-INF/views/templates/{1}/header.jsp"></put-attribute>
 		<put-attribute name="main" value="/WEB-INF/views/member/admin/{1}/{2}.jsp" />
 	</definition>
 	<definition name="login_home" extends="home">
 		<put-attribute name="main" value="/WEB-INF/views/member/login/home_view.jsp" />
-		<put-attribute name="left" value="/WEB-INF/views/templates/ok_login/left.jsp" />
 	</definition>
-	<definition name="login_ok" extends="home">
-		<put-attribute name="main" value="/WEB-INF/views/member/login/ok_view.jsp" />
-		<put-attribute name="left" value="/WEB-INF/views/templates/ok_login/left.jsp" />
-	</definition>
-	<definition name="login_fail" extends="home">
-		<put-attribute name="main" value="/WEB-INF/views/member/login/fail_view.jsp" />
-		<put-attribute name="left" value="/WEB-INF/views/templates/fail_login/left.jsp" />
+	<definition name="login_*" extends="home">
+		<put-attribute name="main" value="/WEB-INF/views/member/login/{1}_view.jsp" />
 	</definition>
 	<definition name="login_planner" extends="home">
 		<put-attribute name="main" value="/WEB-INF/views/member/planner.jsp" />
-		<put-attribute name="left" value="/WEB-INF/views/templates/ok_login/left.jsp" />
 	</definition>
 	<definition name = "my_*" extends="home">
 	<put-attribute name="main" value="/WEB-INF/views/member/my/{1}.jsp" />
-	<put-attribute name="left" value="/WEB-INF/views/templates/ok_login/left.jsp" />
-	
 	</definition>
 </tiles-definitions>
 
