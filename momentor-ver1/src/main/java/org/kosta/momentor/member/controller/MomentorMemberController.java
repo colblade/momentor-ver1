@@ -141,7 +141,7 @@ public class MomentorMemberController {
 		mv.addObject("selectDate", pvo.getPlannerDate());
 		mv.addObject("cartList", cartList);
 		mv.addObject("plannerListByDate", plannerListByDate);
-		mv.setViewName("my_plannerTest");
+		mv.setViewName("my_planner");
 		return mv;
 	}
 

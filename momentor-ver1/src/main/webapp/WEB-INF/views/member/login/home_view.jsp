@@ -84,8 +84,8 @@
     		  alert("운동을 먼저 등록하세요!");
     		  return false;
     	  }
-    	  if(confirm("상세보기로 넘어가시겠습니까?")){
-    		  location.href="my_planner.do";
+    	  if(confirm("상세보기로 넘어가시겠습니까?")==false){
+    		  return false;
     	  }
       });
    });
@@ -198,9 +198,10 @@
         <h4 class="modal-title" id="planModalLabel">플래너</h4>
       </div>
       <form action="my_planner.do" id="detailPlanForm">
-		   <div class="modal-body">	   	 
-		       선택날짜 : <input type="text" class="form-control" name="plannerDate" id="selectDay"><br>
-		       운동목록 : <span id="showList"></span>	      	   
+		   <div class="modal-body">
+		   		<input type="hidden" name="momentorMemberVO.memberId" value="${sessionScope.pnvo.momentorMemberVO.memberId}">
+				선택날짜 : <input type="text" class="form-control" name="plannerDate" id="selectDay"><br>
+				운동목록 : <span id="showList"></span>	      	   
 		   <div class="modal-footer">
 		      <button type="button" class="btn btn-default" data-dismiss="modal" id="closePlan">Close</button>
 		      <input type="submit" class="btn btn-primary" id="detailPlan" value="상세보기">
