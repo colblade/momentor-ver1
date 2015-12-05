@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+
 //github.com/colblade/Momentor-test.git
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -133,14 +134,22 @@ public class MomentorMemberController {
 		return list;
 	}
 	@RequestMapping("my_planner.do")
-	public ModelAndView planner(HttpServletRequest request){
-		return new ModelAndView("my_planner", "plannerDate", request.getParameter("plannerDate"));
+	public ModelAndView planner(HttpServletRequest request, PlannerVO pvo){
+		ModelAndView mv = new ModelAndView();
+		ArrayList<CartVO> cartList = (ArrayList<CartVO>) plannerService.getCartList(pvo.getMomentorMemberVO().getMemberId());
+		ArrayList<PlannerVO> plannerListByDate = (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
+		mv.addObject("selectDate", pvo.getPlannerDate());
+		mv.addObject("cartList", cartList);
+		mv.addObject("plannerListByDate", plannerListByDate);
+		mv.setViewName("my_plannerTest");
+		return mv;
 	}
 
 	@RequestMapping("my_registerInPlanner.do")
 	@ResponseBody
-	public void registerExerciseInPlanner(PlannerVO pvo){
+	public ArrayList<PlannerVO> registerExerciseInPlanner(PlannerVO pvo){
 		plannerService.registerExerciseInPlanner(pvo);
+		return (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
 	}
 	
 	@RequestMapping("my_getPlannerListByDate.do")
@@ -160,18 +169,20 @@ public class MomentorMemberController {
 	
 	@RequestMapping("my_deleteExcerciseInCart.do")
 	@ResponseBody
-	public void deleteExcerciseInCart(CartVO cvo){
+	public ArrayList<CartVO> deleteExcerciseInCart(CartVO cvo){
 		plannerService.deleteExcerciseInCart(cvo);
+		return (ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId());
 	}
 	
 	@RequestMapping("my_deleteExerciseInPlanner.do")
 	@ResponseBody
-	public void deleteExerciseInPlanner(HttpServletRequest request, PlannerVO pvo){
+	public ArrayList<PlannerVO> deleteExerciseInPlanner(HttpServletRequest request, PlannerVO pvo){
 		String[] deleteArray = request.getParameterValues("exerciseVO.exerciseName");
 		for(int i=0; i<deleteArray.length; i++){
 			pvo.setExerciseVO(new ExerciseVO(deleteArray[i], null));
 			plannerService.deleteExerciseInPlanner(pvo);
 		}
+		return (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
 	}
 	
 	@RequestMapping("my_getPlannerContentByDate.do")
@@ -183,8 +194,9 @@ public class MomentorMemberController {
 	
 	@RequestMapping("my_updateAchievementInPlanner.do")
 	@ResponseBody
-	public void updateAchievementInPlanner(PlannerVO pvo){
+	public ArrayList<PlannerVO> updateAchievementInPlanner(PlannerVO pvo){
 		plannerService.updateAchievementInPlanner(pvo);
+		return (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
 	}
 	
 	@RequestMapping("my_updateCommentInPlanner.do")
@@ -195,7 +207,6 @@ public class MomentorMemberController {
 			plannerService.registerCommentInPlanner(pvo);
 		}
 	}
-
 	
 	@RequestMapping("my_myPage.do")
 	public String myPage(){
