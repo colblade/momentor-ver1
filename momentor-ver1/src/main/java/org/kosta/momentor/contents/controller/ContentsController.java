@@ -2,6 +2,7 @@ package org.kosta.momentor.contents.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -223,4 +224,43 @@ public class ContentsController {
 			return new ModelAndView("admin_noticemgr_writeNoticeResult","nvo",nvo);
 		}
 	
+		/**
+		 * 추천/비추천 ajax로 하는 부분.
+		 * 
+		 * @param memberId
+		 * @param boardNo
+		 * @param recommend
+		 * @param notRecommend
+		 * @return
+		 */
+		@RequestMapping("my_updateRecommendInfo.do")
+		@ResponseBody
+		public Map<String, String> updateRecommendInfo(String memberId, int boardNo,String recommend, String notRecommend){
+			int num=0;
+		
+			
+			communityBoardService.updateRecommendInfo(boardNo, memberId, recommend, notRecommend);
+			
+			
+			
+		if ((recommend!=null&&recommend.equals("Y"))||(notRecommend!=null&&notRecommend.equals("Y"))) {
+			num = 1;
+		} else {
+			num = -1;
+		}
+		if (recommend != null && !recommend.equals("")) {
+			communityBoardService.updateRecommend(boardNo, num);
+			num = 0;
+		} else if (notRecommend != null && !notRecommend.equals("")) {
+			communityBoardService.updateNotRecommend(boardNo, num);
+			num = 0;
+		}
+		String count[] = communityBoardService.countRecommend(boardNo);
+		Map<String, String> map = communityBoardService.getRecommendInfoByMemberId(boardNo, memberId);
+		
+		map.put("recommendCount", count[0]);
+		map.put("notRecommendCount", count[1]);
+
+		return map;
+		}
 }

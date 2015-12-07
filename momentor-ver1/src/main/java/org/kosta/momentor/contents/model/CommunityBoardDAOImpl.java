@@ -1,6 +1,7 @@
 package org.kosta.momentor.contents.model;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -61,14 +62,14 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 	}
 
 	@Override
-	public void updateRecommend(int cbRecommend) {
-		// TODO Auto-generated method stub
-		
+	public void updateRecommend(Map<String, Integer> map) {
+			sqlSessionTemplate.update("content.updateRecommend", map);
+			
 	}
 
 	@Override
-	public void updateNotRecommend(int cbNotRecommend) {
-		// TODO Auto-generated method stub
+	public void updateNotRecommend(Map<String, Integer> map) {
+		sqlSessionTemplate.update("content.updateNotRecommend", map);
 		
 	}
 
@@ -110,4 +111,39 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 		public int totalContent(){
 			return sqlSessionTemplate.selectOne("content.totalContent");
 		}
+	   
+	   @Override
+		public Map<String, String> getRecommendInfoByMemberId(Map<String, String> map) {
+			
+			//System.out.println("Dao상에서 memberId와 boardNo의 값 : "+ map);
+		Map<String, String> res = sqlSessionTemplate.selectOne("content.getRecommendInfoByMemberId", map);
+		//System.out.println("res: "+res);
+			return res;
+		}
+
+		@Override
+		public int updateRecommendInfo(Map<String, String> map) {
+		return	sqlSessionTemplate.update("content.updateRecommendInfo", map);
+			
+		}
+
+
+		@Override
+		public void insertRecommendInfo(Map<String, String> map) {
+			sqlSessionTemplate.update("content.insertRecommendInfo", map);
+			
+		}
+
+		@Override
+		public int countRecommend(int boardNo) {
+			// TODO Auto-generated method stub
+			return sqlSessionTemplate.selectOne("content.countRecommend", boardNo);
+		}
+
+		@Override
+		public int countNotRecommend(int boardNo) {
+			// TODO Auto-generated method stub
+			return sqlSessionTemplate.selectOne("content.countNotRecommend", boardNo);
+		}
+	   
 }

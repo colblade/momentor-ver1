@@ -1,7 +1,9 @@
 package org.kosta.momentor.contents.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -101,4 +103,75 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 		      //System.out.println("service:"+boardNo);
 		      return communityBoardDAO.getCommunityByNo(boardNo);
 		   }
+	   
+	   
+	   
+		 /** 게시물에서 맨 처음 추천/비추천을 한다면 INSERT
+			이미 예전에 추천 비추천을 한 경우가 있다면 UPDATE
+			*/
+		@Override
+		public void updateRecommendInfo(int boardNo, String memberId, String recommend, String notRecommend) {
+
+
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("boardNo", String.valueOf(boardNo));
+			map.put("memberId", memberId);
+			map.put("recommend", recommend);
+			map.put("notRecommend", notRecommend);
+			int res = communityBoardDAO.updateRecommendInfo(map);
+			
+			if(res==0){
+				communityBoardDAO.insertRecommendInfo(map);
+				System.out.println("communityService updateRecommend insert실행");
+			}else{
+				System.out.println("communityService updateRecommend update실행");
+				
+			}
+		}
+	/**
+	 * 추천 수 수정
+	 */
+		@Override
+		public void updateRecommend(int boardNo, int num) {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+					map.put("boardNo", boardNo);
+					map.put("num", num);
+					communityBoardDAO.updateRecommend(map);
+		}
+	/**
+	 * 비추천수 수정
+	 */
+		@Override
+		public void updateNotRecommend(int boardNo, int num) {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			map.put("boardNo", boardNo);
+			map.put("num", num);
+			communityBoardDAO.updateNotRecommend(map);
+		}
+
+	/**
+	 *게시글 번호와 아이디를 매개변수로 해당 아이디가 추천했는지 안 했는지 알려준다.
+	 */
+		@Override
+		public Map<String, String> getRecommendInfoByMemberId(
+				int boardNo, String memberId) {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("boardNo", String.valueOf(boardNo));
+			map.put("memberId", memberId);
+			Map<String, String> res = communityBoardDAO.getRecommendInfoByMemberId(map);
+			
+			
+			return res;
+		}
+	/**
+	 * 해당 게시물의 추천/비추천 수를 가지고 온다.
+	 */
+	@Override
+	public String[] countRecommend(int boardNo) {
+
+		String res[] = {String.valueOf(communityBoardDAO.countRecommend(boardNo)),
+				String.valueOf(communityBoardDAO.countNotRecommend(boardNo))};
+
+		return res;
+	}
 }

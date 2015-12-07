@@ -51,8 +51,58 @@
                    }
                 });
              });//replyBtn */
-          }
-         );
+         
+       
+           //추천
+         	$("#recommendImg").on("click", "#recImg", function(){
+         	
+         	
+         	$.ajax({
+         		type:"post",
+         		url:"${initParam.root}my_updateRecommendInfo.do",
+         		data:"memberId="+$("#memberId").val()+"&boardNo="+$("#boardNo").val()+"&recommend="+$("#recommend").val(),
+         		success: function(data){
+         		var recommend = data.RECOMMEND;
+         	
+
+         			if(recommend =="Y"){
+         				$("#recommendImg").html("<input type = 'hidden' value = 'N' id = 'recommend'><img src='${initParam.root }image/recommend.png' width='20' height='20' id = 'recImg'>");
+         			}else{
+         				$("#recommendImg").html("<input type = 'hidden' value = 'Y' id = 'recommend'><img src='${initParam.root }image/notRecommend.png' width='20' height='20' id = 'recImg'>");
+         			}
+         			
+         			$("#recommendCount").html(data.recommendCount);
+         			
+         		}//success
+         	});//ajax
+         	});//on
+         	
+         			
+         	//비추천
+         	$("#notRecommendImg").on("click", "#notRecImg", function(){
+         		
+         	
+         	$.ajax({
+         		type:"post",
+         		url:"${initParam.root}my_updateRecommendInfo.do",
+         		data:"memberId="+$("#memberId").val()+"&boardNo="+$("#boardNo").val()+"&notRecommend="+$("#notRecommend").val(),
+         		success: function(data){
+
+         			var notrecommend = data.NOTRECOMMEND;
+         			
+         			if(notrecommend =="Y"){
+         			
+         			$("#notRecommendImg").html("<input type = 'hidden' value = 'N' id = 'notRecommend'><img src='${initParam.root }image/recommend.png' width='20' height='20' id = 'notRecImg'>");
+         		}else{
+         			$("#notRecommendImg").html("<input type = 'hidden' value = 'Y' id = 'notRecommend'><img src='${initParam.root }image/notRecommend.png' width='20' height='20' id = 'notRecImg'>");				
+         		}
+         				$("#notRecommendCount").html(data.notRecommendCount);
+         		}//success
+         	});//ajax
+         	});//on
+         	
+       
+       });
 </script>
 <div class="container">
 
@@ -74,7 +124,38 @@
             <hr>
             <p>
             <input class="btn btn-default" type="button" value="댓글보기▼" id="replyBtn">
-               조회수 : ${info.memberHits}&nbsp;추천수 : ${info.recommend }&nbsp;비추천수 : ${info.notRecommend }<br>
+               <c:set value="${requestScope.recommendInfo }" var = "recInfo"/>
+           
+             	조회수 : ${info.memberHits}&nbsp; | 추천수 : <span id="recommendCount">${info.recommend }</span>&nbsp;
+             	<span id="recommendImg">
+               <c:choose>
+               <c:when test="${'Y' eq recInfo.RECOMMEND}">
+               
+               <input type = "hidden" value = "N" id = "recommend">
+               <img src="${initParam.root }image/recommend.png" width="20" height="20" id = "recImg" >
+               </c:when>
+                <c:otherwise>
+               <input type = "hidden" value = "Y" id = "recommend">
+               <img src="${initParam.root }image/notRecommend.png" width="20" height="20" id = "recImg" >
+                </c:otherwise>
+                </c:choose></span>
+              | 비추천수 : <span id = "notRecommendCount">  ${info.notRecommend }
+                </span>
+				<span id="notRecommendImg">
+                <c:choose>
+                <c:when test="${recInfo.NOTRECOMMEND eq 'Y'}">
+               <input type = "hidden" value = "N" id = "notRecommend">
+               <img src="${initParam.root }image/recommend.png" width="20" height="20" id = "notRecImg">
+               </c:when>
+               <c:otherwise>
+                    <input type = "hidden" value = "Y" id = "notRecommend">
+                    <img src="${initParam.root }image/notRecommend.png" width="20" height="20" id = "notRecImg">
+               </c:otherwise>
+                 </c:choose>
+                 </span>
+                 <br>
+      <input type ="hidden" value = "${sessionScope.pnvo.momentorMemberVO.memberId }" id = "memberId">
+        <input type='hidden' value='${info.boardNo}' name='boardNo' id = "boardNo">
             </p>
             <div id="replyView"><hr>Hello<hr></div>      
             <div class="row marketing">

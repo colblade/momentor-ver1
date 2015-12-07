@@ -275,4 +275,61 @@ WHERE RANKING<=5 ]]>
 		insert into NOTICE_BOARD(NOTICE_NO, MEMBERID, TITLE, NOTICE_DATE,CONTENT)
 		values(NOTICE_SEQ.nextVal, #{momentorMemberVO.memberId}, #{boardTitle},sysdate,#{boardContent})
 	</insert>
+	
+	
+		<!-- 해당 게시물의 추천수를 업뎃 -->
+	<update id = "updateRecommend">
+	UPDATE MEMBER_BOARD SET RECOMMEND = RECOMMEND + #{num} WHERE MEMBER_NO =#{boardNo} 
+	</update>
+	
+	<!-- 해당 게시물의 비추천수를 업뎃 -->
+	<update id="updateNotRecommend">
+	UPDATE MEMBER_BOARD SET NOTRECOMMEND = NOTRECOMMEND +#{num} WHERE MEMBER_NO =#{boardNo}	
+	</update>
+
+	<!-- 멤버가 해당 게시물에서 추천 비추천을 눌렀을 때 맨 처음 했으면 insert -->
+	<insert id="insertRecommendInfo" parameterType="map">
+	INSERT INTO RECOMMEND_INFO 
+	<choose>
+	<when test="recommend !=null and !recommend.equals('')">
+	(MEMBER_NO, MEMBERID,RECOMMEND) 
+	VALUES (#{boardNo},#{memberId},#{recommend})
+	</when>
+	<when test="notRecommend !=null and !notRecommend.equals('')">
+	(MEMBER_NO, MEMBERID,NOTRECOMMEND) 
+	VALUES (#{boardNo},#{memberId},#{notRecommend})
+	</when>
+	<otherwise>
+	VALUES (#{boardNo},#{memberId},#{recommend},#{notRecommend})
+	</otherwise>
+	</choose>
+	</insert>
+	
+	<!-- 멤버가 해당 게시물에서 추천 비추천을 눌렀을 때 처음이 아닐시 update -->
+	<update id="updateRecommendInfo" parameterType="map">
+		UPDATE RECOMMEND_INFO SET
+		<if test="recommend !=null and !recommend.equals('')">
+		 RECOMMEND = #{recommend}
+		 </if>
+		 <if test="notRecommend !=null and !notRecommend.equals('')">
+		 NOTRECOMMEND = #{notRecommend}
+		 </if>
+		 WHERE MEMBER_NO = #{boardNo} AND MEMBERID = #{memberId}
+	</update>
+
+	<!-- 멤버가 해당 게시물에서 추천/비추천을 누른 상태를 가지고 온다 Y/N -->
+	<select id="getRecommendInfoByMemberId" parameterType="map" resultType="map">
+	SELECT RECOMMEND, NOTRECOMMEND FROM RECOMMEND_INFO WHERE MEMBER_NO = #{boardNo} AND MEMBERID = #{memberId}
+	</select>
+
+	<!-- 해당 게시물의 모든 추천수를 가지고 온다. -->
+	<select id="countRecommend" resultType="int" parameterType="int">
+	SELECT RECOMMEND FROM MEMBER_BOARD WHERE MEMBER_NO= #{value}
+	</select>
+
+	<!-- 해당 게시물의 모든 비추천수를 가지고 온다. -->
+	<select id="countNotRecommend" resultType="int" parameterType="int">
+		SELECT NOTRECOMMEND FROM MEMBER_BOARD WHERE MEMBER_NO =#{value}
+	</select>
+	
  </mapper>
