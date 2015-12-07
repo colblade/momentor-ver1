@@ -34,5 +34,7 @@ public interface CommunityBoardService {
 	public Map<String, String> getRecommendInfoByMemberId(int boardNo, String memberId);	
 	
 	//해당 커뮤니티 게시글의 추천/비추천수를 가지고 온다.
+	public List<CommunityBoardVO> findByTitle(String word); // 커뮤니티 검색
+	public ListVO getSearchCommunityList(String pageNo, String word); // 검색된 커뮤니티 목록
 	public String[] countRecommend(int boardNo);
 }

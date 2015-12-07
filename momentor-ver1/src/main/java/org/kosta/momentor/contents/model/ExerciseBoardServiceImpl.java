@@ -1,6 +1,7 @@
 package org.kosta.momentor.contents.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -95,5 +96,23 @@ public class ExerciseBoardServiceImpl implements ExerciseBoardService {
 	public List<ExerciseBoardVO> getExerciseBoardListBestTop5ByHits() {
 		return exerciseBoardDAO.getExerciseBoardListBestTop5ByHits();
 	}
-	
+	@Override
+	public List<ExerciseBoardVO> findByTitle(String word) {
+		// 운동게시판 전체 검색
+		return exerciseBoardDAO.findByTitle(word);
+	}
+	 public ListVO getSearchExerciseList(String pageNo, String word) {
+		 // 운동 게시판 검색 페이지
+			if(pageNo==null||pageNo=="") 
+				pageNo="1";
+			int total=exerciseBoardDAO.searchExerciseContent(word);
+			ArrayList<BoardVO> list= null;
+			HashMap<String, String> paramMap = new HashMap<String, String>();
+			paramMap.put("word", word);
+			paramMap.put("pageNo", pageNo);
+			list = (ArrayList)exerciseBoardDAO.getSearchExerciseList(paramMap);
+			PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+			ListVO lvo=new ListVO(list,paging);
+	      return lvo;
+	   }
 }

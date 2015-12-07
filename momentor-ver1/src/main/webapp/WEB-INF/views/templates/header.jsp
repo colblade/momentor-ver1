@@ -1,6 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$("#findForm").submit(function(){
+    			if($("#searchBox").val() == ""){
+    				alert("검색어를 입력하세요!");
+    				return false;
+    			}
+    		});
+    	});
+    </script>
     <nav class="navbar navbar-default navbar-fixed-top">
      <div class="container">
         <div class="navbar-header col-md-3">
@@ -35,11 +45,11 @@
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-right" role="search">
+          <form class="navbar-form navbar-right" role="search" id="findForm" action="member_findResult.do">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Search">
+              <input type="text" class="form-control" placeholder="Search" id="searchBox" name="word">
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-default">검색</button>
           </form>
         </div><!--/.nav-collapse -->
         </div>

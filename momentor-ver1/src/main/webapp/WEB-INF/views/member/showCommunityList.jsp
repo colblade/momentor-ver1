@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+    <link rel="stylesheet" href="${initParam.root}dist/css/style.css">
     <script type="text/javascript">
        $(document).ready(function(){
              $("#writeBtn").click(function(){
@@ -9,7 +10,8 @@
           }
          );
     </script>
- <table border="1" >
+<div class="table-responsive">
+ <table class="table table-striped">
   <tr>
     <th>글번호</th>
     <th>제목</th>
@@ -34,11 +36,6 @@
    </tr>
 </c:forEach>
 </table>
-<form>
-   <textarea rows="3" cols="40">
-      ${sessionScope.pnvo}
-   </textarea>
-</form>
 <c:if test="${sessionScope.pnvo!=null }">
    <img src="${initParam.root}image/write_btn.jpg" id="writeBtn">
 </c:if><br><br>	
@@ -65,3 +62,4 @@
 	▶</a>
 	</c:if>
 	</p>
+	</div>

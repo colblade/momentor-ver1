@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!-- DatePicker(jQuery UI) -->
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 
@@ -41,7 +42,7 @@
 						<tr>
 							<td>${list.ranking }</td>
 							<td><a
-								href="${initParam.root }member_getExerciseByNo.do?boardNo=${list.boardNo}&pageNo=${param.pageNo}">${list.boardTitle }</a></td>
+								href="${initParam.root }member_getExerciseByNo.do?boardNo=${list.boardNo}&pageNo=${param.pageNo}">${fn:substring(list.boardTitle,0,4)}..</a></td>
 							<td>${list.exerciseVO.exerciseName }</td>
 							<td>관리자</td>
 							<td>${list.boardWdate }</td>
@@ -76,7 +77,7 @@
 					<c:forEach items="${requestScope.communityTop5List }" var="list">
 						<tr>
 							<td>${list.ranking }</td>
-							<td>${list.boardTitle }</td>
+							<td>${fn:substring(list.boardTitle,0,4)}..</td>
 							<td>${list.momentorMemberVO.nickName }</td>
 							<td>${list.memberHits }</td>
 							<td>${list.recommend }</td>

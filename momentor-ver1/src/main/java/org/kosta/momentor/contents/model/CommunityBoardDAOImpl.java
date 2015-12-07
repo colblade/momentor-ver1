@@ -1,5 +1,6 @@
 package org.kosta.momentor.contents.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -145,5 +146,18 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 			// TODO Auto-generated method stub
 			return sqlSessionTemplate.selectOne("content.countNotRecommend", boardNo);
 		}
-	   
+		@Override
+		public List<CommunityBoardVO> findByTitle(String word) {
+			// 커뮤니티 게시판 전체 검색
+			return sqlSessionTemplate.selectList("content.findByCommunityTitle",word);
+		}
+		public List<CommunityBoardVO> getSearchCommunityList(HashMap<String, String> paramMap) {
+			// 커뮤니티 게시판 검색 페이지
+			List<CommunityBoardVO> list=sqlSessionTemplate.selectList("content.getSearchCommunityList", paramMap);
+			return list;
+		}
+		public int searchContent(String word){
+			// 커뮤니티 게시판 검색 총 개수
+			return sqlSessionTemplate.selectOne("content.searchContent", word);
+		}
 }

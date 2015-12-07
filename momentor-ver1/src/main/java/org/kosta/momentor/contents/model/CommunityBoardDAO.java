@@ -1,5 +1,6 @@
 package org.kosta.momentor.contents.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,9 @@ public interface CommunityBoardDAO {
 	
 	//전체 비추천수 값 가지고 오기
 	public int countNotRecommend(int boardNo);
-
+	public List<CommunityBoardVO> findByTitle(String word); // 커뮤니티 검색
+	public List<CommunityBoardVO> getSearchCommunityList(HashMap<String, String> paramMap); // 검색된 커뮤니티 목록
+	public int searchContent(String word); // 검색된 커뮤니티 총 개수
 }
 
 

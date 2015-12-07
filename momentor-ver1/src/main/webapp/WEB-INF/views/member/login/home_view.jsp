@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!-- DatePicker(jQuery UI) -->
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 
@@ -84,8 +85,8 @@
     		  alert("운동을 먼저 등록하세요!");
     		  return false;
     	  }
-    	  if(confirm("상세보기로 넘어가시겠습니까?")==false){
-    		  return false;
+    	  if(confirm("상세보기로 넘어가시겠습니까?")){
+    		  location.href="my_planner.do";
     	  }
       });
    });
@@ -115,7 +116,7 @@
 						<tr>
 							<td>${list.ranking }</td>
 							<td><a
-								href="${initParam.root }member_getExerciseByNo.do?boardNo=${list.boardNo}&pageNo=${param.pageNo}">${list.boardTitle }</a></td>
+								href="${initParam.root }member_getExerciseByNo.do?boardNo=${list.boardNo}&pageNo=${param.pageNo}">${fn:substring(list.boardTitle,0,4)}..</a></td>
 							<td>${list.exerciseVO.exerciseName }</td>
 							<td>관리자</td>
 							<td>${list.boardWdate }</td>
@@ -150,7 +151,7 @@
 					<c:forEach items="${requestScope.communityTop5List }" var="list">
 						<tr>
 							<td>${list.ranking }</td>
-							<td>${list.boardTitle }</td>
+							<td>${fn:substring(list.boardTitle,0,4)}..</td>
 							<td>${list.momentorMemberVO.nickName }</td>
 							<td>${list.memberHits }</td>
 							<td>${list.recommend }</td>
@@ -198,10 +199,9 @@
         <h4 class="modal-title" id="planModalLabel">플래너</h4>
       </div>
       <form action="my_planner.do" id="detailPlanForm">
-		   <div class="modal-body">
-		   		<input type="hidden" name="momentorMemberVO.memberId" value="${sessionScope.pnvo.momentorMemberVO.memberId}">
-				선택날짜 : <input type="text" class="form-control" name="plannerDate" id="selectDay"><br>
-				운동목록 : <span id="showList"></span>	      	   
+		   <div class="modal-body">	   	 
+		       선택날짜 : <input type="text" class="form-control" name="plannerDate" id="selectDay"><br>
+		       운동목록 : <span id="showList"></span>	      	   
 		   <div class="modal-footer">
 		      <button type="button" class="btn btn-default" data-dismiss="modal" id="closePlan">Close</button>
 		      <input type="submit" class="btn btn-primary" id="detailPlan" value="상세보기">

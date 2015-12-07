@@ -1,5 +1,6 @@
 package org.kosta.momentor.contents.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -97,6 +98,19 @@ public class ExerciseBoardDAOImpl implements ExerciseBoardDAO {
 		return sqlSessionTemplate.selectList("content.getExerciseBoardListBestTop5ByHits");
 		
 	}
-
+	@Override
+	public List<ExerciseBoardVO> findByTitle(String word) {
+		// 운동게시판 전체 검색
+		return sqlSessionTemplate.selectList("content.findByExerciseTitle",word);
+	}
+	public List<ExerciseBoardVO> getSearchExerciseList(HashMap<String, String> paramMap) {
+		// 운동게시판 검색 페이지
+		List<ExerciseBoardVO> list=sqlSessionTemplate.selectList("content.getSearchExerciseList", paramMap);
+		return list;
+	}
+	public int searchExerciseContent(String word){
+		// 운동게시판 검색 총 개수
+		return sqlSessionTemplate.selectOne("content.searchExerciseContent", word);
+	}
 	
 }

@@ -19,5 +19,6 @@ public interface ExerciseBoardService {
 	public ExerciseBoardVO getExerciseByNo(int boardNo);
 	public void updateExerciseHits(int boardNo);
 	public List<ExerciseBoardVO> getExerciseBoardListBestTop5ByHits();
-
+	public List<ExerciseBoardVO> findByTitle(String word); // 운동게시판 검색
+	public ListVO getSearchExerciseList(String pageNo, String word) ; // 운동게시판 검색 페이지
 }

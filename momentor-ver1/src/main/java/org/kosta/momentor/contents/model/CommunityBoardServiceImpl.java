@@ -166,12 +166,30 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 	/**
 	 * 해당 게시물의 추천/비추천 수를 가지고 온다.
 	 */
-	@Override
-	public String[] countRecommend(int boardNo) {
+		@Override
+		public String[] countRecommend(int boardNo) {
 
-		String res[] = {String.valueOf(communityBoardDAO.countRecommend(boardNo)),
-				String.valueOf(communityBoardDAO.countNotRecommend(boardNo))};
+		   String res[] = {String.valueOf(communityBoardDAO.countRecommend(boardNo)),
+		         String.valueOf(communityBoardDAO.countNotRecommend(boardNo))};
 
-		return res;
-	}
+		   return res;
+		}
+	public List<CommunityBoardVO> findByTitle(String word) {
+		   // 커뮤니티 전체 검색
+			return communityBoardDAO.findByTitle(word);
+		}
+	   public ListVO getSearchCommunityList(String pageNo, String word) {
+		   // 커뮤니티 게시판 검색 페이지 이동
+			if(pageNo==null||pageNo=="") 
+				pageNo="1";
+			int total=communityBoardDAO.searchContent(word);
+			ArrayList<BoardVO> list= null;
+			HashMap<String, String> paramMap = new HashMap<String, String>();
+			paramMap.put("word", word);
+			paramMap.put("pageNo", pageNo);
+			list = (ArrayList)communityBoardDAO.getSearchCommunityList(paramMap);
+			PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+			ListVO lvo=new ListVO(list,paging);
+	      return lvo;
+	   }
 }

@@ -332,4 +332,50 @@ WHERE RANKING<=5 ]]>
 		SELECT NOTRECOMMEND FROM MEMBER_BOARD WHERE MEMBER_NO =#{value}
 	</select>
 	
+	<!-- 운동게시판 검색 -->
+  <select id="findByExerciseTitle" resultMap="ebvoMap" resultType="ebvo">
+  SELECT B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH
+FROM exercise_board B, MOMENTOR_MEMBER M
+WHERE B.memberId = M.memberId and title like '%${value}%'
+<!-- 커뮤니티 검색 --> 
+  </select>
+  <select id="findByCommunityTitle" resultType="cbvo" resultMap="cbvoMap">
+   SELECT C.MEMBER_NO, C.TITLE, C.MEMBER_DATE, C.MEMBER_HITS, M.NICKNAME,M.AUTH
+FROM MEMBER_BOARD C, MOMENTOR_MEMBER M
+WHERE C.memberId = M.memberId and title like '%${value}%' 
+  </select>
+ <!-- 커뮤니티 검색 개수 -->
+ <select id="searchContent" resultType="int">
+SELECT count(*)
+FROM MEMBER_BOARD C, MOMENTOR_MEMBER M
+WHERE C.memberId = M.memberId and title like '%${value}%'
+ </select>
+ 
+ <select id="getSearchCommunityList" resultMap="cbvoMap" >
+	SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/6) AS PAGE
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM MEMBER_BOARD
+		ORDER BY MEMBER_DATE DESC)
+		)where page=#{pageNo} and title like '%${word}%'
+	</select>
+	
+	<!-- 운동게시판 검색 개수 -->
+ <select id="searchExerciseContent" resultType="int">
+SELECT count(*)
+FROM exercise_board B, MOMENTOR_MEMBER M
+WHERE B.memberId = M.memberId and title like '%${value}%'
+ </select>
+ 
+ <select id="getSearchExerciseList" resultMap="ebvoMap" >
+	SELECT B.EXERCISENAME,B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.MEMBERID,B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH FROM(
+SELECT EXERCISE_NO, TITLE, EXERCISE_DATE, CEIL(ROWNUM/5) AS PAGE, MEMBERID,EXERCISENAME ,EXERCISE_HITS FROM(
+SELECT EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE, MEMBERID,EXERCISENAME,EXERCISE_HITS
+FROM EXERCISE_BOARD ORDER BY EXERCISE_NO DESC
+)
+) B, MOMENTOR_MEMBER M,EXERCISE E
+WHERE B.EXERCISENAME = E.EXERCISENAME AND
+M.MEMBERID = B.MEMBERID AND PAGE=#{pageNo} and title like '%${word}%' 
+	</select>
+	
  </mapper>

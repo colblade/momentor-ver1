@@ -1,5 +1,6 @@
 package org.kosta.momentor.contents.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.kosta.momentor.cart.model.ExerciseVO;
@@ -30,4 +31,7 @@ public void deleteExerciseByAdmin(String exerciseName);
 //운동 수정
 public void updateExerciseByAdmin(ExerciseVO evo);
 public List<ExerciseBoardVO> getExerciseBoardListBestTop5ByHits();
+public List<ExerciseBoardVO> findByTitle(String word); // 운동게시판 전체 검색
+public List<ExerciseBoardVO> getSearchExerciseList(HashMap<String, String> paramMap); // 운동게시판 검색 페이지
+public int searchExerciseContent(String word); // 운동게시판 검색 총 개수
 }

@@ -263,4 +263,50 @@ public class ContentsController {
 
 		return map;
 		}
+		@RequestMapping("member_findResult.do") // 전체 검색하기
+		public ModelAndView findByTitle(String word){
+			List<ExerciseBoardVO> ebList = exerciseBoardService.findByTitle(word); // 운동게시판 검색
+			List<CommunityBoardVO> cbList = communityBoardService.findByTitle(word); // 커뮤니티 검색
+			List<ExerciseBoardVO> elist = new ArrayList<ExerciseBoardVO>(); // 운동게시판 5개씩 검색
+			List<CommunityBoardVO> clist = new ArrayList<CommunityBoardVO>(); // 커뮤니티 5개씩 검색
+			if(cbList.size() >= 5){
+				for(int i=0;i<5;i++){
+					clist.add(cbList.get(i));
+				}
+			} else{
+				for(int i=0;i<cbList.size();i++){
+					clist.add(cbList.get(i));
+				}
+			}
+			if(ebList.size() >= 5){
+				for(int i=0;i<5;i++){
+					elist.add(ebList.get(i));
+				}
+			} else{
+				for(int i=0;i<ebList.size();i++){
+					elist.add(ebList.get(i));
+				}
+			}
+			ModelAndView mv = new ModelAndView("member_findResult");
+			mv.addObject("word", word); // 검색어 전송
+			mv.addObject("totalEbList", ebList); // 전체 운동게시물 검색 수
+			mv.addObject("totalCbList", cbList); // 전체 커뮤니티 검색 수
+			mv.addObject("ebList", elist); // 화면에 보여지는 운동게시물
+			mv.addObject("cbList", clist); // 화면에 보여지는 커뮤니티
+			return mv;
+		}
+		@RequestMapping("member_showSearchCommunity.do") // 커뮤니티 전체 검색 페이지로 이동
+		public ModelAndView showSearchCommunity(String word, String pageNo){
+			ModelAndView mv = new ModelAndView("member_showSearchCommunity");
+			mv.addObject("word", word);
+			mv.addObject("list", communityBoardService.getSearchCommunityList(pageNo, word));
+			return mv;			
+		}
+		@RequestMapping("member_showSearchExercise.do") // 운동게시판 전체 검색 페이지로 이동
+		public ModelAndView showSearchExercise(String word, String pageNo){
+			ModelAndView mv = new ModelAndView("member_showSearchExercise");
+			mv.addObject("word", word);
+			mv.addObject("list", exerciseBoardService.getSearchExerciseList(pageNo, word));
+			return mv;			
+		}
 }
