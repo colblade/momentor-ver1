@@ -2,8 +2,12 @@ package org.kosta.momentor.member.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+
 
 
 //github.com/colblade/Momentor-test.git
@@ -127,17 +131,29 @@ public class MomentorMemberController {
         }	
 		return mvo;
 	}
+	
 	@RequestMapping("my_getPlannerList.do")
 	@ResponseBody
-	public ArrayList<PlannerVO> getPlannerList(PlannerVO pvo){
-		ArrayList<PlannerVO> list = (ArrayList<PlannerVO>) plannerService.getPlannerList(pvo);
+	public ArrayList<PlannerVO> getPlannerList(HttpServletRequest request){
+		String memberId = request.getParameter("momentorMemberVO.memberId");
+		ArrayList<PlannerVO> list = (ArrayList<PlannerVO>) plannerService.getPlannerList(memberId);
 		return list;
 	}
 	@RequestMapping("my_planner.do")
 	public ModelAndView planner(HttpServletRequest request, PlannerVO pvo){
 		ModelAndView mv = new ModelAndView();
+		// Date 클래스를 통해 오늘의 년월일을 yyyy-MM-dd 형으로 추출
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date);
 		ArrayList<CartVO> cartList = (ArrayList<CartVO>) plannerService.getCartList(pvo.getMomentorMemberVO().getMemberId());
 		ArrayList<PlannerVO> plannerListByDate = (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
+		int intTypeSelectDate = Integer.parseInt(pvo.getPlannerDate().replaceAll("-", "")); // 날짜 비교를 위해 선택한 날을 int 타입으로 변환
+		int intTypeToday = Integer.parseInt(today.replaceAll("-", "")); // 날짜 비교를 위해 오늘을 int 타입으로 변환
+		mv.addObject("intTypeSelectDate", intTypeSelectDate);
+		mv.addObject("intTypeToday", intTypeToday);
+		
+		mv.addObject("today", today);
 		mv.addObject("selectDate", pvo.getPlannerDate());
 		mv.addObject("cartList", cartList);
 		mv.addObject("plannerListByDate", plannerListByDate);
@@ -161,10 +177,17 @@ public class MomentorMemberController {
 	
 	@RequestMapping("my_getCartList.do")
 	@ResponseBody
-	public ArrayList<CartVO> getCartList(String id){
-		ArrayList<CartVO> list = (ArrayList<CartVO>) plannerService.getCartList(id);
-		//System.out.println(list);
-		return list;
+	public ArrayList<CartVO> getCartList(HttpServletRequest request){
+		String memberId = request.getParameter("momentorMemberVO.memberId");
+		return (ArrayList<CartVO>) plannerService.getCartList(memberId);
+	}
+	
+	@RequestMapping("my_registerExerciseInCart.do")
+	@ResponseBody
+	public ArrayList<CartVO> registerExerciseInCart(CartVO cvo){
+		plannerService.registerExerciseInCart(cvo);
+		System.out.println((ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId()));
+		return (ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId());
 	}
 	
 	@RequestMapping("my_deleteExcerciseInCart.do")
@@ -206,6 +229,13 @@ public class MomentorMemberController {
 		if(updateResult == 0){ // 업데이트할 코멘트가 없으면(실행결과가 0이면) 등록
 			plannerService.registerCommentInPlanner(pvo);
 		}
+	}
+	
+	@RequestMapping("my_updateTargetSetInPlanner.do")
+	@ResponseBody
+	public ArrayList<PlannerVO> updateTargetSetInPlanner(PlannerVO pvo){
+		plannerService.updateTargetSetInPlanner(pvo);
+		return (ArrayList<PlannerVO>) plannerService.getPlannerListByDate(pvo);
 	}
 	
 	@RequestMapping("my_myPage.do")

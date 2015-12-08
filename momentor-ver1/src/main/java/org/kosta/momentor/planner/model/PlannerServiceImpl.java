@@ -17,13 +17,11 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public void registerExerciseInPlanner(PlannerVO pvo) {
-	plannerDAO.registerExerciseInPlanner(pvo);
-		
+		plannerDAO.registerExerciseInPlanner(pvo);
 	}
 
 	@Override
 	public void updateTargetSetInPlanner(PlannerVO pvo) {
-		// TODO Auto-generated method stub
 		plannerDAO.updateTargetSetInPlanner(pvo);
 	}
 	
@@ -53,28 +51,24 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public void updateAchievementInPlanner(PlannerVO pvo) {
-		// TODO Auto-generated method stub
 		plannerDAO.updateAchievementInPlanner(pvo);
 	}
 
 	@Override
-	public List<PlannerVO> getPlannerList(String id) {
-		// TODO Auto-generated method stub
-		return plannerDAO.getPlannerList(id);
-	}
-
-	@Override
 	public PlannerVO getPlannerByDate(PlannerVO pvo) {
-		// TODO Auto-generated method stub
 		return plannerDAO.getPlannerByDate(pvo);
 	}
 
 	@Override
 	public void deleteExerciseInPlanner(PlannerVO pvo) {
-		// TODO Auto-generated method stub
 		plannerDAO.deleteExerciseInPlanner(pvo);
 	}
 
+	@Override
+	public List<PlannerVO> getPlannerList(String id) {
+		return plannerDAO.getPlannerList(id);		
+	}
+	
 	@Override
 	public List<PlannerVO> getPlannerListByDate(PlannerVO pvo) {
 		List<PlannerVO> pListByDate = plannerDAO.getPlannerListByDate(pvo);
@@ -131,11 +125,13 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 	
 	@Override
+	public void registerExerciseInCart(CartVO cvo) {
+		cartDAO.registerExerciseInCart(cvo);
+	}
+	
+	@Override
 	public void deleteExcerciseInCart(CartVO cvo) {
 		cartDAO.deleteExcerciseInCart(cvo);
 	}
-	@Override
-	public List<PlannerVO> getPlannerList(PlannerVO pvo) {
-		return plannerDAO.getPlannerList(pvo);		
-	}
+
 }

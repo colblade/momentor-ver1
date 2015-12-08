@@ -28,7 +28,8 @@ public interface PlannerService {
 	
 	// 카트 리스트 불러오기
 	public List<CartVO> getCartList(String id);
+	// 카트에 운동 등록하기
+	public void registerExerciseInCart(CartVO cvo);
 	// 카트 내 운동 삭제하기
 	public void deleteExcerciseInCart(CartVO cvo);
-	public List<PlannerVO> getPlannerList(PlannerVO pvo);
 }

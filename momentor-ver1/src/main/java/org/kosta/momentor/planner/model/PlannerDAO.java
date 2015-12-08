@@ -24,6 +24,5 @@ public interface PlannerDAO {
 
 	// 플래너 삭제(오늘을 기준으로 이전일 경우만)
 	public void deleteExerciseInPlanner(PlannerVO pvo);
-	public List<PlannerVO> getPlannerList(PlannerVO pvo);
-	
+
 }

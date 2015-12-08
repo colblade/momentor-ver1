@@ -37,12 +37,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		(#{momentorMemberVO.memberId}, #{exerciseVO.exerciseName}, #{plannerDate}, #{targetSet})
 	</insert>
 	
-	<!-- <update id="updateTargetSetInPlanner" parameterType="planvo">
-	UPDATE EXERCISE_PLANNER SET TARGETSET =#{targetSet}
-	 WHERE MEMBERID =#{momentorMemberVO.memberId}
-	  AND EXERCISENAME = #{exerciseVO.exerciseName}
+	<update id="updateTargetSetInPlanner" parameterType="planvo">
+		UPDATE EXERCISE_PLANNER SET TARGETSET =#{targetSet}
+	 	WHERE MEMBERID =#{momentorMemberVO.memberId}
+	  	AND EXERCISENAME = #{exerciseVO.exerciseName}
 		AND TO_CHAR(PLANNER_DATE,'YYYY-MM-DD') = #{plannerDate}
-	</update> -->
+	</update>
 	
 	<select id="getPlannerContentByDate" resultMap="plvomap">
 		SELECT PLANNERCONTENT FROM EXERCISE_PLANNERCONTENT

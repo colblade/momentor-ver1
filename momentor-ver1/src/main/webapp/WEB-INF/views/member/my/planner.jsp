@@ -9,6 +9,7 @@
 		// select로 선택된 value(1~targetSet)를 achievement 에 담아야 한다.
 		// 실시 button 클릭시 로그인한 사용자의 memberId, 해당 plannerDate, achievement, exerciseName를 담아 보내주어야 한다.
 		$("#plannerListTable").on("click", ".achiveBtn", function(){
+			//alert($(this).parent().siblings().next().eq(0).text().trim()); // 수정보완 기간에 text값에 trim붙여서 글자만 추출하도록 수정할 예정.
 			var updateAchiveEx = $(this).parent().siblings().next().html();
 			var achievementValue = $(this).parent().siblings().next().next().find(".exSelect").val();
 			if(confirm("등록 후에는 수정/삭제가 불가능합니다.\n등록하시겠습니까?") == false){
@@ -22,6 +23,47 @@
 					plannerListFunc(resultList);
 				}
 			});
+		});
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 플래너에 등록된 운동 목표세트 수정하기
+		var targetSetVal = "";
+		$("#plannerListTable").on("click", ".updateBtn", function(){
+			// 버튼이 '수정' 일때 클릭하면, 목표세트를 text 상자로 만들어 준 후 버튼을 '저장'으로 바꿔준다.
+			if($(this).val() == "수정"){
+				targetSetVal = $(this).parent().prev().text().trim();
+				var updateInput = "<input type='text' class='updateTargetVal' size='2' style='text-align: right' value=" + targetSetVal + ">";
+				$(this).parent().prev().html(updateInput);
+				$(this).val("저장");
+			} else if($(this).val() == "저장") {
+				// 버튼이 '저장' 일때 클릭하면, text 상자의 값으로 update 해준 후 버튼을 '수정'으로 바꿔준다.
+				var updateTargetVal = $(this).parent().prev().find(".updateTargetVal").val();
+				var updateTargetEx = $(this).parent().siblings().eq(1).text().trim();
+				if(updateTargetVal == "" || updateTargetVal == 0){
+					alert("목표 세트는 1 이상의 숫자로 입력해주세요.");
+					$(this).parent().prev().find(".updateTargetVal").val("");
+					$(this).parent().prev().find(".updateTargetVal").focus();
+					return;
+				}
+				// 기존의 목표세트에서 값이 수정되었을때만 업데이트 해준다.
+				if(targetSetVal != updateTargetVal){
+					$.ajax({
+						type:"post",
+						url:"my_updateTargetSetInPlanner.do",
+						data:"momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&plannerDate=${requestScope.selectDate}&exerciseVO.exerciseName="+updateTargetEx+"&targetSet="+updateTargetVal,
+						success:function(resultList){
+							plannerListFunc(resultList);
+						}
+					});
+					alert("수정되었습니다.");
+				} else {
+					$(this).parent().prev().html(targetSetVal);
+				}
+				$(this).val("수정");
+			}
+		});
+		// 목표세트 수정에서 숫자외의 문자를 입력시 공백으로 초기화
+		$("#plannerListTable").on("keyup", ".updateTargetVal", function(){
+			$(this).val($(this).val().replace(/[^0-9]/gi, ""));
 		});
 		
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,21 +93,20 @@
 		
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 임시 목표 set에 숫자외의 문자를 입력시 공백으로 초기화
-		//$("#tempTargetSet").keyup(function(){
 		$("#cartListTable").on("keyup", "#tempTargetSet", function(){
 				$(this).val($(this).val().replace(/[^0-9]/gi, ""));
 		});
 		// 찜 리스트에서 임시 등록란으로 올리기
-		//$("#selectExerciseBtn").click(function(){
 		$("#cartListTable").on("click", "#selectExerciseBtn", function(){
 			var selectExercise = $(":input[name=tempExerciseName]:checked").val();
 			var targetSet = $("#tempTargetSet");
 			if(selectExercise == undefined){
-				alert("운동을 선택하세요!");
+				alert("운동을 선택하세요.");
 				return;
 			}
-			if(targetSet.val() == ""){
-				alert("목표 세트를 입력하세요!");
+			if(targetSet.val() == "" || targetSet.val() == 0){
+				alert("목표 세트는 1 이상의 숫자로 입력해주세요.");
+				targetSet.val("");
 				targetSet.focus();
 				return;
 			}
@@ -118,6 +159,12 @@
 			// 임시등록란이 비어있는지 확인
 			if(regExName == ""){
 				alert("임시등록된 운동이 없습니다.");
+				return false;
+			}
+			if($("#targetSet").val() == "" || $("#targetSet").val() == 0){
+				alert("목표 세트는 1 이상의 숫자로 입력해주세요.");
+				$("#targetSet").val("");
+				$("#targetSet").focus();
 				return false;
 			}
 			// listBody의 자식(td)에 등록하려는 운동이 이미 있는지 확인한다.
@@ -182,7 +229,12 @@
 				}
 			});
 		});
-		//---------------------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		// 플래너 리스트의 전체선택 체크박스
+		$("#plannerListTable").on("change", ":input[name=allCheck]", function(){
+			var flag = $(this).prop("checked");
+			$(":input[name=deleteCheck]").prop("checked", flag);
+		});
 	});
 		
 	// 임시등록 되어있는 운동이 있는데 페이지를 벗어나려 할 때 사용자에게 알림
@@ -192,12 +244,19 @@
 		}
 	});
 	
+	// 오늘의 년월일 구하기
+	var now = new Date();
+	var year= now.getFullYear();
+	var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+	var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+	var todayVal = year + '-' + mon + '-' + day;
+	
 	// 플래너에 등록, 플래너에서 삭제, 달성 시 플래너 리스트를 출력하는 공통 function
 	function plannerListFunc(resultList){
 		var listTableFrame = "등록된 운동이 없습니다.";
 		if(resultList.length != 0){
 			listTableFrame = "<table border='1' cellpadding='5' style='text-align: center'>" + 
-									"<thead><tr><th>선택</th><th>운동명</th><th>달성세트</th><th>목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>" + 
+									"<thead><tr><th><input type='checkbox' name='allCheck'></th><th>운동명</th><th>달성세트</th><th colspan='2'>목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>" + 
 									"</tr></thead><tbody id='listBody'>";
 				$.each(resultList, function(index, list){
 					listTableFrame += "<tr>";
@@ -206,14 +265,25 @@
 					if(list.achievement != 0){
 						listTableFrame += "<td>" + list.achievement + "</td>";
 					} else {
-						var selectTable = "";
-						for(var i=1; i<list.targetSet+1; i++){
-							selectTable += "<option value=" + i + ">" + i + "</option>";
+						// 선택한 날짜와 오늘을 비교하여 오늘일때만 달성버튼 활성화
+						if(todayVal == list.plannerDate){
+							var selectTable = "";
+							for(var i=1; i<list.targetSet+1; i++){
+								selectTable += "<option value=" + i + ">" + i + "</option>";
+							}
+							listTableFrame += "<td><select class='exSelect'>" + selectTable + "</select><input type='button' class='achiveBtn' value='달성'></td>";
+						} else {
+							listTableFrame += "<td>" + list.achievement + "</td>";
 						}
-						listTableFrame += "<td><select class='exSelect'>" + selectTable + "</select><input type='button' class='achiveBtn' value='달성'></td>";
 					}
-					listTableFrame += "<td>" + list.targetSet + "</td>" +
-												"<td>" + list.achievementPercent + "%</td>";
+					// 선택한 날짜와 오늘을 비교하여 오늘보다 이후일때만 수정버튼 활성화
+					// 기존 yyyy-MM-dd 형태의 날짜에서 '-' 를 제거한 후 숫자형으로 변환
+					if(parseInt(list.plannerDate.replace(/-/g, "")) > parseInt(todayVal.replace(/-/g, ""))){
+						listTableFrame += "<td>" + list.targetSet + "</td><td><input type='button' class='updateBtn' value='수정'></td>";
+					} else {
+						listTableFrame += "<td colspan='2'>" + list.targetSet + "</td>";
+					}
+					listTableFrame += "<td>" + list.achievementPercent + "%</td>";
 					if(index == 0){
 						listTableFrame += "<td rowspan=" + resultList.length + ">" + list.achievementPercentDay + "%</td>" + 
 													"<td rowspan=" + resultList.length + ">" + list.achievementPercentMonth + "%</td>";
@@ -235,7 +305,8 @@
 		<table border="1" cellpadding="5" style="text-align: center">
 			<thead>
 				<tr>
-					<th>선택</th><th>운동명</th><th>달성세트</th><th>목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>
+					<th><input type="checkbox" name="allCheck"></th>
+					<th>운동명</th><th>달성세트</th><th colspan="2">목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>
 				</tr>
 			</thead>
 			<tbody id="listBody">
@@ -249,16 +320,30 @@
 							${plist.achievement}
 						</c:when>
 						<c:otherwise>
-							<select class="exSelect">
-								<c:forEach begin="1" end="${plist.targetSet}" varStatus="status2">
-									<option value="${status2.count}">${status2.count}</option>
-								</c:forEach>
-							</select>
-							<input type="button" class="achiveBtn" value="달성">
+							<c:choose>
+								<c:when test="${requestScope.today == requestScope.selectDate}">
+									<select class="exSelect">
+										<c:forEach begin="1" end="${plist.targetSet}" varStatus="status2">
+											<option value="${status2.count}">${status2.count}</option>
+										</c:forEach>
+									</select>
+									<input type="button" class="achiveBtn" value="달성">
+								</c:when>
+								<c:otherwise>
+									${plist.achievement}
+								</c:otherwise>
+							</c:choose>
 						</c:otherwise>
 					</c:choose>
 					</td>
-					<td>${plist.targetSet}</td>
+					<c:choose>
+						<c:when test="${requestScope.intTypeSelectDate > requestScope.intTypeToday}">
+							<td>${plist.targetSet}</td><td><input type="button" class="updateBtn" value="수정"></td>
+						</c:when>
+						<c:otherwise>
+							<td colspan="2">${plist.targetSet}</td>
+						</c:otherwise>
+					</c:choose>
 					<td>${plist.achievementPercent} %</td>
 					<c:if test="${status1.count == 1}">
 						<td rowspan="${requestScope.plannerListByDate.size()}">${plist.achievementPercentDay} %</td>
@@ -285,8 +370,8 @@
 
 <!-- 임시등록란 -->
 <h3>선택 확인 / 등록</h3>
-목표운동 <input type="text" name="exerciseVO.exerciseName" id="exerciseName" style="text-align: right" size="12" readonly ><br>
-목표세트 <input type="text" name="targetSet" id="targetSet" style="text-align: right" size="12"> set<br>
+목표운동 <input type="text" name="exerciseVO.exerciseName" id="exerciseName" style="text-align: right" size="22" readonly ><br>
+목표세트 <input type="text" name="targetSet" id="targetSet" style="text-align: right" size="12"> set
 <input type="button" id="regPlannerBtn" value="등록">
 <hr>
 

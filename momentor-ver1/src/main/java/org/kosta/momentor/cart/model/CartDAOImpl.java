@@ -13,8 +13,7 @@ public class CartDAOImpl implements CartDAO {
 	
 	@Override
 	public void registerExerciseInCart(CartVO cvo) {
-		// TODO Auto-generated method stub
-		
+		sqlSessionTemplate.insert("cart.registerExerciseInCart", cvo);
 	}
 
 	@Override

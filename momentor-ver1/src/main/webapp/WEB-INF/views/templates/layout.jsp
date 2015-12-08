@@ -16,12 +16,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="${initParam.root}dist/css/style.css">
 <link rel="stylesheet" type="text/css" href="${initParam.root}css/home.css">
-  <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- font awesome -->
-    <link rel="stylesheet" href="${initParam.root}css/font-awesome.min.css" media="screen" title="no title">
-    <!-- Custom style -->
-    <link rel="stylesheet" href="${initParam.root}css/style.css" media="screen" title="no title" >
+
 <!-- 합쳐지고 최소화된 최신 CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 

@@ -65,8 +65,5 @@ public class PlannerDAOImpl implements PlannerDAO {
 	public List<PlannerVO> getPlannerListByDate(PlannerVO pvo) {
 		return sqlSessionTemplate.selectList("plan.getPlannerListByDate", pvo);
 	}
-	@Override
-	public List<PlannerVO> getPlannerList(PlannerVO pvo) {
-		return sqlSessionTemplate.selectList("plan.getPlannerList",pvo);		
-	}
+
 }
