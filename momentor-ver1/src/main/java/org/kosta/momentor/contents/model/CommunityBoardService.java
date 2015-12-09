@@ -7,8 +7,8 @@ public interface CommunityBoardService {
 	public void deleteCommunity(int cboardNo);//글 삭제.
 	public void updateCommunity(CommunityBoardVO cvo);//글 수정.
 	public ReplyVO postingReply(ReplyVO rvo);//댓글 등록
-	public void deleteReply(int cboardNo);//댓글 삭제
-	public void updateReply(int cboardNo);//댓글 등록
+	public void deleteReply(int replyNo);//댓글 삭제
+	public void updateReply(ReplyVO rvo);//댓글 수정
 	public List<CommunityBoardVO> findByCbTitle(String cbTitle);//제목으로 글검색
 	public List<CommunityBoardVO> findByCbNickName(String nickName);//닉네임으로 검색
 	public void updateRecommend(int cbRecommend);//추천
@@ -16,7 +16,7 @@ public interface CommunityBoardService {
 	public CommunityBoardVO getCommunityByNo(int boardNo);//커뮤니티글 상세보기.
 	public void updateHits(int boardNo); //조회수 증가.
 	public List<ReplyVO> getReplyListByNo(int boardNo);//커뮤니티 글 상세 보기 + 댓글 보기
-	 
+	public ReplyVO getReplyByNo(int replyNo);//댓글 시퀀스로 단일 댓글 가져오기
 	public List<CommunityBoardVO> getCommunityBoardListBestTop5ByRecommend();//커뮤니티 게시판 추천수 TOP5
 	public ListVO getAllPostingList(String pageNo);//전체 목록
 

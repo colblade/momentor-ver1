@@ -27,10 +27,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<!-- 모든 글 리스트 출력 -->
 	<select id="getAllPostingList" resultMap="cbvoMap">
-	 select b.MEMBER_NO,b.MEMBERID,b.TITLE,b.MEMBER_DATE,b.CONTENT,b.MEMBER_HITS,b.RECOMMEND,b.NOTRECOMMEND from (
+	 select b.MEMBER_NO,b.MEMBERID,m.NICKNAME,b.TITLE,b.MEMBER_DATE,b.CONTENT,b.MEMBER_HITS,b.RECOMMEND,b.NOTRECOMMEND from (
 			select MEMBER_NO,MEMBERID,TITLE,MEMBER_DATE,CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,ceil(rownum/5) as page from (
-					select MEMBER_NO,MEMBERID,TITLE,to_char(MEMBER_DATE,'YYYY.MM.DD HH24:MI:SS') as MEMBER_DATE,
-					CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND from MEMBER_BOARD  order by MEMBER_DATE desc
+					select MEMBER_NO,MEMBERID,TITLE,to_char(MEMBER_DATE,'YYYY.MM.DD') as MEMBER_DATE,
+					CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND from MEMBER_BOARD  order by MEMBER_NO desc
 		     )
        ) b,MOMENTOR_MEMBER m where b.MEMBERID=m.MEMBERID and page=#{value}
 	</select>
@@ -50,7 +50,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	UPDATE MEMBER_BOARD set TITLE=#{boardTitle},MEMBER_DATE=SYSDATE,CONTENT=#{boardContent}
 	WHERE MEMBER_NO=#{boardNo}
 	</update>
-
+	<!-- 댓글 등록 -->
+	<insert id="postingReply" parameterType="rvo">
+		INSERT INTO MEMBER_REPLY (REPLY_NO,MEMBER_NO, MEMBERID, CONTENT, REPLY_DATE)
+		VALUES (REPLY_SEQ.NEXTVAL, #{communityBoardVO.boardNo},#{momentorMemberVO.memberId},#{content},SYSDATE)
+	</insert>
+	<!-- 댓글 삭제 -->
+	<delete id="deleteReply" parameterType="int">
+		DELETE FROM MEMBER_REPLY WHERE REPLY_NO=#{value}
+	</delete>
+	<!-- 댓글 전체 삭제 -->
+	<delete id="deleteAllReply" parameterType="int">
+		DELETE FROM MEMBER_REPLY WHERE MEMBER_NO=#{value}
+	</delete>
+	<!-- 단일 댓글 가져오기 -->
+	<select id="getReplyByNo" parameterType="int" resultType="rvo" resultMap="rvoMap">
+		SELECT REPLY_NO,MEMBER_NO,MEMBERID,CONTENT,TO_CHAR(REPLY_DATE,'YYYY.MM.DD') AS REPLY_DATE FROM MEMBER_REPLY WHERE REPLY_NO = #{value}
+	</select>
+	<!-- 댓글 업데이트 -->
+	<update id="updateReply" parameterType="rvo">
+		UPDATE MEMBER_REPLY set CONTENT=#{content},REPLY_DATE=SYSDATE WHERE REPLY_NO=${replyNo}
+	</update>
 	
 	<!-- reply board result map -->
 	<resultMap type="rvo" id="rvoMap">
@@ -59,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="reply_no" property="replyNo" />
 		<result column="reply_date" property="replyDate" />
 		<result column="title" property="communityBoardVO.boardTitle" />
+		<result column="nickName" property="momentorMemberVO.nickName"/>
 	</resultMap>
 	
 		<!-- 내가 쓴 커뮤니티 글 리스트를 보여준다. -->
@@ -102,9 +123,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 해당글의 모든 덧글을 가지고 오는 q -->
 	<select id="getReplyListByNo" resultType="rvo" resultMap="rvoMap">
-		SELECT REPLY_NO,MEMBER_NO,MEMBERID,CONTENT,TO_CHAR(REPLY_DATE,'YYYY.MM.DD') AS REPLY_DATE FROM MEMBER_REPLY WHERE MEMBER_NO = #{boardNo}
+		SELECT MR.REPLY_NO,MR.MEMBERID,MR.MEMBER_NO,MM.NICKNAME,MR.CONTENT,TO_CHAR(MR.REPLY_DATE,'YYYY.MM.DD') AS REPLY_DATE
+		FROM MEMBER_REPLY MR, MOMENTOR_MEMBER MM
+		WHERE MEMBER_NO = #{boardNo} and  MR.MEMBERID=MM.MEMBERID
 	
-	ORDER BY REPLY_DATE ASC
+	ORDER BY MR.REPLY_NO ASC
 	
 	<!-- 조회수 증가 -->
 	</select>
@@ -332,6 +355,10 @@ WHERE RANKING<=5 ]]>
 		SELECT NOTRECOMMEND FROM MEMBER_BOARD WHERE MEMBER_NO =#{value}
 	</select>
 	
+	<!-- 해당 게시물의 추천/비추천 테이블을 삭제한다 -->
+	<delete id="deleteRecommend" parameterType="int">
+	DELETE FROM RECOMMEND_INFO WHERE MEMBER_NO=#{value}
+	</delete>
 	<!-- 운동게시판 검색 -->
   <select id="findByExerciseTitle" resultMap="ebvoMap" resultType="ebvo">
   SELECT B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH

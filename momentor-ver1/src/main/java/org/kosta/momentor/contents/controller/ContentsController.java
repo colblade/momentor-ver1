@@ -166,24 +166,63 @@ public class ContentsController {
 	/*커뮤니티 게시판 게시물 삭제*/
 	@RequestMapping("my_deleteCommunity.do")
 	public ModelAndView deleteCommunity(int boardNo){
-		//System.out.println("삭제 컨트롤러 : "+boardNo);
 		communityBoardService.deleteCommunity(boardNo);
 		return new ModelAndView("redirect:/showCommunityList.do");	
 	}
 	/*커뮤니티 게시판 게시물 수정 페이지로 이동*/
 	@RequestMapping("my_updateCommunityForm.do")
 	public ModelAndView updateForm(int boardNo){
-		CommunityBoardVO cbvo=communityBoardService.getCommunityByNo(boardNo);
-		//System.out.println("수정 하기 전 게시글 확인 : "+cbvo);
-		return new ModelAndView("my_updateCommunityForm","cbvo",cbvo);
+		CommunityBoardVO cvo = communityBoardService.getCommunityByNo(boardNo);
+		return new ModelAndView("my_updateCommunityForm", "cvo", cvo);
 	}
-	/*커뮤니티 게시판 게시물 수정*/
-	@RequestMapping(value="my_updateCommunity.do",method=RequestMethod.POST)
-	public ModelAndView updateCommunity(CommunityBoardVO cvo){
-		/*System.out.println("수정될 글 내용 : "+cvo);
-		System.out.println("게시물 수정 시 게시글 번호 : "+cvo.getBoardNo());*/
+	/* 커뮤니티 게시판 게시물 수정 */
+	@RequestMapping(value = "my_updateCommunity.do", method = RequestMethod.POST)
+	public ModelAndView updateCommunity(CommunityBoardVO cvo) {
 		communityBoardService.updateCommunity(cvo);
-		return new ModelAndView("redirect:/member_ getCommunityNoHitByNo.do","boardNo",cvo.getBoardNo());
+		return new ModelAndView("redirect:/member_ getCommunityNoHitByNo.do","boardNo", cvo.getBoardNo());
+	}
+	/* 덧글 리스트 반환 */
+	@RequestMapping("my_getReplyList.do")
+	@ResponseBody
+	public List<ReplyVO> getReplyList(int boardNo) {
+		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		return replyList;
+	}
+	/* 덧글 번호로 덧글 반환 */
+	@RequestMapping("my_getReplyByNo.do")
+	@ResponseBody
+	public ReplyVO getReplyByNo(int replyNo) {
+		ReplyVO rvo = communityBoardService.getReplyByNo(replyNo);
+		return rvo;
+	}
+
+	/* 덧글 수정 */
+	@RequestMapping("my_updateReply.do")
+	@ResponseBody
+	public List<ReplyVO> updateReply(int replyNo, String updateReplyContent,int boardNo) {
+		System.out.println(boardNo);
+		ReplyVO rvo = new ReplyVO();
+		rvo.setReplyNo(replyNo);
+		rvo.setContent(updateReplyContent);
+		communityBoardService.updateReply(rvo);
+		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		return replyList;
+	}
+	/* 덧글 등록(커뮤니티) */
+	@RequestMapping(value = "my_registReply.do", method = RequestMethod.POST)
+	@ResponseBody
+	public List<ReplyVO> registReply(ReplyVO rvo) {
+		communityBoardService.postingReply(rvo);
+		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(rvo.getCommunityBoardVO().getBoardNo());
+		return replyList;
+	}
+	/* 덧글 삭제(커뮤니티) */
+	@RequestMapping("my_deleteReply.do")
+	@ResponseBody
+	public List<ReplyVO> deleteReply(int replyNo, int boardNo) {
+		communityBoardService.deleteReply(replyNo);
+		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		return replyList;
 	}
 	/* 히트수 증가하지 않고 커뮤니티 글 보기 */
 	@RequestMapping("member_ getCommunityNoHitByNo.do")

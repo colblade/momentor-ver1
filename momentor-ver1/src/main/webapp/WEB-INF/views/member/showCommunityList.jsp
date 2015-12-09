@@ -29,17 +29,14 @@
          </c:when>
          <c:otherwise><td><a href="member_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
       </c:choose>
-      <td>${pnvo.momentorMemberVO.nickName}</td>
+      <td>${posting.momentorMemberVO.nickName}</td>
       <td>${posting.boardWdate}</td>
       <td>${posting.memberHits}</td>
       <td>${posting.recommend}</td>
    </tr>
 </c:forEach>
 </table>
-<c:if test="${sessionScope.pnvo!=null }">
-   <img src="${initParam.root}image/write_btn.jpg" id="writeBtn">
-</c:if><br><br>	
-<p class="paging">
+<p class="paging" align="center">
 	<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
 	<c:if test="${pb.previousPageGroup}">
 	<a href="showCommunityList.do?pageNo=${pb.startPageOfPageGroup-1}">
@@ -63,3 +60,16 @@
 	</c:if>
 	</p>
 	</div>
+	<form>
+	<select>
+		<option value="">검색 구분</option>
+		<option value="">아이디</option>
+		<option value="">제목</option>
+	</select> <input type="text" id="communitySearch"> <input type="submit"
+		value="검색">
+</form>
+<c:if test="${sessionScope.pnvo!=null }">
+	<div align="right">
+		<input class="btn btn-default" type="button" value="글쓰기" id="writeBtn">
+	</div>
+</c:if>

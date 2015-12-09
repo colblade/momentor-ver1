@@ -34,20 +34,23 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 
 	@Override
 	public ReplyVO postingReply(ReplyVO rvo) {
-		// TODO Auto-generated method stub
+		sqlSessionTemplate.insert("content.postingReply",rvo);
 		return null;
 	}
 
 	@Override
-	public void deleteReply(int cboardNo) {
-		// TODO Auto-generated method stub
-		
+	public void deleteAllReply(int cboardNo) {
+		sqlSessionTemplate.delete("content.deleteAllReply", cboardNo);
+	}
+	
+	@Override
+	public void deleteReply(int replyNo) {
+		sqlSessionTemplate.delete("content.deleteReply", replyNo);	
 	}
 
 	@Override
-	public void updateReply(int cboardNo) {
-		// TODO Auto-generated method stub
-		
+	public void updateReply(ReplyVO rvo) {
+		sqlSessionTemplate.update("content.updateReply",rvo);	
 	}
 
 	@Override
@@ -75,6 +78,11 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 	}
 
 	@Override
+	public void deleteRecommend(int cboardNo) {
+		sqlSessionTemplate.delete("content.deleteRecommend",cboardNo);
+	}
+	
+	@Override
 	public List<CommunityBoardVO> getAllPostingList() {
 		List<CommunityBoardVO> list=sqlSessionTemplate.selectList("content.getAllPostingList");
 		return list;
@@ -96,6 +104,11 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 		return sqlSessionTemplate.selectList("content.getReplyListByNo", boardNo);
 	}
 
+	@Override
+	public ReplyVO getReplyByNo(int replyNo) {
+		return sqlSessionTemplate.selectOne("content.getReplyByNo", replyNo);
+	}
+	
 	@Override
 	public List<CommunityBoardVO> getCommunityBoardListBestTop5ByRecommend() {
 		

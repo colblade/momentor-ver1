@@ -20,8 +20,10 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 	}
 
 	@Override
-	public void deleteCommunity(int cboardNo) {
-		communityBoardDAO.deleteCommunity(cboardNo);
+	public void deleteCommunity(int cboardNo) {//커뮤니티 게시판 글삭제
+		communityBoardDAO.deleteAllReply(cboardNo);//무결성에 따른 덧글 우선삭제
+		communityBoardDAO.deleteRecommend(cboardNo);//무결성에 따른 추천 우선 삭제
+		communityBoardDAO.deleteCommunity(cboardNo);//그후 게시글 번호로 게시글 삭제	
 	}
 
 	@Override
@@ -31,22 +33,27 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 
 	@Override
 	public ReplyVO postingReply(ReplyVO rvo) {
-		// TODO Auto-generated method stub
+		communityBoardDAO.postingReply(rvo);
 		return null;
 	}
 
 	@Override
-	public void deleteReply(int cboardNo) {
-		// TODO Auto-generated method stub
+	public void deleteReply(int replyNo) {
+		communityBoardDAO.deleteReply(replyNo);
 		
 	}
 
 	@Override
-	public void updateReply(int cboardNo) {
-		// TODO Auto-generated method stub
+	public void updateReply(ReplyVO rvo) {
+		communityBoardDAO.updateReply(rvo);
 		
 	}
 
+	@Override
+	public ReplyVO getReplyByNo(int replyNo) {		
+		return communityBoardDAO.getReplyByNo(replyNo);
+	}  
+	
 	@Override
 	public List<CommunityBoardVO> findByCbTitle(String cbTitle) {
 		// TODO Auto-generated method stub
