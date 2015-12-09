@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select m.memberId, m.memberPassword, m.memberName, m.birthYear, m.birthMonth, m.birthDay, m.nickName, m.memberEmail, m.gender, m.memberAddress, m.auth, 
 		p.MEMBERWEIGHT, p.MEMBERHEIGHT, p.age, p.bmi
 		from momentor_member m, MOMEMTOR_MEMBER_PHYSICAL p
-		where m.memberId=p.memberId and m.memberId=#{memberId} and m.memberPassword=#{memberPassword}
+		where m.memberId=p.memberId and m.memberId=#{memberId} and m.memberPassword=#{memberPassword} and m.auth!=8
 </select>   
 	<insert id="registerMember" parameterType="mvo" >
 		  INSERT INTO MOMENTOR_MEMBER 
@@ -67,13 +67,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	<update id="myPageMemberPhysicalInfoUpdate" parameterType="pnvo">
 		update MOMEMTOR_MEMBER_PHYSICAL
-		set memberWeight=#{memberWeight}, memberHeight=#{memberHeight}
+		set memberWeight=#{memberWeight}, memberHeight=#{memberHeight}, bmi=#{bmi}
 		where memberId=#{momentorMemberVO.memberId}
 	</update>
-	<delete id="myPageDeleteMemberInfo">
-		delete from MOMENTOR_MEMBER where memberId=#{memberId}
-	</delete>
+	<update id="myPageDeleteMemberInfo">
+		update MOMENTOR_MEMBER 
+		set auth = 8
+		where memberId=#{value}
+	</update>
 	<delete id="myPageDeleteMemberPhysicalInfo">
-		delete from MOMEMTOR_MEMBER_PHYSICAL where memberId=#{memberId}
+		delete from MOMEMTOR_MEMBER_PHYSICAL where memberId=#{value}
 	</delete>
  </mapper>

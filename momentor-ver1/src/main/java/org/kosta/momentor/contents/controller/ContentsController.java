@@ -21,6 +21,7 @@ import org.kosta.momentor.contents.model.NoticeBoardService;
 import org.kosta.momentor.contents.model.NoticeBoardVO;
 import org.kosta.momentor.contents.model.PagingBean;
 import org.kosta.momentor.contents.model.ReplyVO;
+import org.kosta.momentor.member.model.MomentorMemberPhysicalVO;
 import org.kosta.momentor.member.model.MomentorMemberVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -52,7 +53,10 @@ public class ContentsController {
 	      //헤더 커뮤니티 버튼 클릭시 나오는 화면
 	      //로그인 유무에 따라 분리 해야 하는것인가?->아니라면 로그인시 left는?
 	   }
-	   
+	   @RequestMapping("admin_showCommunityList.do")
+	   public ModelAndView adminShowCommunityList(String pageNo){
+		   return new ModelAndView("admin_showCommunityList","list",communityBoardService.getAllPostingList(pageNo));
+	   }
 	/*커뮤니티 게시판 글쓰기 폼으로 이동*/
 	@RequestMapping("my_writeForm.do")
 	public ModelAndView writeForm(HttpServletRequest request){
@@ -92,10 +96,54 @@ public class ContentsController {
 	      
 	   }
 	
-
+	   /*커뮤니티 게시판 게시물 가져오기 (번호로)*/
+	   @RequestMapping("admin_getCommunityByNo.do")
+	   public ModelAndView adminGetCommunityByNo(int boardNo, @CookieValue(value = "testCookie",required=false) String cookieValue, HttpServletResponse response){
+		   //communityBoardService.updateHits(boardNo);
+		   ModelAndView mv = new ModelAndView("my_community_info");
+		   BoardVO vo = (CommunityBoardVO)communityBoardService.getCommunityByNo(boardNo);
+		   
+		   /**
+		    * pagingbean 적용시키기.
+		    */
+		   //   ReListVO rvo =new ReListVO(communityBoardService.getReplyListByNo(boardNo),new PagingBean(totalContent, nowPage));
+		   List<ReplyVO> list = communityBoardService.getReplyListByNo(boardNo);
+		   if(cookieValue ==null){
+			   System.out.println("testCookie는 존재하지 않으므로 cookie를 생성하고 count 증가");
+			   response.addCookie(new Cookie("testCookie", "|"+boardNo+"|"));
+			   communityBoardService.updateHits(boardNo);
+		   }else if(cookieValue.indexOf("|"+boardNo+"|")==-1){
+			   System.out.println("testCookie cookie 존재하지만 {}글은 처음 조회하므로 count 증가 "+ boardNo);
+			   cookieValue+="|"+boardNo+"|";
+			   //글번호를 쿠키에 추가
+			   response.addCookie(new Cookie("testCookie", cookieValue));
+			   communityBoardService.updateHits(boardNo);
+		   }else{
+			   System.out.println("testCookie cookie 존재하고 이전에 해당하는 게시물을 읽었으므로 count 증가 X");
+		   }
+		   
+		   
+		   mv.addObject("info", vo);
+		   mv.addObject("replyList", list);
+		   return mv;
+		   
+	   }
+	   
 	@RequestMapping("member_exerciseBoard.do")
 	public ModelAndView member_exerciseBoard(String pageNo){
 		ModelAndView mv = new ModelAndView("member_exerciseBoard");
+		ListVO vo = exerciseBoardService.getExerciseBoardList(pageNo);
+		
+		ArrayList<ExerciseBoardVO> list = (ArrayList)vo.getList();
+		PagingBean pb = vo.getPagingBean();
+		
+		mv.addObject("exerciseList", list);
+		mv.addObject("pageObject", pb);
+		return mv;
+	}
+	@RequestMapping("admin_exerciseBoard.do")
+	public ModelAndView admin_exerciseBoard(String pageNo){
+		ModelAndView mv = new ModelAndView("admin_exerciseBoard");
 		ListVO vo = exerciseBoardService.getExerciseBoardList(pageNo);
 		
 		ArrayList<ExerciseBoardVO> list = (ArrayList)vo.getList();
@@ -124,12 +172,22 @@ public class ContentsController {
 		ExerciseBoardVO vo = exerciseBoardService.getExerciseByNo(boardNo);
 		return new ModelAndView("member_exercise_info","exerciseInfo",vo);
 	}
+	@RequestMapping("admin_getExerciseByNo.do")
+	public ModelAndView adminGetExerciseByNo(int boardNo){
+		exerciseBoardService.updateExerciseHits(boardNo);
+		ExerciseBoardVO vo = exerciseBoardService.getExerciseByNo(boardNo);
+		return new ModelAndView("admin_exerciseInfo","exerciseInfo",vo);
+	}
 	@RequestMapping("member_getExerciseNoHitByNo.do")
 	public ModelAndView getExerciseNoHitByNo(int boardNo){
 		ExerciseBoardVO vo = exerciseBoardService.getExerciseByNo(boardNo);
 		return new ModelAndView("member_exercise_info","exerciseInfo",vo);
 	}
-	
+	@RequestMapping("admin_getExerciseNoHitByNo.do")
+	public ModelAndView adminGetExerciseNoHitByNo(int boardNo){
+		ExerciseBoardVO vo = exerciseBoardService.getExerciseByNo(boardNo);
+		return new ModelAndView("admin_exerciseInfo","exerciseInfo",vo);
+	}
 	
 	@RequestMapping("admin_postingExerciseByAdmin.do")
 	public String postingExerciseByAdmin(ExerciseVO evo, ExerciseBoardVO ebvo){
@@ -181,6 +239,7 @@ public class ContentsController {
 		communityBoardService.updateCommunity(cvo);
 		return new ModelAndView("redirect:/member_ getCommunityNoHitByNo.do","boardNo", cvo.getBoardNo());
 	}
+	
 	/* 덧글 리스트 반환 */
 	@RequestMapping("my_getReplyList.do")
 	@ResponseBody
@@ -243,26 +302,58 @@ public class ContentsController {
 			//ListVO list = noticeBoardService.getAllNoticeList(pageNo);
 			return new ModelAndView("member_getAllNoticeList","noticeList",noticeBoardService.getAllNoticeList(pageNo));
 		}
+	  /*관리자 tails 적용하여 관리자가 공지글 목록리스트를 보기 위해*/
+	  	@RequestMapping(value="admin_getAllNoticeList.do")
+	  	public ModelAndView AdmingetAllNoticeList(HttpServletRequest request,String pageNo){
+		  	return new ModelAndView("admin_getAllNoticeList","noticeList",noticeBoardService.getAllNoticeList(pageNo));
+	  	}
 		@RequestMapping("member_getNoticeByNo.do")
 		public ModelAndView MygetNoticeByNo(int boardNo){
 			NoticeBoardVO nvo = noticeBoardService.getNoticeByNo(boardNo);
 			return new ModelAndView("member_getNoticeByNo","nvo",nvo);
 		}
-		
+		/*관리자 tails 적용하여 관리자가 상세내용 불러오기 위해*/
+		@RequestMapping("admin_getNoticeByNo.do")
+		public ModelAndView AdmingetNoticeByNo(int boardNo){
+			NoticeBoardVO nvo = noticeBoardService.getNoticeByNo(boardNo);
+			return new ModelAndView("admin_getNoticeByNo","nvo",nvo);
+		}
+		/*관리자가 공지사항 글작성 하는 form*/
 		@RequestMapping("admin_noticemgr_writeNoticeByAdminForm.do")
-		public ModelAndView writeNoticeByAdminForm(HttpServletRequest request, MomentorMemberVO mvo){
-			return new ModelAndView("admin_noticemgr_writeNoticeByAdminForm");
+		public ModelAndView writeNoticeByAdminForm(HttpServletRequest request){
+			MomentorMemberPhysicalVO pnvo = (MomentorMemberPhysicalVO) request.getSession().getAttribute("pnvo");
+			System.out.println(pnvo);
+			return new ModelAndView("admin_noticemgr_writeNoticeByAdminForm","pnvo",pnvo);
 		}
 		
+		/*관리자가 공지사항 글작성*/
 		@RequestMapping("admin_noticemgr_writeNoticeByAdmin.do")
 		public ModelAndView writeNoticeByAdmin(HttpServletRequest request, NoticeBoardVO nvo){
 			HttpSession session = request.getSession(false);
-			MomentorMemberVO mvo = (MomentorMemberVO) session.getAttribute("mvo");
-			nvo.setMomentorMemberVO(mvo);
+			MomentorMemberPhysicalVO pnvo =  (MomentorMemberPhysicalVO) session.getAttribute("pnvo");
+			nvo.setMomentorMemberVO(pnvo.getMomentorMemberVO());
 			noticeBoardService.writeNoticeByAdmin(nvo);
 			return new ModelAndView("admin_noticemgr_writeNoticeResult","nvo",nvo);
 		}
-	
+		/*관리자가 공지사항 글 수정 form*/
+		@RequestMapping(value="admin_noticemgr_noticeUpdateForm.do")
+		public ModelAndView noticeUpdateForm(int noticeNo){
+			NoticeBoardVO nvo = noticeBoardService.getNoticeByNo(noticeNo);
+			return new ModelAndView("admin_noticemgr_noticeUpdateForm","nvo",nvo);
+		}
+		/*관리자가 공지사항 글 수정*/
+		@RequestMapping(value="admin_noticemgr_noticeUpdate.do", method=RequestMethod.POST)
+		public ModelAndView noticeUpdate(HttpServletRequest request, NoticeBoardVO nvo){
+			noticeBoardService.updateNoticeByAdmin(nvo);
+			return new ModelAndView("admin_noticemgr_noticeUpdateResult","nvo",nvo);
+		}
+		/*관리자가 공지사항 글 삭제*/
+		@RequestMapping(value="admin_noticemgr_noticeDelete.do")
+		public ModelAndView noticeDelete(HttpServletRequest request, int noticeNo){
+			System.out.println("admin_noticemgr_noticeDelete.do -> nvo : " + noticeNo);
+			noticeBoardService.deleteNoticeByAdmin(noticeNo);
+			return new ModelAndView("admin_noticemgr_noticeDeleteResult");
+		}
 		/**
 		 * 추천/비추천 ajax로 하는 부분.
 		 * 

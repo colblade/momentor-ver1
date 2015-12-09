@@ -25,14 +25,13 @@ public class NoticeBoardDAOImpl implements NoticeBoardDAO {
 	}
 
 	@Override
-	public void updateNoticeByAdmin(int noticeNo) {
-		sqlSessionTemplate.update("content.updateNoticeByAdmin",noticeNo);
+	public void updateNoticeByAdmin(NoticeBoardVO nvo) {
+		sqlSessionTemplate.update("content.updateNoticeByAdmin",nvo);
 		
 	}
 
 	@Override
 	public List<BoardVO> getAllNoticeList(String pageNo) {
-		//System.out.println("DAO pageNo" + pageNo);
 		return sqlSessionTemplate.selectList("content.getAllNoticeList",pageNo);
 	}
 

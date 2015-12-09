@@ -48,8 +48,7 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 
 	@Override
 	public MomentorMemberVO updateMember(MomentorMemberVO vo) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectOne("member.myPageMemberInfoUpdate",vo);
 	}
 
 	@Override
@@ -148,14 +147,12 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 
 	@Override
 	public int myPasswordCheck(String password) {
-		// TODO Auto-generated method stub
 		return sqlSessionTemplate.selectOne("member.myPasswordCheck",password);
 	}
 
 	@Override
 	public MomentorMemberPhysicalVO updateMemberPhysical(
 			MomentorMemberPhysicalVO pnvo) {
-		// TODO Auto-generated method stub
 		return sqlSessionTemplate.selectOne("member.myPageMemberPhysicalInfoUpdate",pnvo);	
 	}
 
@@ -173,7 +170,6 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 
 	@Override
 	public MomentorMemberPhysicalVO myPageMemberInfo(String memberId) {
-		// TODO Auto-generated method stub
 		return sqlSessionTemplate.selectOne("member.myPageMemberInfo", memberId);	
 	}
 }

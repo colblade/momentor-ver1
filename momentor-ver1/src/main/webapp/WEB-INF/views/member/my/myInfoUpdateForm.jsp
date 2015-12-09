@@ -39,6 +39,42 @@ $(document).ready(function(){
 			alert("이름를 입력하시오");
 			return false;
 		}
+		if($("#birthYear").val()==null||$("#birthYear").val()==""){
+			alert("년도를 입력하시오");
+			return false;
+		}
+		if(isNaN($("#birthYear").val())){
+			alert("년도를 숫자로 입력하시오");
+			return false;
+		}
+		if($("#birthMonth").val()==null||$("#birthMonth").val()==""){
+			alert("달을 입력하시오");
+			return false;
+		}
+		if(isNaN($("#birthMonth").val())){
+			alert("달을 숫자로 입력하시오");
+			return false;
+		}
+		if($("#birthMonth").val()>12||$("#birthMonth").val()<0){
+			alert("달은 1~12월만 가능합니다.");
+			return false;
+		}
+		if($("#birthDay").val()==null||$("#birthDay").val()==""){
+			alert("날짜를 입력하시오");
+			return false;
+		}
+		if(isNaN($("#birthDay").val())){
+			alert("날짜를 숫자로 입력하시오");
+			return false;
+		}
+		if($("#birthDay").val()>31||$("#birthDay").val()<0){
+			alert("날짜는 1~31일만 가능합니다.");
+			return false;
+		}
+		if($("#birthMonth").val()==2&&$("#birthDay").val()>29){
+			alert("2월은 1~29일만 가능합니다.");
+			return false;
+		}
 		if($("#nickName").val()==null||$("#nickName").val()==""){
 			alert("별명를 입력하시오");
 			return false;
@@ -52,11 +88,19 @@ $(document).ready(function(){
 			return false;
 		}
 		if($("#memberWeight").val()==null||$("#memberWeight").val()==""){
-			alert("키를 입력하시오");
+			alert("몸무게를 입력하시오");
+			return false;
+		}
+		if(isNaN($("#memberWeight").val())){
+			alert("몸무게를 숫자로 입력하시오");
 			return false;
 		}
 		if($("#memberHeight").val()==null||$("#memberHeight").val()==""){
-			alert("몸무게를 입력하시오");
+			alert("키를 입력하시오");
+			return false;
+		}
+		if(isNaN($("#memberHeight").val())){
+			alert("키를 숫자로 입력하시오");
 			return false;
 		}
 		if(checkResultPassword==null||checkResultPassword==""){
@@ -73,27 +117,23 @@ $(document).ready(function(){
 패스워드를 입력해야 수정가능 합니다 <input type="password" name="memberPasswordCheck" id="memberPasswordCheck">
 <span id="memberPasswordCheckView"></span>
 <br><br>
+<input type="hidden" name="auth" value="${requestScope.pnvo.momentorMemberVO.auth}">
+<input type="hidden" name="bmi" value="${requestScope.pnvo.bmi}">
 <table border="1" class="tableForm">
-	<tr><td><input type="hidden" name="id" value="${pnvo.momentorMemberVO.memberId}"></td></tr>
-	<tr><td>아이디</td><td><input type="text" name="memberId" value="${pnvo.momentorMemberVO.memberId}" readonly="readonly"></td></tr>
-	<tr><td>패스워드</td><td><input type="password" name="memberPassword" id="memberPassword"></td></tr>
-	<tr><td>이름</td><td><input type="text" name="memberName" id="memberName"></td></tr>
-	<tr><td>년</td><td><input type="text" name="birthYear" value="${pnvo.momentorMemberVO.birthYear}" readonly="readonly"></td></tr>
-	<tr><td>월</td><td><input type="text" name="birthMonth" value="${pnvo.momentorMemberVO.birthMonth}" readonly="readonly"></td></tr>
-	<tr><td>일</td><td><input type="text" name="birthDay" value="${pnvo.momentorMemberVO.birthDay}" readonly="readonly"></td></tr>
-	<tr><td>별명</td><td><input type="text" name="nickName" id="nickName"></td></tr>
-	<tr><td>이메일</td><td><input type="text" name="memberEmail" id="memberEmail"></td></tr>
-	<tr><td>성별</td><td><input type="text" name="gender" value="${pnvo.momentorMemberVO.gender}" readonly="readonly"></td></tr>
-	<tr><td>주소</td><td><input type="text" name="memberAddress" id="memberAddress"></td></tr>
-	<tr><td>키</td><td><input type="text" name="memberWeight" value="${pnvo.memberWeight}" id="memberWeight"></td></tr>
-	<tr><td>몸무게</td><td><input type="text" name="memberHeight" value="${pnvo.memberHeight}" id="memberHeight"></td></tr>
-	<tr><td>나이</td><td><input type="text" name="age" value="${pnvo.age}" readonly="readonly"></td></tr>
-	<tr><td>bmi</td><td><input type="text" name="bmi" value="${pnvo.bmi}" readonly="readonly"></td></tr>
-<!--  	<tr><td colspan="2">패스워드 확인</td></tr>
- 	<tr>
- 	<td><input type="password" name="memberPasswordCheck" id="memberPasswordCheck"></td>
- 	<td><span id="memberPasswordCheckView"></span></td>
- 	</tr> -->
+	<tr><td><input type="hidden" name="id" value="${requestScope.pnvo.momentorMemberVO.memberId}"></td></tr>
+	<tr><td>아이디</td><td><input type="text" name="memberId" value="${requestScope.pnvo.momentorMemberVO.memberId}" readonly="readonly" style="color: red"></td></tr>
+	<tr><td>패스워드</td><td><input type="password" name="memberPassword" id="memberPassword" value=${requestScope.pnvo.momentorMemberVO.memberPassword }></td></tr>
+	<tr><td>이름</td><td><input type="text" name="memberName" id="memberName" value="${requestScope.pnvo.momentorMemberVO.memberName }"></td></tr>
+	<tr><td>년</td><td><input type="text" name="birthYear" id="birthYear" value="${requestScope.pnvo.momentorMemberVO.birthYear}"></td></tr>
+	<tr><td>월</td><td><input type="text" name="birthMonth" id="birthMonth" value="${requestScope.pnvo.momentorMemberVO.birthMonth}"></td></tr>
+	<tr><td>일</td><td><input type="text" name="birthDay" id="birthDay" value="${requestScope.pnvo.momentorMemberVO.birthDay}"></td></tr>
+	<tr><td>별명</td><td><input type="text" name="nickName" id="nickName" value="${requestScope.pnvo.momentorMemberVO.nickName }" readonly="readonly" style="color:red"></td></tr>
+	<tr><td>이메일</td><td><input type="text" name="memberEmail" id="memberEmail" value="${requestScope.pnvo.momentorMemberVO.memberEmail }"></td></tr>
+	<tr><td>성별</td><td><input type="text" name="gender" value="${requestScope.pnvo.momentorMemberVO.gender}" readonly="readonly" style="color: red"></td></tr>
+	<tr><td>주소</td><td><input type="text" name="memberAddress" id="memberAddress" value="${requestScope.pnvo.momentorMemberVO.memberAddress }"></td></tr>
+	<tr><td>몸무게</td><td><input type="text" name="memberWeight" value="${requestScope.pnvo.memberWeight}" id="memberWeight"></td></tr>
+	<tr><td>키</td><td><input type="text" name="memberHeight" value="${requestScope.pnvo.memberHeight}" id="memberHeight"></td></tr>
+	<tr><td>나이</td><td><input type="text" name="age" value="${requestScope.pnvo.age}" readonly="readonly" style="color: red"></td></tr>
 	<tr><td colspan="2"><input type="button" value="수정완료" id="myInfoUpdate"></td></tr>
 </table>
 </form>

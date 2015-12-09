@@ -1,0 +1,101 @@
+@CHARSET "UTF-8";
+/*
+ * Globals
+ */
+
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: #555;
+}
+	#noticeContentsArea{
+		padding: 10px 100px;
+		text-align: center;
+		font-size: 15px;
+	}
+	#noticeContentsWriteArea{
+ /*  		position:absolute;
+		top:25%;
+		left:30%; */
+		text-align: center;
+		font-size: 15px;
+	}
+	#noticeContentsUpdateResultArea{
+		text-align: center;
+	}
+	#noticeWriteTable, #noticeUpdateTable, #noticeUpdateResult{
+		text-align: center;
+		border-collapse:collapse;
+		background:#EFF4FB url(http://www.roscripts.com/images/teaser.gif) repeat-x;
+		width: 50%;
+		color: #111;
+	}
+	#noticeAllListTable, #noticeByNoTable{
+		border-collapse:collapse;
+/* 		background:#EFF4FB url(http://www.roscripts.com/images/teaser.gif) repeat-x; */
+		background:#EFF4FB url("../image/skycolor.png");
+		background-size: 100%;
+		background-repeat: no-repeat;
+		width: 100%;
+		color: #111444;
+		text-align: center;
+		
+	}
+	#noticeAllListTable thead tr th{
+		text-align: center;
+		padding: 20px;
+	}
+	#noticeAllListTable tbody tr:nth-child(even), #noticeByNoTable tbody tr:nth-child(even), 
+    #noticeUpdateResult tr:nth-child(even)
+	{
+		background-color: #FFFFFF;
+		text-align: center;
+		padding: 10px 5px;
+	}
+	#noticeAllListTable tbody tr td, #noticeByNoTable tbody tr td, #noticeWriteTable tr td,
+	#noticeUpdateTable tr td, #noticeUpdateResult tr td
+	{
+		text-align: center;
+		padding: 10px 5px;
+	}
+	#noticeAllListTable tbody tr td a, #noticeByNoTable tbody tr td a, #noticeWriteTable tr td a,
+	#noticeUpdateTable tr td a, #noticeUpdateResult tr td a{
+		color: red;
+	}
+	.noticeInform{
+		font-size: 30px;
+		padding: 20px;
+		margin-bottom: 10px;
+		padding-left: 12px;
+		color: green;
+		text-align: center;
+	}
+	
+	.noticeWriteBtn{
+		padding: 20px 0 20px 20px;
+		text-align: right;
+	}
+	 .noticeBtn{
+	 	padding : 10px 100px 10px 20px;
+		text-align: right;
+	}
+	  .noticeLink{
+	  	text-align: left;
+	  	font-size: 20px;
+	  	text-decoration: none;
+	  }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -45,14 +45,10 @@ $(document).ready(function(){
 패스워드를 입력해야 탈퇴가능 합니다 <input type="password" name="memberPasswordCheck" id="memberPasswordCheck">
 <span id="memberPasswordCheckView"></span>
 <br><br>
+<input type="hidden" name="auth" value="${requestScope.pnvo.momentorMemberVO.auth}">
 <table border="1" class="tableForm">
-	<tr><td><input type="hidden" name="id" value="${pnvo.momentorMemberVO.memberId}"></td></tr>
+	<tr><td><input type="hidden" name="id" value="${requestScope.pnvo.momentorMemberVO.memberId}"></td></tr>
 	<tr><td>탈퇴사유를 입력하시오</td><td><input type="text" name="DeleteReason" id="DeleteReason"></td></tr>
-<!--  	<tr><td colspan="2">패스워드 확인</td></tr>
- 	<tr>
- 	<td><input type="password" name="memberPasswordCheck" id="memberPasswordCheck"></td>
- 	<td><span id="memberPasswordCheckView"></span></td>
- 	</tr> -->
 	<tr><td colspan="2"><input type="submit" value="탈퇴완료" id="myInfoDelete"></td></tr>
 	</table>
 </form>

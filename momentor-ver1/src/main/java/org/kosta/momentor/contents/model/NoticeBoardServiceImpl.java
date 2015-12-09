@@ -14,7 +14,6 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 
 	@Override
 	public NoticeBoardVO writeNoticeByAdmin(NoticeBoardVO nvo) {
-		System.out.println("service" + nvo);
 		return noticeBoardDAO.writeNoticeByAdmin(nvo);
 	}
 
@@ -25,8 +24,8 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 	}
 
 	@Override
-	public void updateNoticeByAdmin(int noticeNo) {
-		noticeBoardDAO.updateNoticeByAdmin(noticeNo);
+	public void updateNoticeByAdmin(NoticeBoardVO nvo) {
+		noticeBoardDAO.updateNoticeByAdmin(nvo);
 	}
 
 	@Override

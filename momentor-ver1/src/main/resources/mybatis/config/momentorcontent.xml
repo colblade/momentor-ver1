@@ -298,7 +298,16 @@ WHERE RANKING<=5 ]]>
 		insert into NOTICE_BOARD(NOTICE_NO, MEMBERID, TITLE, NOTICE_DATE,CONTENT)
 		values(NOTICE_SEQ.nextVal, #{momentorMemberVO.memberId}, #{boardTitle},sysdate,#{boardContent})
 	</insert>
-	
+	<!-- 관리자가 공지사항 글 수정 -->
+	<update id="updateNoticeByAdmin" parameterType="nvo">
+		update NOTICE_BOARD
+		set title=#{boardTitle}, notice_date=sysdate ,content=#{boardContent}
+		where notice_no = #{boardNo}
+	</update>
+	<!-- 관리자가 공지사항 글 삭제 -->
+	<delete id="deleteNoticeByAdmin">
+		delete from NOTICE_BOARD where notice_no=#{noticeNo}
+	</delete>
 	
 		<!-- 해당 게시물의 추천수를 업뎃 -->
 	<update id = "updateRecommend">

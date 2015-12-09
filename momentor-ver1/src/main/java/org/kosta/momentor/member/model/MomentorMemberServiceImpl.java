@@ -211,29 +211,30 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 	   @Override
 		public String myPasswordCheck(String password, String memberId) {
 			MomentorMemberPhysicalVO mpvo = momentorMemberDAO.myPageMemberInfo(memberId);
-			System.out.println("서비스"+password);
 			int passwordCheck= momentorMemberDAO.myPasswordCheck(password);
-			System.out.println("passwordCheck : "+passwordCheck);
-			System.out.println("mpvoPass" + mpvo.getMomentorMemberVO().getMemberPassword());
+			//패스워드는 고유값이 아니기 때문에 멤버의 패스워드와 비교하는 것을 추가함
 			return (passwordCheck!=0&&password.equals(mpvo.getMomentorMemberVO().getMemberPassword())) ? "ok":"fail"; 
 		}
 		public MomentorMemberPhysicalVO myPageMemberInfo(String memberId) {
 			return momentorMemberDAO.myPageMemberInfo(memberId);
 		}
 
+		//updateMember는 정상수행되고 updateMemberPhysical은 에러가 나게 되는 경우 rollback 해주기 위해서
+		//transaction 처리해주고 exception throws 해줌
 		@Transactional
 		@Override
-		public String updateMember(MomentorMemberVO vo, MomentorMemberPhysicalVO pnvo) {
-			System.out.println("service updateMember : vo?" + vo);
-			System.out.println("service updateMember : pnvo?" + pnvo);
+		public String updateMember(MomentorMemberVO vo, MomentorMemberPhysicalVO pnvo) throws Exception {
 			momentorMemberDAO.updateMember(vo);
-			momentorMemberDAO.updateMemberPhysical(pnvo);
+	        double bmi=(double) pnvo.getMemberHeight()/((double)pnvo.getMemberWeight()*(double)pnvo.getMemberWeight())*(double)10000;
+	        double b = Math.round(bmi*100d) / 100d;
+	        pnvo.setBmi(b);
+	        momentorMemberDAO.updateMemberPhysical(pnvo);
 			return "myInfoUpdate";
 		}
 		
 		@Transactional
 		@Override
-		public String deleteMemeber(String memberId) {
+		public String deleteMemeber(String memberId) throws Exception {
 			momentorMemberDAO.myPageDeleteMemberPhysicalInfo(memberId);
 			momentorMemberDAO.myPageDeleteMemberInfo(memberId);
 			return "myInfoDelete";

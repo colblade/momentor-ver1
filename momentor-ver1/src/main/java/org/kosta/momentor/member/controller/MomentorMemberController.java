@@ -10,6 +10,7 @@ import java.util.List;
 
 
 
+
 //github.com/colblade/Momentor-test.git
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -72,16 +73,31 @@ public class MomentorMemberController {
 			mv.addObject("communityTop5List", cbList);
 			return mv;
 	}
+	@RequestMapping("admin_home.do")
+	public ModelAndView adminHome(){
+		ModelAndView mv = new ModelAndView("admin_home");
+		List<ExerciseBoardVO> ebList =	exerciseBoardService.getExerciseBoardListBestTop5ByHits();
+		List<CommunityBoardVO> cbList =	communityBoardService.getCommunityBoardListBestTop5ByRecommend();
+		mv.addObject("exerciseTop5List", ebList);
+		mv.addObject("communityTop5List", cbList);
+		return mv;
+	}
 	@RequestMapping(value = "login_login.do", method = RequestMethod.POST)
 	public ModelAndView login(HttpServletRequest request, MomentorMemberVO vo) {
 		String path = "login_fail";
 		MomentorMemberPhysicalVO rvo = momentorMemberService.login(vo);
 		System.out.println(rvo);
-		if (rvo != null) {
+		if(rvo != null && rvo.getMomentorMemberVO().getAuth()==1){
+			request.getSession().setAttribute("pnvo", rvo);
+			path = "admin_home";
+			return new ModelAndView(path);
+		} else if (rvo != null && rvo.getMomentorMemberVO().getAuth()!=8) {
 			request.getSession().setAttribute("pnvo", rvo);
 			path = "login_ok";
+			return new ModelAndView(path);
+		} else{
+			return new ModelAndView(path);
 		}
-		return new ModelAndView(path);
 	}	
 	@RequestMapping("logout.do")
 	public String logout(HttpServletRequest request) {
@@ -287,5 +303,49 @@ public class MomentorMemberController {
 		MomentorMemberPhysicalVO pnvo = (MomentorMemberPhysicalVO) request.getSession().getAttribute("pnvo");
 		momentorMemberService.myPageMemberInfo(pnvo.getMomentorMemberVO().getMemberId());
 		return new ModelAndView("my_myInfo", "pnvo", pnvo);
+	}
+	@RequestMapping("my_myInfoUpdateForm.do")
+	public ModelAndView memberInfoUpdateForm(String memberId){
+		MomentorMemberPhysicalVO pnvo = momentorMemberService.myPageMemberInfo(memberId);
+		return new ModelAndView("my_myInfoUpdateForm","pnvo",pnvo);
+	}
+	
+	/**
+	 * 뷰에서 값을 받아와 실제 업데이트 하는 메소드
+	 * @throws Exception 
+	 */
+	@RequestMapping("my_myInfoUpdate.do")
+	public ModelAndView myPageMemberInfoUpdate(MomentorMemberVO mvo,MomentorMemberPhysicalVO pnvo) throws Exception{
+		pnvo.setMomentorMemberVO(mvo);
+		MomentorMemberPhysicalVO mpvo = pnvo;
+		mpvo.setMomentorMemberVO(mvo);
+		momentorMemberService.updateMember(mvo,mpvo);
+		return new ModelAndView("my_myInfoUpdate","pnvo",pnvo);
+	}
+
+	@RequestMapping("my_myInfoDeleteForm.do")
+	public ModelAndView myInfoDeleteForm(String memberId){
+		MomentorMemberPhysicalVO pnvo = momentorMemberService.myPageMemberInfo(memberId);
+		return new ModelAndView("my_myInfoDeleteForm","pnvo",pnvo);
+		
+	}
+	@RequestMapping("my_myInfoDelete.do")
+	public ModelAndView myInfoDelete(HttpServletRequest request,MomentorMemberPhysicalVO pnvo) throws Exception{
+		String deleteReason = request.getParameter("DeleteReason");
+		String memberId = request.getParameter("id");
+		momentorMemberService.deleteMemeber(memberId);
+		HttpSession session = request.getSession(false);
+		if(session != null){
+			session.invalidate();
+		}
+		return new ModelAndView("my_myInfoDelete","deleteReason",deleteReason);
+		
+	}
+	
+	@RequestMapping("my_passwordCheck.do")
+	@ResponseBody
+	public String myPasswordCheck(HttpServletRequest request, String memberPasswordCheck) {
+		String memberId = request.getParameter("id");
+		return momentorMemberService.myPasswordCheck(memberPasswordCheck, memberId);
 	}
 }

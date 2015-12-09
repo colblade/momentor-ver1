@@ -3,9 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<!-- model 계층 빈 설정, dbcp, MyBatis관련 설정, AOP 설정, Transaction  설정 -->
 	<context:component-scan base-package="org.kosta.momentor">
@@ -56,4 +58,9 @@
     </bean>
     <bean id="email" class="org.kosta.momentor.member.model.EmailVO">
     </bean>
+        <!-- Transaction 설정 -->
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<property name="dataSource" ref="dataSource"></property>
+</bean>
+<tx:annotation-driven transaction-manager="transactionManager"/>	
 </beans>
