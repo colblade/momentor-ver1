@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<body>
 <div id="noticeContentsArea">
 <p class="noticeInform">공지사항 게시판</p>
  <table id="noticeAllListTable" class="noticeAllList">
@@ -108,4 +107,68 @@
 		</c:choose>
 	</c:if>
 	</p>
-</body>
+	<div align="center">
+<nav>
+<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
+	  <ul class="pagination">  
+	  <c:if test="${pb.previousPageGroup}">		    
+	    <c:choose>
+	    <li>
+			<c:when test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">
+				<a href="admin_getAllNoticeList.do?pageNo=${pb.startPageOfPageGroup-1}"
+				aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+				</a>
+			</c:when>
+		</li>
+		<li>
+			<c:otherwise>
+				<a href="member_getAllNoticeList.do?pageNo=${pb.startPageOfPageGroup-1}"
+				aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+				</a>
+			</c:otherwise>
+		</li>
+		</c:choose>
+	  </c:if>
+	  <c:forEach var="i" begin="${pb.startPageOfPageGroup}" end="${pb.endPageOfPageGroup}">
+		  	<c:choose>
+				<c:when test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">
+				<li>
+					<a href="admin_getAllNoticeList.do?pageNo=${i}">${i}</a>
+				</li> 	
+				</c:when>				
+				<c:when test="${pb.nowPage!=i}">
+				<li>
+					<a href="member_getAllNoticeList.do?pageNo=${i}">${i}</a>
+				</li> 
+				</c:when>				
+				<c:otherwise>
+				<li class="active">
+      				<span>${i}</span>
+    			</li>
+				</c:otherwise>
+			</c:choose>
+		</c:forEach>
+    	<c:if test="${pb.nextPageGroup}">
+	    <li>
+	    <c:choose>
+	    <li>
+			<c:when test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">
+				<a href="showCommunityList.do?pageNo=${pb.endPageOfPageGroup+1}"
+				aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+			</c:when>
+		</li>
+		<li>
+			<c:otherwise>
+				<a href="member_getAllNoticeList.do?pageNo=${pb.endPageOfPageGroup+1}"
+				aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+			</c:otherwise>
+		</li>
+		</c:choose>
+		</c:if>
+	  </ul>
+	</nav>
+</div>

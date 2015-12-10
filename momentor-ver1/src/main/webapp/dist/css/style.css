@@ -26,25 +26,19 @@
 	left:5px;
 	opacity:1;
 }
+
 p.paging{
 		margin-left: 20%;
 	    width:50%;
-		text-align: center; /* 가운데로 정렬 */	
+		text-align: center;	
 		font-weight: bold;		
 	}
-	/* 한번도 클릭하지 않은 링크, none으로 언더라인 생기지 않게 함 */
-	a:link {color:#888; text-decoration:none;}
-	/* 한번 이상 클릭한 링크, none으로 언더라인 생기지 않게 함 */
-	a:visited {color:#888; text-decoration:none;}	
-	/* 마우스 오버시 링크 색상, none으로 언더라인 생기지 않게 함 */
-	a:hover {color:#333; text-decoration:none;}
-	
 	/* 이미지 마우스 오버시 커서 포인터 변경 */
 	.action{
 	  cursor: pointer;
 	}
-	/* 페이징   */
+	페이징  
 		p.paging{
 		width:50%;
 		text-align: center;
-	}
+	} 

@@ -29,47 +29,48 @@
          </c:when>
          <c:otherwise><td><a href="member_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
       </c:choose>
-      <td>${posting.momentorMemberVO.nickName}</td>
+      <td>${pnvo.momentorMemberVO.nickName}</td>
       <td>${posting.boardWdate}</td>
       <td>${posting.memberHits}</td>
       <td>${posting.recommend}</td>
    </tr>
 </c:forEach>
 </table>
-<p class="paging" align="center">
-	<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
-	<c:if test="${pb.previousPageGroup}">
-	<a href="showCommunityList.do?pageNo=${pb.startPageOfPageGroup-1}">
-	◀&nbsp; </a>	
-	</c:if>
-	<c:forEach var="i" begin="${pb.startPageOfPageGroup}" 
-	end="${pb.endPageOfPageGroup}">
-	<c:choose>
-	<c:when test="${pb.nowPage!=i}">
-	<a href="showCommunityList.do?pageNo=${i}">${i}</a> 
-	</c:when>
-	<c:otherwise>
-	${i}
-	</c:otherwise>
-	</c:choose>
-	&nbsp;
-	</c:forEach>	 
-	<c:if test="${pb.nextPageGroup}">
-	<a href="showCommunityList.do?pageNo=${pb.endPageOfPageGroup+1}">
-	▶</a>
-	</c:if>
-	</p>
-	</div>
-	<form>
-	<select>
-		<option value="">검색 구분</option>
-		<option value="">아이디</option>
-		<option value="">제목</option>
-	</select> <input type="text" id="communitySearch"> <input type="submit"
-		value="검색">
-</form>
-<c:if test="${sessionScope.pnvo!=null }">
-	<div align="right">
-		<input class="btn btn-default" type="button" value="글쓰기" id="writeBtn">
-	</div>
-</c:if>
+</div>
+<div align="center">
+<nav>
+<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
+	  <ul class="pagination">
+	  
+	  <c:if test="${pb.previousPageGroup}">	
+	    <li>
+			<a href="showCommunityList.do?pageNo=${pb.startPageOfPageGroup-1}"
+			aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+			</a>	
+	    </li>
+	  </c:if>
+	  <c:forEach var="i" begin="${pb.startPageOfPageGroup}" end="${pb.endPageOfPageGroup}">
+			<c:choose>
+				<c:when test="${pb.nowPage!=i}">
+				<li>
+					<a href="showCommunityList.do?pageNo=${i}">${i}</a>
+				</li> 
+				</c:when>
+				<c:otherwise>
+				<li class="active">
+      				<span>${i}</span>
+    			</li>
+				</c:otherwise>
+			</c:choose>		    
+		</c:forEach>
+    	<c:if test="${pb.nextPageGroup}">
+	    <li>
+			<a href="showCommunityList.do?pageNo=${pb.endPageOfPageGroup+1}"
+			aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+	    </li>
+		</c:if>
+	  </ul>
+	</nav>
+</div>

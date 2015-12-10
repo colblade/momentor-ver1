@@ -30,42 +30,46 @@
 </c:forEach>
 </tbody>
 </table>
-	<c:set var = "p" value = "${requestScope.pageObject }"></c:set>
-	 <nav>
-	   <ul class="pager">
-		<c:if test="${p.isPreviousPageGroup()==true }">
-		
-			<li><a href="${initParam.root}member_exerciseBoard.do?pageNo=${p.getNowPage()-1 }">LEFT
-			</a></li>
-		
-		</c:if>
-		<c:forEach begin = "${p.getStartPageOfPageGroup() }" end = "${ p.getEndPageOfPageGroup()}" var = "count">
-		
-		<a href= "${initParam.root}member_exerciseBoard.do?pageNo=${count }">${count }</a>	
-	
+</div>
+<div align="center">
+<nav>
+<c:set var="p" value="${requestScope.pageObject}"></c:set>
+	  <ul class="pagination">	  
+	  <c:if test="${p.isPreviousPageGroup()==true }">	
+	    <li>
+			<a href="${initParam.root}member_exerciseBoard.do?pageNo=${p.getNowPage()-1 }"
+			aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+			</a>	
+	    </li>
+	  </c:if>
+	  <c:forEach var="i" begin="${p.getStartPageOfPageGroup() }" end = "${ p.getEndPageOfPageGroup()}">
+			<c:choose>
+				<c:when test="${p.nowPage!=i}">
+				<li>
+					<a href="${initParam.root}member_exerciseBoard.do?pageNo=${i}">${i}</a>
+				</li> 
+				</c:when>
+				<c:otherwise>
+				<li class="active">
+      				<span>${i}</span>
+    			</li>
+				</c:otherwise>
+			</c:choose>		    
 		</c:forEach>
-
-		<c:if test="${p.isNextPageGroup()==true }">
-		
-			<li><a href="${initParam.root}member_exerciseBoard.do?pageNo=${p.getEndPageOfPageGroup()+1 }">
-			RIGHT</a></li>
+    	<c:if test="${p.isNextPageGroup()==true }">
+	    <li>
+			<a href="${initParam.root}member_exerciseBoard.do?pageNo=${p.getEndPageOfPageGroup()+1 }"
+			aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+	    </li>
 		</c:if>
-		
-   
-    
-    
-    
-    
-    
-    
-	<c:if test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">		 
+		<c:if test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">		 
 	<br><br>
 				<li><a href="${initParam.root}admin_contentmgr_writeView.do">WRITE</a></li>
 
 		<br><br>
 	</c:if>	
-	 </ul>
-    </nav>
-    
+	  </ul>
+	</nav>
 </div>
-

@@ -28,27 +28,40 @@
 </c:forEach>
 </tbody>
 </table>
-<p class="paging">
-	<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
-	<c:if test="${pb.previousPageGroup}">	
-	<a href="member_showSearchExercise.do?pageNo=${pb.startPageOfPageGroup-1}&word=${requestScope.word}">
-	◀&nbsp; </a>	
-	</c:if>
-	<c:forEach var="i" begin="${pb.startPageOfPageGroup}" 
-	end="${pb.endPageOfPageGroup}">
-	<c:choose>
-	<c:when test="${pb.nowPage!=i}">
-	<a href="member_showSearchExercise.do?pageNo=${i}&word=${requestScope.word}">${i}</a> 
-	</c:when>
-	<c:otherwise>
-	${i}
-	</c:otherwise>
-	</c:choose>
-	&nbsp;&nbsp;
-	</c:forEach>	 
-	<c:if test="${pb.nextPageGroup}">
-	<a href="member_showSearchExercise.do?pageNo=${pb.endPageOfPageGroup+1}&word=${requestScope.word}">
-	▶</a>
-	</c:if>
-	</p>   
-	</div>
+</div>
+<div align="center">
+<nav>
+<c:set var="pb" value="${requestScope.list.pagingBean}"></c:set>
+	  <ul class="pagination">	  
+	  <c:if test="${pb.previousPageGroup}">	
+	    <li>
+			<a href="member_showSearchExercise.do?pageNo=${pb.startPageOfPageGroup-1}&word=${requestScope.word}"
+			aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+			</a>	
+	    </li>
+	  </c:if>
+	  <c:forEach var="i" begin="${pb.startPageOfPageGroup}" end="${pb.endPageOfPageGroup}">
+			<c:choose>
+				<c:when test="${pb.nowPage!=i}">
+				<li>
+					<a href="member_showSearchExercise.do?pageNo=${i}&word=${requestScope.word}">${i}</a>
+				</li> 
+				</c:when>
+				<c:otherwise>
+				<li class="active">
+      				<span>${i}</span>
+    			</li>
+				</c:otherwise>
+			</c:choose>		    
+		</c:forEach>
+    	<c:if test="${pb.nextPageGroup}">
+	    <li>
+			<a href="member_showSearchExercise.do?pageNo=${pb.endPageOfPageGroup+1}&word=${requestScope.word}"
+			aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+	    </li>
+		</c:if>
+	  </ul>
+	</nav>
+</div>

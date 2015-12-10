@@ -13,7 +13,7 @@
    // FullCalnedar
    $(document).ready(function() {
       $('#calendar').fullCalendar({
-         height: 500,
+    	  height: 600,
          dayClick: function(date) { // 날짜 클릭시 알럿.
         	$('#planModal').modal();   
         	var calendarDay = "";				
@@ -93,7 +93,7 @@
 </script>
 <style type="text/css">
 #wrap{margin: 0 auto; padding: 20px;}
-.calendar_body{width: 650px; float: center; margin-left: 100px;}
+.calendar_body{width: 700px; float: center; margin-left: 150px;}
 </style>
 <body>
 <div class="row marketing">
