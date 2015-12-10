@@ -24,7 +24,7 @@
                <c:when test="${sessionScope.pnvo==null }">
                   <td>${posting.boardTitle}</td>
                </c:when>
-               <c:otherwise><td><a href="member_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
+               <c:otherwise><td><a href="my_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
             </c:choose>
             <td>${pnvo.momentorMemberVO.nickName}</td>
             <td>${posting.boardWdate}</td>
