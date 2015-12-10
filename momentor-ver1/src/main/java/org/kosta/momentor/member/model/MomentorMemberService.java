@@ -9,10 +9,10 @@ import org.kosta.momentor.contents.model.ReListVO;
 import org.kosta.momentor.contents.model.ReplyVO;
 
 public interface MomentorMemberService {
-	public MomentorMemberVO managerFindMemberById(String id);//관리자가 회원정보 검색
-	public MomentorMemberVO managerFindMemberByNickName(String nickName);//관리자가 회원정보 검색
-	public List<MomentorMemberVO> managerFindMemberByAddress(String address);//관리자가 회원정보 검색
-	public List<MomentorMemberVO> managerFindMemberByName(String name);//관리자가 회원정보 검색
+	public MemberListVO managerFindMemberById(String memberId,String pageNo);//관리자가 회원정보 검색
+	public MemberListVO managerFindMemberByNickName(String nickName,String pageNo);//관리자가 회원정보 검색
+	public MemberListVO managerGetAllMember(String pageNo);//관리자가 모든 회원정보 검색
+	public MemberListVO managerFindMemberByName(String name,String pageNo);//관리자가 회원정보 검색
 	public MomentorMemberPhysicalVO login(MomentorMemberVO vo);		//로그인
 	public void updateMember(MomentorMemberVO vo);				//수정
 	public void registerMember(MomentorMemberVO vo, String date, String memberEmail, String memberEmail2,String memberWeight,String memberHeight) ;			//가입
@@ -33,7 +33,7 @@ public interface MomentorMemberService {
 	public void SendEmail(EmailVO email) throws Exception; // email전송
 	public String nickNameOverlappingCheck(String nickName);
 	public String idOverlappingCheck(String idcheck);
-	
+	public String emailOverlappingCheck(String memberEmail,String memberEmail2) ; 
 	
 	public String updateMember(MomentorMemberVO vo,MomentorMemberPhysicalVO pnvo) throws Exception; //회원이 자기정보 수정부분 vo와 pnvo를 같이 업데이트하기위해 추가
 	public String myPasswordCheck(String password, String memberId) ;

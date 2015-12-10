@@ -6,18 +6,8 @@
 	<definition name="member_*" extends="home">
 		<put-attribute name="main" value="/WEB-INF/views/member/{1}.jsp" />
 	</definition>
-	<definition name="admin_home" extends="home">
-		<put-attribute name="header" value="/WEB-INF/views/member/admin/header.jsp"/>
-		<put-attribute name="main" value="/WEB-INF/views/member/login/home_view.jsp" />
-	</definition>
-	<definition name="admin_*_*" extends="home">
-		<put-attribute name="header" value="/WEB-INF/views/member/admin/header.jsp"/>
-		<!-- <put-attribute name="header" value="/WEB-INF/views/templates/{1}/header.jsp"></put-attribute> -->
+		<definition name="admin_*_*" extends="home">
 		<put-attribute name="main" value="/WEB-INF/views/member/admin/{1}/{2}.jsp" />
-	</definition>
-	<definition name="admin_*" extends="home">
-		<put-attribute name="header" value="/WEB-INF/views/member/admin/header.jsp"/>
-		<put-attribute name="main" value="/WEB-INF/views/member/{1}.jsp" />
 	</definition>
 	<definition name="login_home" extends="home">
 		<put-attribute name="main" value="/WEB-INF/views/member/login/home_view.jsp" />

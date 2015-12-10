@@ -31,8 +31,14 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse col-md-2">
           <ul class="nav navbar-nav navbar-left">
-            <li><a href="${initParam.root }my_myPage.do">My Page</a></li>
-
+            <c:choose>
+          <c:when test="${sessionScope.pnvo.momentorMemberVO.auth == 1}">
+            <li><a href="${initParam.root }admin_myPage.do">My Page</a></li>
+            </c:when>
+            <c:otherwise>
+             <li><a href="${initParam.root }my_myPage.do">My Page</a></li>
+            </c:otherwise>
+		</c:choose>
             <li><a href="${initParam.root }member_exerciseBoard.do?pageNo=1">Momentor Guide</a></li>
              <li><a href="${initParam.root}showCommunityList.do?pageNo=1">커뮤니티</a></li>
             <li class="dropdown">

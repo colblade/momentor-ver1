@@ -3,6 +3,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
      <script type="text/javascript">
     $(document).ready(function(){
+    	  var checkIdFlag=false;
+   	   var checkNickNameFlag=false;
+   	   var checkPassFlag=false;
+   	   var checkEmailFlag=false;
        $("#logout").click(function(){
           if(confirm("로그아웃하시겠습니까?")){
              location.href="${initParam.root}/logout.do";
@@ -68,9 +72,6 @@
            $("#mailPass").val("");
            $("#showPass").html("");
         });
-        var i=0;
-        var p=0;
-        var n=0;
         $(".datepicker").datepicker({
            dateFormat: 'yy-mm-dd' ,
             changeYear: true ,
@@ -84,64 +85,94 @@
         location.href="${initParam.root}home.do";
      });
      $("#id").keyup(function(){
-        var id=$("#id").val().trim();
-        if(id.length<4 || id.length>10){
-           $("#idCheckView").html("아이디는 4자이상 10자 이하여야 함!").css(
-                 "color","pink");
-           i=0;
-           checkResultId="";
-           return;
-        }
-        
-        $.ajax({
-           type:"POST",
-           url:"idcheck.do",            
-           data:"idcheck="+$("#id").val(),
-           success:function(data){                  
-              if(data=="fail"){
-              $("#idCheckView").html(id+" 사용불가!").css("color","red");
-                 checkResultId="";
-                 i=0;
-                 return false;
-              }else{                  
-                 $("#idCheckView").html(id+" 사용가능!").css(
-                       "color","Lime");      
-                 i=1;
-                 checkResultId=id;
-           
-              }               
-           }      
-        });
-     });
-     $("#nick").keyup(function(){
-        var nick=$("#nick").val().trim();
-        if(nick.length<4 || nick.length>10){
-           $("#nickCheckView").html("닉네임은 4자이상 10자 이하여야 함!").css(
-                 "color","pink");
-           checkResultNick="";
-           n=0;
-           return;
-        }
-        
-        $.ajax({
-           type:"POST",
-           url:"nickNameCheck.do",            
-           data:"nickName="+$("#nick").val(),
-           success:function(data){                  
-              if(data=="fail"){
-              $("#nickCheckView").html(nick+" 사용불가!").css("color","red");
-                 checkResultId="";
-                 n=0;
-                 return false;
-              }else{                  
-                 $("#nickCheckView").html(nick+" 사용가능!").css(
-                       "color","Lime");      
-                 n=1;
-                 checkResultNick=nick;
-              
-              }               
-           }      
-        });
+    	   var id=$("#id").val().trim();
+    	   if(id.length<4 || id.length>10){
+    	      $("#idCheckView").html("아이디는 4자이상 10자 이하여야 함!").css(
+    	            "color","pink");
+    	      checkIdFlag=false;
+    	      checkResultId="";
+    	      return;
+    	   }
+    	   
+    	   $.ajax({
+    	      type:"POST",
+    	      url:"idcheck.do",            
+    	      data:"idcheck="+$("#id").val(),
+    	      success:function(data){                  
+    	         if(data=="fail"){
+    	         $("#idCheckView").html(id+" 사용불가!").css("color","red");
+    	            checkResultId="";
+    	            checkIdFlag=false;
+    	            return false;
+    	         }else{                  
+    	            $("#idCheckView").html(id+" 사용가능!").css(
+    	                  "color","Lime");      
+    	            checkIdFlag=true;
+    	            checkResultId=id;
+    	      
+    	         }               
+    	      }      
+    	   });
+    	});
+    	$("#nick").keyup(function(){
+    	   var nick=$("#nick").val().trim();
+    	   if(nick.length<4 || nick.length>10){
+    	      $("#nickCheckView").html("닉네임은 4자이상 10자 이하여야 함!").css(
+    	            "color","pink");
+    	      checkResultNick="";
+    	      checkNickNameFlag=false;
+    	      return;
+    	   }
+    	   
+    	   $.ajax({
+    	      type:"POST",
+    	      url:"nickNameCheck.do",            
+    	      data:"nickName="+$("#nick").val(),
+    	      success:function(data){                  
+    	         if(data=="fail"){
+    	         $("#nickCheckView").html(nick+" 사용불가!").css("color","red");
+    	            checkResultId="";
+    	            checkNickNameFlag=false;
+    	            return false;
+    	         }else{                  
+    	            $("#nickCheckView").html(nick+" 사용가능!").css(
+    	                  "color","Lime");      
+    	            checkNickNameFlag=true;
+    	            checkResultNick=nick;
+    	         
+    	         }               
+    	      }      
+    	   });
+    	});
+    	$("#emailOverlapping").click(function(){
+    		  var memberEmail=$("#email1").val().trim();
+    		   var memberEmail2=$("#join_email2").val().trim();
+    		   if($("#join_email2").val()==""){
+    		    	  $("#emailCheckView").html("이메일 주소를 선택해주세요.").css(
+    		  	            "color","orange");
+    		    	  checkResultEmail="";
+    		    	  checkEmailFlag=false;
+    			      return;
+    		   }
+    		   $.ajax({
+    		      type:"POST",
+    		      url:"emailcheck.do",            
+    		      data:"memberEmail="+$("#email1").val()  + "&memberEmail2=" + $("#join_email2").val(),
+    		      success:function(data){                  
+    		         if(data=="fail"){
+    		         $("#emailCheckView").html(memberEmail+"@"+memberEmail2+"사용불가!").css("color","red");
+    		         checkResultEmail="";
+    		         checkEmailFlag=false;
+    		            return false;
+    		         }else{                  
+    		            $("#emailCheckView").html(memberEmail+"@"+memberEmail2+"사용가능!").css(
+    		                  "color","Lime");      
+    		            checkEmailFlag=true;
+    		            checkResultEmail=memberEmail+"@"+memberemail2;
+    		         
+    		         }               
+    		      }      
+    		   });
      });
      function chkPwd(str)
      {
@@ -166,103 +197,113 @@
       }
      });
      $("#checkPass").keyup(function(){
-        if($("#pass").val()!=$("#checkPass").val()){
-           $("#checkPassword").css("color","red").text("비밀번호가 서로 다릅니다.")
-           p=0;
-           return false;
-        }else if($("#pass").val()==$("#checkPass").val()){
-           p=1;
-           $("#checkPassword").css("color","Lime").text("비밀번호가 서로 일치합니다")
-           
-        }
-     });
+    	   if($("#pass").val()!=$("#checkPass").val()){
+    	      $("#checkPassword").css("color","red").text("비밀번호가 서로 다릅니다.")
+    	      checkPassFlag=false;
+    	      return false;
+    	   }else if($("#pass").val()==$("#checkPass").val()){
+    		   checkPassFlag=true;
+    	      $("#checkPassword").css("color","Lime").text("비밀번호가 서로 일치합니다")
+    	      
+    	   }
+    	});
+    	$("#pass").keyup(function(){
+    		   if($("#pass").val()!=$("#checkPass").val() && $("#checkPass").val() != ""){
+    		      $("#checkPassword").css("color","red").text("비밀번호가 서로 다릅니다.")
+    		      checkPassFlag=false;
+    		      return false;
+    		   }else if($("#pass").val()==$("#checkPass").val() && $("#checkPass").val() != ""){
+    			   checkPassFlag=true;
+    		      $("#checkPassword").css("color","Lime").text("비밀번호가 서로 일치합니다")
+    		      
+    		   }
+    		});
      $("#momentorRegister").submit(function(){
-        if($("#id").val()==""){
-           alert("아이디를 입력하세요.");
-           $("#id").focus();
-           return false;
-        }
-        if($("#pass").val()==""){
-           alert("비밀번호를 입력하세요");
-           $("#pass").focus();
-           return false;
-        }
-        if($("#checkPass").val()==""){
-           alert("비밀번호 확인을 입력해주세요");
-           $("#checkPass").focus();
-           return false;
-        }
-        if($("#name").val()==""){
-           alert("이름을 입력하세요!");
-           $("#name").focus();
-           return false;
-        }
-        if($("#wdate").val()==""){
-           alert("생년월일을 선택해주세요.");
-           $("#wdate").focus();
-           return false;
-        }
-        if($("#nick").val()==""){
-           alert("별명을 입력하세요.");
-           $("#nick").focus();
-           return false;
-        }
-        if($("#join_email2").val()==""){
-           alert("이메일을 입력하세요");
-           $("#join_email2").focus();
-           return false;
-        }
-        if($("#gender").val()==""){
-           alert("성별을 입력해주세요");
-           $("#gender").focus();
-           return false;
-        }
-        /* if($("#registerForm :radio[name=gender]:checked").length==0){
-           alert("성별을 입력해주세요");
-           return false;
-        } */
-        if($("#address").val()==""){
-           alert("주소를 입력해주세요");
-           $("#address").focus();
-           return false;
-        }
-        if($("#weight").val()==""){
-           alert("키를 입력하세요");
-           $("#weight").focus();
-           return false;
-        }
-        if(isNaN($("#weight").val())){
-           alert("키를 숫자로 입력하세요");
-           $("#weight").focus();
-           return false;
-        }
-        if($("#height").val()==""){
-           alert("몸무게를 입력하세요");
-           $("#height").focus();
-           return false;
-        }
-        if(isNaN($("#height").val())){
-           alert("몸무게를 숫자로 입력하세요");
-           $("#height").focus();
-           return false;
-        }
-      if(n!=1&&i!=1&&p!=1){
-           alert("인증정보가 맞지 않는것이 있습니다.");
-           return false;
-        } else{
-     	   submit();
-          /*  $.ajax({
-            type:"post",
-            url:"register_result.do?memberId=" + $("#id").val() + "&memberPassword=" + $("#pass").val() + "&memberName=" + $("#name").val() + "&date="+ $("#wdate").val()
-                  + "&nickName="+ $("#nick").val()+ "&memberEmail="+ $("#email1").val() + "&memberEmail2="+$("#join_email2").val()
-                  + "&gender="+$("#gender").val()+ "&memberAddress="+ $("#address").val() + "&memberWeight="+$("#weight").val()
-                  + "&memberHeight="+$("#height").val(),
-            dataType:"json",
-            success:function(data){
-               $("#registerView").css("color","Lime").html(data.memberName+"님 momentor회원가입을 축하드립니다");
-            }
-         }); */
-        }
+    	   if($("#id").val()==""){
+    	      alert("아이디를 입력하세요.");
+    	      $("#id").focus();
+    	      return false;
+    	   }
+    	   if($("#pass").val()==""){
+    	      alert("비밀번호를 입력하세요");
+    	      $("#pass").focus();
+    	      return false;
+    	   }
+    	   if($("#checkPass").val()==""){
+    	      alert("비밀번호 확인을 입력해주세요");
+    	      $("#checkPass").focus();
+    	      return false;
+    	   }
+    	   if($("#name").val()==""){
+    	      alert("이름을 입력하세요!");
+    	      $("#name").focus();
+    	      return false;
+    	   }
+    	   if($("#wdate").val()==""){
+    	      alert("생년월일을 선택해주세요.");
+    	      $("#wdate").focus();
+    	      return false;
+    	   }
+    	   if($("#nick").val()==""){
+    	      alert("별명을 입력하세요.");
+    	      $("#nick").focus();
+    	      return false;
+    	   }
+    	   if($("#join_email2").val()==""){
+    	      alert("이메일을 입력하세요");
+    	      $("#join_email2").focus();
+    	      return false;
+    	   }
+    	   if($("#gender").val()==""){
+    	      alert("성별을 입력해주세요");
+    	      $("#gender").focus();
+    	      return false;
+    	   }
+    	   /* if($("#registerForm :radio[name=gender]:checked").length==0){
+    	      alert("성별을 입력해주세요");
+    	      return false;
+    	   } */
+    	   if($("#address").val()==""){
+    	      alert("주소를 입력해주세요");
+    	      $("#address").focus();
+    	      return false;
+    	   }
+    	   if($("#height").val()==""){
+    	      alert("키를 입력하세요");
+    	      $("#height").focus();
+    	      return false;
+    	   }
+    	   if(isNaN($("#height").val())){
+    	      alert("키를 숫자로 입력하세요");
+    	      $("#height").focus();
+    	      return false;
+    	   }
+    	   if($("#weight").val()==""){
+    	      alert("몸무게를 입력하세요");
+    	      $("#weight").focus();
+    	      return false;
+    	   }
+    	   if(isNaN($("#weight").val())){
+    	      alert("몸무게를 숫자로 입력하세요");
+    	      $("#weight").focus();
+    	      return false;
+    	   }
+    	 if(checkIdFlag!=true){
+    	      alert("아이디를 확인해주세요!");
+    	      return false;
+    	   }
+    	 if(checkPassFlag!=true){
+    	     alert("비밀번호를 확인해주세요!");
+    	     return false;
+    	  }
+    	 if(checkNickNameFlag!=true){
+    	     alert("닉네임을 확인해주세요!");
+    	     return false;
+    	  }
+    	 if(checkEmailFlag!=true){
+    	     alert("이메일을 확인해주세요!");
+    	     return false;
+    	  }
      });
      $("#closeRegister").click(function(){
          $("#id").val("");
@@ -438,6 +479,8 @@
                <option value="gmail.com" >gmail.com</option>
                <option value="" selected>직접입력</option>
          </select>   
+            <input type="button" value="이메일중복검사" class="btn btn-primary" id="emailOverlapping" >   
+         <span id="emailCheckView"></span>
          </div>
            <label for="">성별</label>
     <select name="gender"class="form-control"id="gender">

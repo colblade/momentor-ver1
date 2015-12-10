@@ -1,5 +1,6 @@
 package org.kosta.momentor.member.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,11 +9,10 @@ import org.kosta.momentor.contents.model.ReplyVO;
 
 
 public interface MomentorMemberDAO {
-	public MomentorMemberVO managerFindMemberById(String id);//관리자가 회원정보 검색
-	public MomentorMemberVO managerFindMemberByNickName(String nickName);//관리자가 회원정보 검색
-	public List<MomentorMemberVO> managerGetAllMember();//관리자가 모든 회원정보 검색
-	public List<MomentorMemberVO> managerFindMemberByAddress(String address);//관리자가 주소로 회원정보 검색
-	public List<MomentorMemberVO> managerFindMemberByName(String name);//관리자가 이름으로 회원정보 검색
+	public List<MomentorMemberPhysicalVO>  managerFindMemberById(HashMap<String,String> paramMap);//관리자가 회원정보 검색
+	public List<MomentorMemberPhysicalVO>  managerFindMemberByNickName(HashMap<String,String> paramMap);//관리자가 회원정보 검색
+	public List<MomentorMemberPhysicalVO> managerGetAllMember(String pageNo);//관리자가 모든 회원정보 검색
+	public List<MomentorMemberPhysicalVO> managerFindMemberByName(HashMap<String,String> paramMap);//관리자가 이름으로 회원정보 검색
 	public MomentorMemberPhysicalVO login(MomentorMemberVO vo); 		//로그인
 	public MomentorMemberVO updateMember(MomentorMemberVO vo);		//수정
 	public void registerMember(MomentorMemberVO vo) ;		//가입
@@ -28,7 +28,10 @@ public interface MomentorMemberDAO {
 	// bmi 공식 찾다 보니까 저런것도 나오길래 정보 공유겸 넣어 놓음
 	public MomentorMemberVO deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
 	public void deleteMemeber(MomentorMemberVO vo); // 회원탈퇴
-	
+	public int totalMemberContent();
+	public int totalMemberFindByIdContent(String memberId);
+	public int totalMemberFindByNameContent(String memberName);
+	public int totalMemberFindByNickNameContent(String nickName);
 	//mypage상 나의 글 보기
 	public List<BoardVO> getMyCommnunityBoardList(Map<String, String> map);
 	
@@ -37,7 +40,7 @@ public interface MomentorMemberDAO {
 	
 	public int idOverlappingCheck(String id) ;//아이디 중복체크
 	public int nickNameOverlappingCheck(String nickName);//닉네임 중복체크
-	
+	public int emailOverlappingCheck(String memberEmail) ; //이메일 중복체크
 	//mypage 내가 쓴 전체 글 수
 	public int countAllMyCommnunityBoard(String memberId);
 	//mypage 내가 쓴 전체 댓글 수

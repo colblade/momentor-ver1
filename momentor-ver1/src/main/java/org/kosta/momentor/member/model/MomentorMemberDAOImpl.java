@@ -18,27 +18,21 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 	private SqlSessionTemplate sqlSessionTemplate;
 
 	@Override
-	public MomentorMemberVO managerFindMemberById(String id) {
+	public List<MomentorMemberPhysicalVO>  managerFindMemberById(HashMap<String,String> paramMap) {
 		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectList("member.managerFindMemberById",paramMap);
 	}
 
 	@Override
-	public MomentorMemberVO managerFindMemberByNickName(String nickName) {
+	public List<MomentorMemberPhysicalVO>  managerFindMemberByNickName(HashMap<String,String> paramMap) {
 		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectList("member.managerFindMemberByNickName",paramMap);
 	}
 
 	@Override
-	public List<MomentorMemberVO> managerFindMemberByAddress(String address) {
+	public List<MomentorMemberPhysicalVO> managerFindMemberByName(HashMap<String,String> paramMap) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<MomentorMemberVO> managerFindMemberByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectList("member.managerFindMemberByName",paramMap);
 	}
 
 	@Override
@@ -100,9 +94,9 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 
 
 	@Override
-	public List<MomentorMemberVO> managerGetAllMember() {
+	public List<MomentorMemberPhysicalVO> managerGetAllMember(String PageNo) {
 		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectList("member.managerGetAllMember",PageNo);
 	}
 
 	@Override
@@ -171,5 +165,33 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 	@Override
 	public MomentorMemberPhysicalVO myPageMemberInfo(String memberId) {
 		return sqlSessionTemplate.selectOne("member.myPageMemberInfo", memberId);	
+	}
+	@Override
+	public int totalMemberContent() {
+		return sqlSessionTemplate.selectOne("member.totalMemberContent");
+	}
+
+	@Override
+	public int totalMemberFindByIdContent(String memberId) {
+		return sqlSessionTemplate.selectOne("member.totalMemberFindByIdContent",memberId);
+	}
+
+	@Override
+	public int totalMemberFindByNameContent(String memberName) {
+		// TODO Auto-generated method stub
+		return sqlSessionTemplate.selectOne("member.totalMemberFindByNameContent",memberName);
+	}
+
+	@Override
+	public int totalMemberFindByNickNameContent(String nickName) {
+		// TODO Auto-generated method stub
+		return sqlSessionTemplate.selectOne("member.totalMemberFindByNickNameContent",nickName);
+	}
+
+	@Override
+	public int emailOverlappingCheck(String memberEmail) {
+		// TODO Auto-generated method stub
+		System.out.println("DAO "+memberEmail);
+		return sqlSessionTemplate.selectOne("member.emailOverlappingCheck",memberEmail);
 	}
 }

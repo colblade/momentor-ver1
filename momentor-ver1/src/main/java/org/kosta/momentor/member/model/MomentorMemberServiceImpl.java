@@ -31,27 +31,48 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 	private MomentorMemberDAO momentorMemberDAO;
 
 	@Override
-	public MomentorMemberVO managerFindMemberById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public MemberListVO managerFindMemberById(String search,String pageNo) {
+		//System.out.println("넘어옴?"+search);
+		if(pageNo==null||pageNo=="") 
+			pageNo="1";
+		ArrayList<MomentorMemberPhysicalVO> list=null;
+		HashMap<String,String> paramMap=new HashMap<String,String>();
+		paramMap.put("memberId", search);
+		paramMap.put("pageNo", pageNo);
+		list=(ArrayList)momentorMemberDAO.managerFindMemberById(paramMap);
+		int total=momentorMemberDAO.totalMemberFindByIdContent(search);
+		PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+		MemberListVO lvo=new MemberListVO(list, paging);
+      return lvo;
 	}
 
 	@Override
-	public MomentorMemberVO managerFindMemberByNickName(String nickName) {
-		// TODO Auto-generated method stub
-		return null;
+	public MemberListVO managerFindMemberByNickName(String search,String pageNo) {
+		if(pageNo==null||pageNo=="") 
+			pageNo="1";
+		ArrayList<MomentorMemberPhysicalVO> list=null;
+		HashMap<String,String> paramMap=new HashMap<String,String>();
+		paramMap.put("nickName", search);
+		paramMap.put("pageNo", pageNo);
+		list=(ArrayList)momentorMemberDAO.managerFindMemberByNickName(paramMap);
+		int total=momentorMemberDAO.totalMemberFindByNickNameContent(search);
+		PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+		MemberListVO lvo=new MemberListVO(list,paging);
+      return lvo;
 	}
-
 	@Override
-	public List<MomentorMemberVO> managerFindMemberByAddress(String address) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<MomentorMemberVO> managerFindMemberByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public MemberListVO managerFindMemberByName(String search,String pageNo) {
+		if(pageNo==null||pageNo=="") 
+			pageNo="1";
+		ArrayList<MomentorMemberPhysicalVO> list=null;
+		HashMap<String,String> paramMap=new HashMap<String,String>();
+		paramMap.put("memberName", search);
+		paramMap.put("pageNo", pageNo);
+		list=(ArrayList)momentorMemberDAO.managerFindMemberByName(paramMap);
+		int total=momentorMemberDAO.totalMemberFindByNameContent(search);
+		PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+		MemberListVO lvo=new MemberListVO(list,paging);
+      return lvo;
 	}
 
 	@Override
@@ -238,5 +259,22 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 			momentorMemberDAO.myPageDeleteMemberPhysicalInfo(memberId);
 			momentorMemberDAO.myPageDeleteMemberInfo(memberId);
 			return "myInfoDelete";
+		}
+		@Override
+		public MemberListVO managerGetAllMember(String pageNo) {
+			if(pageNo==null||pageNo=="") 
+				pageNo="1";
+			ArrayList<MomentorMemberPhysicalVO> list=(ArrayList)momentorMemberDAO.managerGetAllMember(pageNo);
+			int total=momentorMemberDAO.totalMemberContent();
+			PagingBean paging=new PagingBean(total,Integer.parseInt(pageNo));
+			MemberListVO lvo=new MemberListVO(list,paging);
+	      return lvo;
+	   }
+
+		@Override
+		public String emailOverlappingCheck(String memberEmail, String memberEmail2) {
+			System.out.println("서비스 : "+memberEmail+"@"+memberEmail2);
+			  int count=momentorMemberDAO.emailOverlappingCheck(memberEmail+"@"+memberEmail2);
+			   return (count==0) ? "ok":"fail";
 		}
 }

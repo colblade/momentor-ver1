@@ -11,6 +11,10 @@ import java.util.List;
 
 
 
+
+
+
+
 //github.com/colblade/Momentor-test.git
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -73,32 +77,22 @@ public class MomentorMemberController {
 			mv.addObject("communityTop5List", cbList);
 			return mv;
 	}
-	@RequestMapping("admin_home.do")
-	public ModelAndView adminHome(){
-		ModelAndView mv = new ModelAndView("admin_home");
-		List<ExerciseBoardVO> ebList =	exerciseBoardService.getExerciseBoardListBestTop5ByHits();
-		List<CommunityBoardVO> cbList =	communityBoardService.getCommunityBoardListBestTop5ByRecommend();
-		mv.addObject("exerciseTop5List", ebList);
-		mv.addObject("communityTop5List", cbList);
-		return mv;
-	}
 	@RequestMapping(value = "login_login.do", method = RequestMethod.POST)
-	public ModelAndView login(HttpServletRequest request, MomentorMemberVO vo) {
-		String path = "login_fail";
-		MomentorMemberPhysicalVO rvo = momentorMemberService.login(vo);
-		System.out.println(rvo);
-		if(rvo != null && rvo.getMomentorMemberVO().getAuth()==1){
-			request.getSession().setAttribute("pnvo", rvo);
-			path = "admin_home";
-			return new ModelAndView(path);
-		} else if (rvo != null && rvo.getMomentorMemberVO().getAuth()!=8) {
-			request.getSession().setAttribute("pnvo", rvo);
-			path = "login_ok";
-			return new ModelAndView(path);
-		} else{
-			return new ModelAndView(path);
-		}
-	}	
+	   public ModelAndView login(HttpServletRequest request, MomentorMemberVO vo) {
+		   String path = "login_fail";
+	      MomentorMemberPhysicalVO rvo = momentorMemberService.login(vo);
+	     System.out.println(rvo);
+	     if (rvo != null) {
+	         request.getSession().setAttribute("pnvo", rvo);
+	         int auth=rvo.getMomentorMemberVO().getAuth();
+	         if(auth==2){
+	         path = "login_ok";
+	         }else if(auth==1){
+	        	 path="admin_login_ok";
+	         }
+	      }
+	     return new ModelAndView(path);
+	   }
 	@RequestMapping("logout.do")
 	public String logout(HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
@@ -260,7 +254,12 @@ public class MomentorMemberController {
 		return new ModelAndView("my_mypage","pnvo",pnvo);		*/
 		return "my_mypage";
 	}
-	
+	@RequestMapping("admin_myPage.do")
+	public String adminMyPage(){
+		/*	MomentorMemberPhysicalVO pnvo = (MomentorMemberPhysicalVO) request.getSession().getAttribute("pnvo");
+		return new ModelAndView("my_mypage","pnvo",pnvo);		*/
+		return "admin_my_mypage";
+	}
 	@RequestMapping("my_getMyCommnunityBoardList")
 	public ModelAndView getMyCommnunityBoardList(String memberId,String pageNo){
 		ModelAndView mv = new ModelAndView("my_myboard_result");
@@ -297,7 +296,14 @@ public class MomentorMemberController {
 	public String idcheckAjax(String idcheck) {
 		return momentorMemberService.idOverlappingCheck(idcheck);
 	}
-
+	@RequestMapping("emailcheck.do")
+	@ResponseBody
+	public String emailcheckAjax(String memberEmail,String memberEmail2,MomentorMemberVO vo) {
+		System.out.println(memberEmail);
+		System.out.println(memberEmail2);
+		System.out.println(memberEmail+"@"+memberEmail2);
+		return momentorMemberService.emailOverlappingCheck(memberEmail,memberEmail2);
+	}
 	@RequestMapping("my_myInfo.do")
 	public ModelAndView myInfo(HttpServletRequest request) {
 		MomentorMemberPhysicalVO pnvo = (MomentorMemberPhysicalVO) request.getSession().getAttribute("pnvo");
@@ -347,5 +353,27 @@ public class MomentorMemberController {
 	public String myPasswordCheck(HttpServletRequest request, String memberPasswordCheck) {
 		String memberId = request.getParameter("id");
 		return momentorMemberService.myPasswordCheck(memberPasswordCheck, memberId);
+	}
+	@RequestMapping("admin_my_meberList.do")
+	public ModelAndView adminMypage(String pageNo){
+		return  new ModelAndView("admin_my_memberList","list",momentorMemberService.managerGetAllMember(pageNo));
+	}
+	@RequestMapping("admin_my_managerFindBy.do")
+	public ModelAndView managerFindById(String search,String pageNo,String searchMenu){
+		ModelAndView mv=new ModelAndView("admin_my_find_member_result");
+		if(searchMenu.equals("id")){
+			mv.addObject("searchMenu",searchMenu);
+			mv.addObject("search", search);
+			mv.addObject("list", momentorMemberService.managerFindMemberById(search, pageNo));
+	}if(searchMenu.equals("name")){
+		mv.addObject("searchMenu",searchMenu);
+		mv.addObject("search", search);
+		mv.addObject("list", momentorMemberService.managerFindMemberByName(search, pageNo));
+	}if(searchMenu.equals("nickName")){
+		mv.addObject("searchMenu",searchMenu);
+		mv.addObject("search", search);
+		mv.addObject("list", momentorMemberService.managerFindMemberByNickName(search, pageNo));
+	}
+		return mv;
 	}
 }
