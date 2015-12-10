@@ -61,9 +61,20 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 	}
 
 	@Override
-	public List<CommunityBoardVO> findByCbNickName(String nickName) {
-		return null;
-	}
+	public ListVO findByCbNickName(String pageNo, String searchWord) {
+		if(pageNo==null||pageNo==""){
+			pageNo="1";
+		}
+		int total=communityBoardDAO.searchContent(searchWord);
+		ArrayList<BoardVO> list= null;
+		HashMap<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("word", searchWord);
+		paramMap.put("pageNo", pageNo);
+		list = (ArrayList)communityBoardDAO.findByCbNickName(paramMap);
+		PagingBean paging = new PagingBean(total,Integer.parseInt(pageNo));
+		ListVO lvo=new ListVO(list, paging);
+		return lvo;
+   }
 
 	@Override
 	public void updateRecommend(int cbRecommend) {

@@ -60,9 +60,8 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 	}
 
 	@Override
-	public List<CommunityBoardVO> findByCbNickName(String nickName) {
-		 
-		return null;
+	public List<CommunityBoardVO> findByCbNickName(HashMap<String, String> paramMap) {
+		return sqlSessionTemplate.selectList("content.findByCbNickName", paramMap);
 	}
 
 	@Override

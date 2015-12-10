@@ -8,7 +8,7 @@ public interface CommunityBoardDAO {
 	public CommunityBoardVO postingCommunity(CommunityBoardVO cvo);//글 업로드
 	public void deleteCommunity(int cboardNo);//글 삭제
 	public List<CommunityBoardVO> findByCbTitle(String cbTitle);//제목으로 글검색
-	public List<CommunityBoardVO> findByCbNickName(String nickName);//닉네임으로 검색
+	public List<CommunityBoardVO> findByCbNickName(HashMap<String, String> paramMap);//닉네임으로 검색
 
 	public List<CommunityBoardVO> getAllPostingList(); //전체목록
 	public void updateHits(int boardNo); //조회수 증가

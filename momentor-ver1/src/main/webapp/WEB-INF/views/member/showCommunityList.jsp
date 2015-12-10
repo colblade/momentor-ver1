@@ -78,6 +78,17 @@
      </ul>
    </nav>
 </div>
+<hr>
+<center>
+<form action="member_searchByCommunityBoard.do" id="cbSeachForm">
+	<select name="searchType">
+		<option value="cbTitle">제목</option>
+		<option value="mNickName">닉네임</option>
+	</select>
+	<input type="text" name="searchWord">
+	<input type="submit" value="검색">
+</form>
+</center>
 <nav>
   <ul class="pager">
     <c:if test="${sessionScope.pnvo != null}">   

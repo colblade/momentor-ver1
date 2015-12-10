@@ -42,3 +42,7 @@ p.paging{
 		width:50%;
 		text-align: center;
 	} 
+	
+.plannerTable td{
+	text-align: center;
+}

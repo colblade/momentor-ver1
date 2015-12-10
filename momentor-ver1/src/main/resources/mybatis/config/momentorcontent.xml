@@ -401,6 +401,15 @@ WHERE C.memberId = M.memberId and title like '%${value}%'
       )where page=#{pageNo}
    </select>
    
+<select id="findByCbNickName" resultMap="cbvoMap" >
+ 	SELECT C.MEMBER_NO, C.MEMBERID, M.NICKNAME, C.TITLE, C.MEMBER_DATE, C.CONTENT, C.MEMBER_HITS, C.RECOMMEND, C.NOTRECOMMEND
+		FROM (SELECT MEMBER_NO, MEMBERID, TITLE, MEMBER_DATE, CONTENT, MEMBER_HITS, RECOMMEND, NOTRECOMMEND, CEIL(ROWNUM/6) AS PAGE
+		FROM (SELECT MEMBER_NO, MEMBERID, TITLE, TO_CHAR(MEMBER_DATE, 'YYYY.MM.DD') AS MEMBER_DATE, CONTENT, MEMBER_HITS, RECOMMEND, NOTRECOMMEND
+		FROM MEMBER_BOARD
+		ORDER BY MEMBER_DATE DESC)
+		) C, MOMENTOR_MEMBER M where C.MEMBERID = M.MEMBERID and page=#{pageNo} and NICKNAME like '%${word}%'
+</select>
+   
    <!-- 운동게시판 검색 개수 -->
  <select id="searchExerciseContent" resultType="int">
 SELECT count(*)

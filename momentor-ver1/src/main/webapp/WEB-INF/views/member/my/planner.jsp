@@ -3,8 +3,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<script src="${initParam.root}dist/js/jquery.easy-pie-chart.js"></script>
+<link href="${initParam.root}dist/css/jquery.easy-pie-chart.css" rel="stylesheet" media="screen">
+
 <script type="text/javascript">
 	$(document).ready(function(){
+		// Easy pie charts
+        $('.chart').easyPieChart({animate: 1000});
+		
 		// 플래너에 달성치 등록하기
 		// select로 선택된 value(1~targetSet)를 achievement 에 담아야 한다.
 		// 실시 button 클릭시 로그인한 사용자의 memberId, 해당 plannerDate, achievement, exerciseName를 담아 보내주어야 한다.
@@ -129,7 +135,7 @@
 					// 찜 카트가 비어있지 않을때만 table의 틀 출력
 					var cartTableFrame = "찜 된 운동이 없습니다.";
 					if(cartListResult.length != 0){
-						cartTableFrame = "<table style='text-align: center' class='table table-hover'>" + 
+						cartTableFrame = "<table class='table table-hover'>" + 
 												"<thead><tr><th>선택</th><th>번호</th><th colspan='2'>운동명</th><th>삭제</th></tr></thead>" + 
 												"<tbody id='cartListBody'>";
 						$.each(cartListResult, function(index, list){
@@ -159,13 +165,20 @@
 			// 임시등록란이 비어있는지 확인
 			if(regExName == ""){
 				alert("임시등록된 운동이 없습니다.");
-				return false;
+				return;
 			}
 			if($("#targetSet").val() == "" || $("#targetSet").val() == 0){
 				alert("목표 세트는 1 이상의 숫자로 입력해주세요.");
 				$("#targetSet").val("");
 				$("#targetSet").focus();
-				return false;
+				return;
+			}
+			// 선택일이 오늘보다 이전일 경우 플래너에 등록이 불가능하도록 한다.
+			if(parseInt($(".panel-heading").text().substring(0, 10).replace(/-/g, "")) < parseInt(todayVal.replace(/-/g, ""))){
+				alert("지나간 날은 등록할 수 없습니다.");
+				$("#exerciseName").val("");
+				$("#targetSet").val("");
+				return;
 			}
 			// listBody의 자식(td)에 등록하려는 운동이 이미 있는지 확인한다.
 			// 두번째 td에 선택한 운동이 포함되어 있는지 확인
@@ -174,7 +187,7 @@
 				alert("이미 등록된 운동입니다.");
 				$("#exerciseName").val("");
 				$("#targetSet").val("");
-				return false;
+				return;
 			}
 			$.ajax({
 				type:"post",
@@ -197,6 +210,8 @@
 			$("#commentView").toggle(function(){
 				if(($("#commentView").css("display")=="none")){ // textarea가 보이지 않을때(닫힐때)
 					$("#commentBtn").val("코멘트");
+					$("#commentIcon").html("<i class='glyphicon glyphicon-resize-full' aria-hidden='true'></i>");
+					// 특수문자도 입력이 가능하도록 encoding 한다.
 					var commentComp = encodeURIComponent($("#commentArea").val());
 					// 코멘트 내용이 변경되지 않았을 경우에는 그냥 닫아준다.
 					if($("#commentArea").val() == compareComment){
@@ -213,6 +228,7 @@
 					});
 				} else { // textarea가 보일때(열릴때)
 					$("#commentBtn").val("저장");
+					$("#commentIcon").html("<i class='glyphicon glyphicon-resize-small' aria-hidden='true'></i>");
 					// 코멘트버튼 클릭시 등록되어있는 코멘트 보여주기
 					$.ajax({
 						type:"post",
@@ -235,6 +251,11 @@
 			var flag = $(this).prop("checked");
 			$(":input[name=deleteCheck]").prop("checked", flag);
 		});
+		
+		// 운동 상세보기 modal
+		$(".exViewModal").click(function(){
+			$("#exView").modal();
+		});
 	});
 		
 	// 임시등록 되어있는 운동이 있는데 페이지를 벗어나려 할 때 사용자에게 알림
@@ -253,9 +274,14 @@
 	
 	// 플래너에 등록, 플래너에서 삭제, 달성 시 플래너 리스트를 출력하는 공통 function
 	function plannerListFunc(resultList){
-		var listTableFrame = "등록된 운동이 없습니다.";
+		var listTableFrame = "<div class='panel panel-primary'>" + 
+										"<div class='panel-heading'><h4>" + todayVal + "</h4></div>" + 
+										"<div class='panel-body'>등록된 운동이 없습니다.</div></div>";
 		if(resultList.length != 0){
-			listTableFrame = "<table border='1' cellpadding='5' style='text-align: center'>" + 
+			listTableFrame = "<div class='panel panel-primary'>" + 
+									"<div class='panel-heading'><h4>" + todayVal + "</h4></div>" + 
+									"<div class='panel-body'>" + 
+									"<table class='table table-bordered plannerTable'>" + 
 									"<thead><tr><th><input type='checkbox' name='allCheck'></th><th>운동명</th><th>달성세트</th><th colspan='2'>목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>" + 
 									"</tr></thead><tbody id='listBody'>";
 				$.each(resultList, function(index, list){
@@ -283,26 +309,34 @@
 					} else {
 						listTableFrame += "<td colspan='2'>" + list.targetSet + "</td>";
 					}
-					listTableFrame += "<td>" + list.achievementPercent + "%</td>";
+					listTableFrame += "<td><center><div class='chart' data-percent='" + list.achievementPercent + "'>" + list.achievementPercent + "%</div></center></td>";
 					if(index == 0){
-						listTableFrame += "<td rowspan=" + resultList.length + ">" + list.achievementPercentDay + "%</td>" + 
-													"<td rowspan=" + resultList.length + ">" + list.achievementPercentMonth + "%</td>";
+						listTableFrame += "<td style='vertical-align: middle' rowspan=" + resultList.length + ">" + "<center><div class='chart' data-percent='" + list.achievementPercentDay + "'>" + list.achievementPercentDay + "%</div></center></td>" + 
+													"<td style='vertical-align: middle' rowspan=" + resultList.length + ">" + "<center><div class='chart' data-percent='" + list.achievementPercentMonth +  "'>" + list.achievementPercentMonth + "%</div></center></td>";
 					}
 					listTableFrame += "</tr>";
 				});
-				listTableFrame += "</tbody></table>" + 
+				listTableFrame += "</tbody></table></div></div>" + 
 											"<input type='button' id='deleteBtn' value='선택 삭제'>";
 		}
 		$("#plannerListTable").html(listTableFrame);
+		
+		// Easy pie charts
+        $('.chart').easyPieChart({animate: 1000});
 	}
+	
+
 </script>
 
 <!-- 플래너에 등록된 운동 목록 -->
-<h3>${requestScope.selectDate}</h3>
+
 <span id="plannerListTable">
 <c:choose>
 	<c:when test="${requestScope.plannerListByDate.size() != 0}">
-		<table border="1" cellpadding="5" style="text-align: center">
+	<div class="panel panel-primary">
+	<div class="panel-heading"><h4>${requestScope.selectDate}</h4></div>
+	<div class="panel-body">
+		<table class="table table-bordered plannerTable">
 			<thead>
 				<tr>
 					<th><input type="checkbox" name="allCheck"></th>
@@ -313,7 +347,7 @@
 			<c:forEach items="${requestScope.plannerListByDate}" var="plist" varStatus="status1">
 				<tr>
 					<td><input type="checkbox" name="deleteCheck" value="${plist.exerciseVO.exerciseName}"></td>
-					<td>${plist.exerciseVO.exerciseName}</td>
+					<td><a href="#" class="exViewModal" >${plist.exerciseVO.exerciseName}</a></td>
 					<td>
 					<c:choose>
 						<c:when test="${plist.achievement != 0}">
@@ -344,43 +378,54 @@
 							<td colspan="2">${plist.targetSet}</td>
 						</c:otherwise>
 					</c:choose>
-					<td>${plist.achievementPercent} %</td>
+					<td><center><div class="chart" data-percent="${plist.achievementPercent}">${plist.achievementPercent}%</div></center></td>
 					<c:if test="${status1.count == 1}">
-						<td rowspan="${requestScope.plannerListByDate.size()}">${plist.achievementPercentDay} %</td>
-						<td rowspan="${requestScope.plannerListByDate.size()}">${plist.achievementPercentMonth} %</td>
+						<td style="vertical-align: middle" rowspan="${requestScope.plannerListByDate.size()}"><center><div class="chart" data-percent="${plist.achievementPercentDay}">${plist.achievementPercentDay}%</div></center></td>
+						<td style="vertical-align: middle" rowspan="${requestScope.plannerListByDate.size()}"><center><div class="chart" data-percent="${plist.achievementPercentMonth}">${plist.achievementPercentMonth}%</div></center></td>
 					</c:if>
 				</tr>
 			</c:forEach>
 			</tbody>
-		</table>
+		</table></div></div>
 		<input type="button" id="deleteBtn" value="선택 삭제">
 	</c:when>
 	<c:otherwise>
+	<div class="panel panel-primary">
+	<div class="panel-heading"><h4>${requestScope.selectDate}</h4></div>
+	<div class="panel-body">
 		등록된 운동이 없습니다.
+	</div></div>
 	</c:otherwise>
 </c:choose>
 </span>
 
 <input type="button" id="commentBtn" value="코멘트">
+<span id="commentIcon"><i class="glyphicon glyphicon-resize-full" aria-hidden="true"></i></span>
 <br>
 <span id="commentView">
-	<textarea cols='53' rows='15' name='commentArea' id='commentArea'></textarea>
+	<textarea cols='100' rows='10' name='commentArea' id='commentArea'></textarea>
 </span>
-<hr>
+<br><hr><br>
 
 <!-- 임시등록란 -->
-<h3>선택 확인 / 등록</h3>
+
+<div class="panel panel-primary">
+<div class="panel-heading"><h4>선택 확인 / 등록</h4></div>
+<div class="panel-body">
 목표운동 <input type="text" name="exerciseVO.exerciseName" id="exerciseName" style="text-align: right" size="22" readonly ><br>
 목표세트 <input type="text" name="targetSet" id="targetSet" style="text-align: right" size="12"> set
 <input type="button" id="regPlannerBtn" value="등록">
-<hr>
+</div></div> 
+<br><hr><br>
 
 <!-- 찜한 운동 리스트 -->
-<h3>찜 바구니</h3>
 <span id="cartListTable">
 <c:choose>
 	<c:when test="${requestScope.cartList.size() != 0}">
-		<table style="text-align: center" class="table table-hover">
+	<div class="panel panel-primary">
+	<div class="panel-heading"><h4>찜 바구니</h4></div>
+	<div class="panel-body">
+		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th>선택</th><th>번호</th><th colspan="2">운동명</th><th>삭제</th>
@@ -401,10 +446,28 @@
 					<input type="button" id="selectExerciseBtn" value="선택"></td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div></div>
 	</c:when>
 	<c:otherwise>
 		찜 된 운동이 없습니다.
 	</c:otherwise>
 </c:choose>
 </span>
+
+<!-- Modal -->
+<div class="modal fade" id="exView" tabindex="-1" role="dialog" aria-labelledby="exViewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exViewModalLabel">상세보기</h4>
+      </div>
+      <div class="modal-body">
+          운동 내용 넣어야 함
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="btn btn-default" data-dismiss="modal" id="closePass">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

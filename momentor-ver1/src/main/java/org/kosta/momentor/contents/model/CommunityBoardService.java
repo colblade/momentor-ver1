@@ -10,7 +10,7 @@ public interface CommunityBoardService {
 	public void deleteReply(int replyNo);//댓글 삭제
 	public void updateReply(ReplyVO rvo);//댓글 수정
 	public List<CommunityBoardVO> findByCbTitle(String cbTitle);//제목으로 글검색
-	public List<CommunityBoardVO> findByCbNickName(String nickName);//닉네임으로 검색
+	public ListVO findByCbNickName(String pageNo, String searchWord);//닉네임으로 검색
 	public void updateRecommend(int cbRecommend);//추천
 	public void updateNotRecommend(int cbNotRecommend);//비추천
 	public CommunityBoardVO getCommunityByNo(int boardNo);//커뮤니티글 상세보기.

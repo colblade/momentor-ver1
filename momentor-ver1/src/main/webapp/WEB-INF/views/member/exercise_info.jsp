@@ -112,7 +112,9 @@ $(function(){
 	   </c:if>
 	   <li><a href = "${initParam.root }member_exerciseBoard.do?pageNo=${param.pageNo}">뒤로가기</a></li>
 	   <!-- Button trigger modal -->
-	   <li><a href="#" id="regInCartModal" >찜하기</a> </li>
+	   <c:if test="${sessionScope.pnvo != null}">
+	   		<li><a href="#" id="regInCartModal" >찜하기</a> </li>
+	   </c:if>
 	   </ul>
 	   </nav>
     </div><!-- /.container -->

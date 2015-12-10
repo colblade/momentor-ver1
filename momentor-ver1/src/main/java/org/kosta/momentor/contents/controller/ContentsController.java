@@ -493,4 +493,17 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 		return list;
 		}
 		
+		// 커뮤니티 게시판 타이틀, 닉네임 검색
+		@RequestMapping("member_searchByCommunityBoard.do")
+		public ModelAndView searchByCommunityBoard(String pageNo, String searchWord, String searchType){
+			ModelAndView mv = new ModelAndView();
+			mv.addObject("word", searchWord);
+			if(searchType.equals("cbTitle")){
+				mv.addObject("list", communityBoardService.getSearchCommunityList(pageNo, searchWord));
+			} else if(searchType.equals("mNickName")) {
+				mv.addObject("list", communityBoardService.findByCbNickName(pageNo, searchWord));
+			}
+			mv.setViewName("member_showSearchCommunity");
+			return mv;
+		}
 }
