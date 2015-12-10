@@ -88,6 +88,14 @@ $(function(){
             <hr>
             <p class="blog-post-meta">${info.boardWdate } by <a href="#">관리자</a></p>
 			
+			<c:if test="${not empty requestScope.nameList }">
+			<c:forEach items="${requestScope.nameList }" var="fileName"
+								varStatus="vs">
+			<img src="${initParam.root}upload/${fileName.EXERCISENAME}_${fileName.IMGNAME}"
+									title=" ${fileName.IMGNAME }">
+									
+								</c:forEach>
+								</c:if>	
                         <pre>${info.boardContent }</pre>
             <br><br><br>
             <hr>

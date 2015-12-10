@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
+    <link rel="stylesheet" href="${initParam.root}dist/css/style.css">
     <script type="text/javascript">
        $(document).ready(function(){
              $("#writeBtn").click(function(){
@@ -9,20 +10,16 @@
           }
          );
     </script>
-<h2 class="sub-header">Community</h2>
 <div class="table-responsive">
  <table class="table table-striped">
-  <thead>
   <tr>
-    <th>No</th>
-    <th>타이틀</th>
-    <th>글쓴이</th>
-    <th>작성일</th>
+    <th>글번호</th>
+    <th>제목</th>
+    <th>작성자</th>
+    <th>작성시간</th>
     <th>조회수</th>
     <th>추천수</th>
   </tr>
-  </thead>
-  <tbody>
 <c:forEach items="${requestScope.list.list}" var="posting">
    <tr>
       <td>${posting.boardNo }</td>
@@ -30,7 +27,7 @@
          <c:when test="${sessionScope.pnvo==null }">
             <td>${posting.boardTitle}</td>
          </c:when>
-         <c:otherwise><td><a href="member_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
+         <c:otherwise><td><a href="my_getCommunityByNo.do?boardNo=${posting.boardNo}">${posting.boardTitle}</a></td></c:otherwise>
       </c:choose>
       <td>${posting.momentorMemberVO.nickName}</td>
       <td>${posting.boardWdate}</td>
@@ -38,7 +35,6 @@
       <td>${posting.recommend}</td>
    </tr>
 </c:forEach>
-</tbody>
 </table>
 </div>
 <div align="center">
@@ -73,7 +69,7 @@
 			aria-label="Next">
 				<span aria-hidden="true">&raquo;</span>
 			</a>
-	    </li>
+	     </li>
 		</c:if>
 	  </ul>
 	</nav>

@@ -2,6 +2,7 @@ package org.kosta.momentor.contents.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -112,5 +113,29 @@ public class ExerciseBoardDAOImpl implements ExerciseBoardDAO {
 		// 운동게시판 검색 총 개수
 		return sqlSessionTemplate.selectOne("content.searchExerciseContent", word);
 	}
-	
+	@Override
+	public void registerImgFile(Map<String, String> map) {
+		sqlSessionTemplate.insert("content.registerImgFile", map);		
+	}
+
+	@Override
+	public List<Map<String, String>> getFileListByExerciseName(String exerciseName) {
+	return	sqlSessionTemplate.selectList("content.selectFileList", exerciseName);		
+	}
+
+	@Override
+	public void deleteExerciseImgFile(String exerciseName) {
+
+		
+		
+		sqlSessionTemplate.delete("content.deleteExerciseImgFile", exerciseName)
+		;
+	}
+
+	@Override
+	public void deleteExerciseImgFileByImgName(Map<String, String> map) {
+		System.out.println(map);
+sqlSessionTemplate.delete("content.deleteExerciseImgFileByImgName",map);		
+	}
+
 }

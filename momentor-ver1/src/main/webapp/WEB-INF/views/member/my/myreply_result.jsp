@@ -3,6 +3,14 @@
     
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+
+
+<br>
+    <h3><a href="my_myInfo.do">회원정보 보기</a></h3>
+    
+    <hr>
+    <br>
+
 <div class="table-responsive">
 <h2 class="sub-header">
 <a href="${initParam.root }my_getMyCommnunityBoardList.do?pageNo=1&memberId=${sessionScope.pnvo.momentorMemberVO.memberId}">나의 게시글 보기</a> | 나의 댓글 보기</h2>
@@ -23,7 +31,7 @@
 					<td>${list.communityBoardVO.boardNo }</td>
 					<td>${list.content }</td>
 					<td><a
-						href="${initParam.root }member_getCommunityByNo.do?boardNo=${list.communityBoardVO.boardNo}" title="${list.communityBoardVO.boardTitle }">
+						href="${initParam.root }my_getCommunityByNo.do?boardNo=${list.communityBoardVO.boardNo}" title="${list.communityBoardVO.boardTitle }">
 						원문보기</a>
 						</td>
 					<td>${list.replyDate }</td>

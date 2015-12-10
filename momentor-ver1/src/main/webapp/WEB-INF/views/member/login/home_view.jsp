@@ -151,7 +151,7 @@
 					<c:forEach items="${requestScope.communityTop5List }" var="list">
 						<tr>
 							<td>${list.ranking }</td>
-							<td>${fn:substring(list.boardTitle,0,4)}..</td>
+							<td><a href="${initParam.root }my_getCommunityByNo.do?boardNo=${list.boardNo}">${fn:substring(list.boardTitle,0,4)}..</a></td>
 							<td>${list.momentorMemberVO.nickName }</td>
 							<td>${list.memberHits }</td>
 							<td>${list.recommend }</td>

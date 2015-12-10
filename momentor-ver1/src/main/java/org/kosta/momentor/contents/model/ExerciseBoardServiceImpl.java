@@ -3,6 +3,7 @@ package org.kosta.momentor.contents.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -25,6 +26,7 @@ public class ExerciseBoardServiceImpl implements ExerciseBoardService {
 	public void deleteExerciseByAdmin(int eboardNo, String exerciseName) {
 				//먼저 게시물을 지우고 그 다음
 				//운동을 지운다.
+		exerciseBoardDAO.deleteExerciseImgFile(exerciseName);
 		exerciseBoardDAO.deleteExerciseBoardByAdmin(eboardNo);
 		exerciseBoardDAO.deleteExerciseByAdmin(exerciseName);
 		
@@ -80,11 +82,7 @@ public class ExerciseBoardServiceImpl implements ExerciseBoardService {
 		return result;
 	}
 
-	@Override
-	public ExerciseBoardVO getExerciseByNo(int boardNo) {
-		// TODO Auto-generated method stub
-		return exerciseBoardDAO.getExerciseByNo(boardNo);
-	}
+	
 
 	@Override
 	public void updateExerciseHits(int boardNo) {
@@ -115,4 +113,44 @@ public class ExerciseBoardServiceImpl implements ExerciseBoardService {
 			ListVO lvo=new ListVO(list,paging);
 	      return lvo;
 	   }
+	 
+	 @Override
+		public void insertUploadFile(String exerciseName, String imgName,
+				String imgPath) {
+
+			Map<String, String> map = new HashMap<String, String>();
+			
+			map.put("exerciseName", exerciseName);
+			map.put("imgName", imgName);
+			map.put("imgPath", imgPath);
+			
+			exerciseBoardDAO.registerImgFile(map);
+		}
+
+		@Override
+		public Map<String, Object> getExerciseByNo(int boardNo) {
+			
+			Map<String, Object> result = new HashMap<String, Object>();
+			ExerciseBoardVO ebvo = exerciseBoardDAO.getExerciseByNo(boardNo);
+			result.put("exerciseInfo", exerciseBoardDAO.getExerciseByNo(boardNo));
+			result.put("nameList",exerciseBoardDAO.getFileListByExerciseName(ebvo.getExerciseVO().getExerciseName()));
+			
+			
+			return result;
+		}
+
+		@Override
+		public void deleteExerciseImgFileByImgName(String exerciseName,
+				String imgName) {
+	Map<String, String> map = new HashMap<String, String>();
+	map.put("exerciseName", exerciseName);
+	map.put("imgName", imgName);
+	exerciseBoardDAO.deleteExerciseImgFileByImgName(map);
+		}
+
+		@Override
+		public List<Map<String, String>> getFileListByExerciseName(String exerciseName) {
+			
+			return exerciseBoardDAO.getFileListByExerciseName(exerciseName);
+		}
 }

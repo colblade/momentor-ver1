@@ -2,6 +2,7 @@ package org.kosta.momentor.contents.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kosta.momentor.cart.model.ExerciseVO;
 
@@ -34,4 +35,16 @@ public List<ExerciseBoardVO> getExerciseBoardListBestTop5ByHits();
 public List<ExerciseBoardVO> findByTitle(String word); // 운동게시판 전체 검색
 public List<ExerciseBoardVO> getSearchExerciseList(HashMap<String, String> paramMap); // 운동게시판 검색 페이지
 public int searchExerciseContent(String word); // 운동게시판 검색 총 개수
+
+//파일 업로드
+public void registerImgFile(Map<String, String> map); 
+//파일 리스트 불러오기
+public List<Map<String, String>> getFileListByExerciseName(String exerciseName);
+
+//사진 파일 삭제
+public void deleteExerciseImgFile(String exerciseName);
+
+//사진파일 개별삭제
+public void deleteExerciseImgFileByImgName(Map<String, String> map);
+
 }

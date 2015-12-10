@@ -62,7 +62,7 @@
 			aria-label="Next">
 				<span aria-hidden="true">&raquo;</span>
 			</a>
-	    </li>
+	      </li>
 		</c:if>
 	  </ul>
 	</nav>

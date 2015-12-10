@@ -88,10 +88,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
 		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/5) AS PAGE
 		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
-		FROM MEMBER_BOARD
+		FROM MEMBER_BOARD  WHERE MEMBERID = #{memberId}
 		ORDER BY MEMBER_DATE DESC)
-		) WHERE MEMBERID = #{memberId}
-		AND PAGE = #{pageNo}
+		)
+		WHERE PAGE = #{pageNo}
 	</select>
  	
 
@@ -110,10 +110,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	SELECT R.REPLY_NO, R.MEMBER_NO, R.MEMBERID, R.CONTENT, R.REPLY_DATE, M.TITLE FROM
 	(SELECT REPLY_NO, MEMBER_NO, MEMBERID, CONTENT, REPLY_DATE, CEIL(ROWNUM/5) AS PAGE FROM
 	(SELECT REPLY_NO, MEMBER_NO, MEMBERID, CONTENT, TO_CHAR(REPLY_DATE,'YYYY.MM.DD HH:MI') AS REPLY_DATE
-	FROM MEMBER_REPLY ORDER BY REPLY_DATE DESC)
+	FROM MEMBER_REPLY 
+	
+	WHERE MEMBERID = #{memberId}
+	ORDER BY REPLY_DATE DESC)
 	) R, MEMBER_BOARD M
-	WHERE M.MEMBERID = #{memberId}
-	AND R.MEMBER_NO=M.MEMBER_NO
+	WHERE  R.MEMBER_NO=M.MEMBER_NO
 	AND PAGE = #{pageNo}
 	</select>
 	<!-- 토탈 -->
@@ -144,6 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	<resultMap type="ebvo" id="ebvoMap">
  	
  	 	<result column="EXERCISENAME" property="exerciseVO.exerciseName"/>
+ 	 	<result column = "EXERCISEBODY" property="exerciseVO.exerciseBody"/>
  	 	<result column="EXERCISE_NO" property="boardNo"/>
  	 	<result column="TITLE" property="boardTitle"/>
  	 	<result column="EXERCISE_DATE" property="boardWdate"/>
@@ -199,9 +202,12 @@ M.MEMBERID = B.MEMBERID AND PAGE  =#{value}
  	
  	<!-- 운동 게시물 상세보기 -->
   <select id="getExerciseByNo" resultType="ebvo" resultMap="ebvoMap">
-  SELECT EXERCISENAME, EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE , CONTENT,MEMBERID
-  FROM EXERCISE_BOARD
-  WHERE EXERCISE_NO = #{value}
+   SELECT EB.EXERCISENAME, EB.EXERCISE_NO, EB.TITLE, TO_CHAR(EB.EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE , EB.CONTENT, EB.MEMBERID,
+  EX.EXERCISEBODY
+  FROM EXERCISE_BOARD EB, EXERCISE EX
+  WHERE 
+  EB.EXERCISENAME = EX.EXERCISENAME AND 
+  EXERCISE_NO = #{value}
   </select>
  
  	<!-- 운동게시판 조회수 증가 -->
@@ -368,17 +374,17 @@ WHERE RANKING<=5 ]]>
 	<delete id="deleteRecommend" parameterType="int">
 	DELETE FROM RECOMMEND_INFO WHERE MEMBER_NO=#{value}
 	</delete>
-	<!-- 운동게시판 검색 -->
+<!-- 운동게시판 검색 -->
   <select id="findByExerciseTitle" resultMap="ebvoMap" resultType="ebvo">
   SELECT B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH
 FROM exercise_board B, MOMENTOR_MEMBER M
-WHERE B.memberId = M.memberId and title like '%${value}%'
+WHERE B.memberId = M.memberId and title like '%${value}%' order by exercise_no desc
 <!-- 커뮤니티 검색 --> 
   </select>
   <select id="findByCommunityTitle" resultType="cbvo" resultMap="cbvoMap">
    SELECT C.MEMBER_NO, C.TITLE, C.MEMBER_DATE, C.MEMBER_HITS, M.NICKNAME,M.AUTH
 FROM MEMBER_BOARD C, MOMENTOR_MEMBER M
-WHERE C.memberId = M.memberId and title like '%${value}%' 
+WHERE C.memberId = M.memberId and title like '%${value}%' order by c.MEMBER_NO desc
   </select>
  <!-- 커뮤니티 검색 개수 -->
  <select id="searchContent" resultType="int">
@@ -388,15 +394,14 @@ WHERE C.memberId = M.memberId and title like '%${value}%'
  </select>
  
  <select id="getSearchCommunityList" resultMap="cbvoMap" >
-	SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
-		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/6) AS PAGE
-		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
-		FROM MEMBER_BOARD
-		ORDER BY MEMBER_DATE DESC)
-		)where page=#{pageNo} and title like '%${word}%'
-	</select>
-	
-	<!-- 운동게시판 검색 개수 -->
+   SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+      FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/5) AS PAGE
+      FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+      FROM MEMBER_BOARD where title like '%${word}%' ORDER BY MEMBER_NO DESC)
+      )where page=#{pageNo}
+   </select>
+   
+   <!-- 운동게시판 검색 개수 -->
  <select id="searchExerciseContent" resultType="int">
 SELECT count(*)
 FROM exercise_board B, MOMENTOR_MEMBER M
@@ -404,14 +409,35 @@ WHERE B.memberId = M.memberId and title like '%${value}%'
  </select>
  
  <select id="getSearchExerciseList" resultMap="ebvoMap" >
-	SELECT B.EXERCISENAME,B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.MEMBERID,B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH FROM(
+SELECT B.EXERCISENAME,B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.MEMBERID,B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH FROM(
 SELECT EXERCISE_NO, TITLE, EXERCISE_DATE, CEIL(ROWNUM/5) AS PAGE, MEMBERID,EXERCISENAME ,EXERCISE_HITS FROM(
 SELECT EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE, MEMBERID,EXERCISENAME,EXERCISE_HITS
-FROM EXERCISE_BOARD ORDER BY EXERCISE_NO DESC
+FROM EXERCISE_BOARD where title like '%${word}%' ORDER BY EXERCISE_NO DESC
 )
 ) B, MOMENTOR_MEMBER M,EXERCISE E
 WHERE B.EXERCISENAME = E.EXERCISENAME AND
-M.MEMBERID = B.MEMBERID AND PAGE=#{pageNo} and title like '%${word}%' 
-	</select>
+M.MEMBERID = B.MEMBERID AND PAGE=#{pageNo} 
+   </select>
+	
+	<!-- img 등록 -->
+	<insert id="registerImgFile" parameterType="map">
+ 	INSERT INTO EXERCISE_IMG (EXERCISENAME, IMGNAME, IMGPATH)
+ 	VALUES (#{exerciseName},#{imgName},#{imgPath})
+ </insert>
+
+<!-- 해당 운동 이미지 가지고오기 -->
+<select id="selectFileList" resultType="map">
+	SELECT EXERCISENAME , IMGNAME ,IMGPATH  FROM EXERCISE_IMG WHERE EXERCISENAME=#{value}
+</select>
+
+ <!-- IMG 전체 삭제-->
+ <delete id="deleteExerciseImgFile">
+ 
+ DELETE FROM EXERCISE_IMG WHERE EXERCISENAME = #{exerciseName}
+ </delete>
+ <!-- img 개별 삭제 -->
+ <delete id = "deleteExerciseImgFileByImgName">
+ DELETE FROM EXERCISE_IMG WHERE EXERCISENAME = #{exerciseName} AND IMGNAME = #{imgName}
+ </delete>
 	
  </mapper>
