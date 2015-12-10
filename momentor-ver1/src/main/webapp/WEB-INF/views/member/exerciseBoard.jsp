@@ -64,12 +64,13 @@
 			</a>
 	    </li>
 		</c:if>
-		<c:if test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">		 
-	<br><br>
-				<li><a href="${initParam.root}admin_contentmgr_writeView.do">WRITE</a></li>
-
-		<br><br>
-	</c:if>	
 	  </ul>
 	</nav>
 </div>
+<nav>
+  <ul class="pager">
+    <c:if test="${sessionScope.pnvo.momentorMemberVO.auth==1 }">	
+    	<li class="next"><a href="${initParam.root}admin_contentmgr_writeView.do">WRITE</a></li>
+	</c:if>	
+  </ul>
+</nav>

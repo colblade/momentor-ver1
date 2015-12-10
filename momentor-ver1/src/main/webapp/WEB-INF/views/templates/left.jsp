@@ -21,18 +21,17 @@
               return false;
            } else{
               $.ajax({
-                 type:"get",
-                 url:"check_idCheck.do?memberName=" + $("#nameId").val() + "&memberEmail=" + $("#mailId").val(),
-                 dataType:"json",
+            	type:"get",
+  				url:"check_idCheck.do?memberName=" + $("#nameId").val() + "&memberEmail=" + $("#mailId").val(),
                  success:function(data){
-                    if(data != null){
-                       $("#showId").html("회원님의 아이디는 " + "<font color='red'>"+data.memberId + "</font> 입니다.");
-                    } else{
-                       $("#showId").html("일치하는 회원정보가 없습니다!");
-                       $("#nameId").val("");
-                       $("#mailId").val("");
-                       $("#nameId").focus();
-                    }
+                	 if(data == ""){
+ 						$("#showId").html("일치하는 회원정보가 없습니다!");
+ 						$("#nameId").val("");
+ 						$("#mailId").val("");
+ 						$("#nameId").focus();
+ 					} else{
+ 						$("#showId").html("회원님의 아이디는 " + "<font color='red'>"+data.memberId + "</font> 입니다.");
+ 					}
                  }
               });
            }
@@ -51,18 +50,17 @@
               return false;
            } else{
               $.ajax({
-                 type:"get",
-                 url:"check_passCheck.do?memberId=" + $("#idPass").val() + "&memberEmail=" + $("#mailPass").val(),
-                 dataType:"json",
+            	  type:"get",
+  				url:"check_passCheck.do?memberId=" + $("#idPass").val() + "&memberEmail=" + $("#mailPass").val(),
                  success:function(data){
-                    if(data != null){
-                       $("#showPass").html("회원님의 비밀번호는 " + "<font color='red'>"+data.memberEmail + "</font>로 전송되었습니다.");
-                    } else{
-                       $("#showId").html("일치하는 회원정보가 없습니다!");
-                       $("#nameId").val("");
-                       $("#mailId").val("");
-                       $("#nameId").focus();
-                    }
+                	 if(data == ""){
+ 						$("#showPass").html("일치하는 회원정보가 없습니다!");
+ 						$("#idPass").val("");
+ 						$("#mailPass").val("");
+ 						$("#idPass").focus();
+ 					} else{
+ 						$("#showPass").html("회원님의 비밀번호는 " + "<font color='red'>"+data.memberEmail + "</font>로 전송되었습니다.");
+ 					}
                  }
               });
            }
@@ -341,29 +339,26 @@
 		키 : ${sessionScope.pnvo.memberHeight}cm <br>
 		몸무게 : ${sessionScope.pnvo.memberWeight}kg  <br>
 		<c:choose>
-			<c:when test="${sessionScope.pnvo.bmi >= 0 && sessionScope.pnvo.bmi < 18.5}">
+			<c:when test="${sessionScope.pnvo.bmi < 18.5}">
 				<a href="#" data-html="true" data-title="저체중" data-placement="bottom">
-				<font color="red">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="red" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 18.5 && sessionScope.pnvo.bmi < 23}">
 				<a href="#" data-html="true" data-title="정상" data-placement="bottom">
-				<font color="greenyellow">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="greenyellow" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 23 && sessionScope.pnvo.bmi < 25}">
 				<a href="#" data-html="true" data-title="과체중" data-placement="bottom">
-				<font color="yellow">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="yellow" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 25 && sessionScope.pnvo.bmi < 30}">
 				<a href="#" data-html="true" data-title="비만" data-placement="bottom">
-				<font color="orange">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="orange" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 30}">
 				<a href="#" data-html="true" data-title="고도비만" data-placement="bottom">
-				<font color="red">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="red" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
-			<c:otherwise>
-				bmi : ${sessionScope.pnvo.bmi}<br>
-			</c:otherwise>
 		</c:choose>
     </font><hr>
 </c:when>
@@ -385,10 +380,10 @@
    <!-- button class="btn btn-sm btn-primary btn-block" type="submit" id="register">회원가입</button>-->
 <!-- Button trigger modal -->
 <a data-toggle="modal" href="#registerModal"class="btn btn-sm btn-primary btn-block">회원가입</a>
-<div><h6><a data-toggle="modal" href="#myModal">아이디찾기</a>
+<div><h6><a data-toggle="modal" href="#idModal">아이디찾기</a>
 | <a data-toggle="modal" href="#passModal">비밀번호찾기</a></h6></div>
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
+<div class="modal fade" id="idModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
   <div class="modal-dialog">
   <div class="idFindCheck">
     <div class="modal-content">   
@@ -410,13 +405,13 @@
   </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
   <div class="modal-dialog">
   <div class="idFindCheck">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="idModalLabel">비밀번호찾기</h4>
+        <h4 class="modal-title" id="passModalLabel">비밀번호찾기</h4>
       </div>
       <div class="modal-body">
           ID : <input type="text" class="form-control"  name="memberId" id="idPass"><br>
