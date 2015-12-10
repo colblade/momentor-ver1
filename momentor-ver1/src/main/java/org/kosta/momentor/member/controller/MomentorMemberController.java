@@ -125,22 +125,24 @@ public class MomentorMemberController {
 		return mvo;
 	}
 	@Autowired
-	private EmailVO email;
-	@RequestMapping("check_passCheck.do")
-	@ResponseBody
-	public MomentorMemberVO passwordCheck(MomentorMemberVO vo) throws Exception{		
-        MomentorMemberVO mvo = momentorMemberService.passwordCheck(vo);
-        String id = mvo.getMemberId();
-        String e_mail = mvo.getMemberEmail();
-        String pass = mvo.getMemberPassword();
-        if(pass != null) {
-            email.setContent("비밀번호는 "+pass+" 입니다.");
-            email.setReceiver(e_mail);
-            email.setSubject(id+"님 비밀번호 찾기 메일입니다.");
-			momentorMemberService.SendEmail(email);
-        }	
-		return mvo;
-	}
+	   private EmailVO email;
+	   @RequestMapping("check_passCheck.do")
+	   @ResponseBody
+	   public MomentorMemberVO passwordCheck(MomentorMemberVO vo) throws Exception{      
+	        MomentorMemberVO mvo = momentorMemberService.passwordCheck(vo);
+	        if(mvo != null){
+	           String id = mvo.getMemberId();
+	            String e_mail = mvo.getMemberEmail();
+	            String pass = mvo.getMemberPassword();
+	            if(pass != null) {
+	                email.setContent("비밀번호는 "+pass+" 입니다.");
+	                email.setReceiver(e_mail);
+	                email.setSubject(id+"님 비밀번호 찾기 메일입니다.");
+	             momentorMemberService.SendEmail(email);
+	          } 
+	        }        
+	      return mvo;
+	   }
 	
 	@RequestMapping("my_getPlannerList.do")
 	@ResponseBody
