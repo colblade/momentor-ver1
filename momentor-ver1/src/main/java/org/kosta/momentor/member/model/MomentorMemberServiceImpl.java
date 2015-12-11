@@ -148,10 +148,10 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 	}
 
 	@Override
-	public MomentorMemberVO deleteMemberByAdmin(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public int deleteMemberByAdmin(String id) {
+		return momentorMemberDAO.deleteMemberByAdmin(id);
 	}
+
 
 	@Override
 	public void deleteMemeber(MomentorMemberVO vo) {

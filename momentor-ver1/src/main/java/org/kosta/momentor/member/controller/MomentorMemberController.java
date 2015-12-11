@@ -15,6 +15,7 @@ import java.util.List;
 
 
 
+
 //github.com/colblade/Momentor-test.git
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +82,6 @@ public class MomentorMemberController {
 	   public ModelAndView login(HttpServletRequest request, MomentorMemberVO vo) {
 		   String path = "login_fail";
 	      MomentorMemberPhysicalVO rvo = momentorMemberService.login(vo);
-	     System.out.println(rvo);
 	     if (rvo != null) {
 	         request.getSession().setAttribute("pnvo", rvo);
 	         int auth=rvo.getMomentorMemberVO().getAuth();
@@ -90,7 +90,7 @@ public class MomentorMemberController {
 	         }else if(auth==1){
 	        	 path="admin_login_ok";
 	         }
-	      }
+	     }
 	     return new ModelAndView(path);
 	   }
 	@RequestMapping("logout.do")
@@ -376,6 +376,31 @@ public class MomentorMemberController {
 		mv.addObject("search", search);
 		mv.addObject("list", momentorMemberService.managerFindMemberByNickName(search, pageNo));
 	}
+		return mv;
+	}
+	@RequestMapping("deleteMemberByAdmin.do")
+	public ModelAndView deleteMemberByAdmin(String memberId,String pageNo,String searchMenu,String search){
+		System.out.println(memberId);
+		momentorMemberService.deleteMemberByAdmin(memberId);
+		ModelAndView mv=new ModelAndView("admin_my_memberList","list",momentorMemberService.managerGetAllMember(pageNo));
+		if(searchMenu!=null&&search!=null){
+		if(searchMenu.equals("id")){
+			mv.addObject("searchMenu",searchMenu);
+			mv.addObject("search", search);
+			mv.addObject("list", momentorMemberService.managerFindMemberById(search, pageNo));
+			mv.setViewName("admin_my_find_member_result");
+		}else if(searchMenu.equals("name")){
+			mv.addObject("searchMenu",searchMenu);
+			mv.addObject("search", search);
+			mv.addObject("list", momentorMemberService.managerFindMemberByName(search, pageNo));
+			mv.setViewName("admin_my_find_member_result");
+		}else if(searchMenu.equals("nickName")){
+			mv.addObject("searchMenu",searchMenu);
+			mv.addObject("search", search);
+			mv.addObject("list", momentorMemberService.managerFindMemberByNickName(search, pageNo));
+			mv.setViewName("admin_my_find_member_result");
+		}
+		}
 		return mv;
 	}
 }

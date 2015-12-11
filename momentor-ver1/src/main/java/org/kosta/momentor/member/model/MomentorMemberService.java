@@ -22,7 +22,7 @@ public interface MomentorMemberService {
 	public MomentorMemberVO findMemberById(String name,String email);		//회원이 이름과 이메일로 아이디 찾기
 	public MomentorMemberVO findMemberByPassword(String id, String name,String email);		//회원이 아이디, 이름, 이메일로 비밀번호 찾기	
 	public double bmi(MomentorMemberPhysicalVO vo);
-	public MomentorMemberVO deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
+	public int deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
 	public void deleteMemeber(MomentorMemberVO vo); // 회원탈퇴
 
 

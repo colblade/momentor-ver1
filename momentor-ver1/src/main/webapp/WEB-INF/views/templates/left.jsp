@@ -7,6 +7,7 @@
    	   var checkNickNameFlag=false;
    	   var checkPassFlag=false;
    	   var checkEmailFlag=false;
+   	   var checkNameFlag=false;
        $("#logout").click(function(){
           if(confirm("로그아웃하시겠습니까?")){
              location.href="${initParam.root}/logout.do";
@@ -82,10 +83,20 @@
      $("#back").click(function(){
         location.href="${initParam.root}home.do";
      });
+     function chkId(str)
+     {
+      var reg_Id = /^[a-zA-Z0-9]+$/;
+      if(!reg_Id.test(str))
+      {
+       return false;
+      }
+      return true;
+     }
      $("#id").keyup(function(){
     	   var id=$("#id").val().trim();
-    	   if(id.length<4 || id.length>10){
-    	      $("#idCheckView").html("아이디는 4자이상 10자 이하여야 함!").css(
+    	   $('#id').val($('#id').val().trim()); 
+    	   if(!chkId($('#id').val().trim())&&id.length<4||id.length>10){
+    	      $("#idCheckView").html("아이디는 4자이상 10자 이하에 공백이 없어야 하며 한글은 불가능 합니다.").css(
     	            "color","pink");
     	      checkIdFlag=false;
     	      checkResultId="";
@@ -114,6 +125,7 @@
     	});
     	$("#nick").keyup(function(){
     	   var nick=$("#nick").val().trim();
+    	   $('#nick').val($('#nick').val().trim()); 
     	   if(nick.length<4 || nick.length>10){
     	      $("#nickCheckView").html("닉네임은 4자이상 10자 이하여야 함!").css(
     	            "color","pink");
@@ -145,6 +157,7 @@
     	$("#emailOverlapping").click(function(){
     		  var memberEmail=$("#email1").val().trim();
     		   var memberEmail2=$("#join_email2").val().trim();
+    		 	var regex=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
     		   if($("#join_email2").val()==""){
     		    	  $("#emailCheckView").html("이메일 주소를 선택해주세요.").css(
     		  	            "color","orange");
@@ -152,6 +165,15 @@
     		    	  checkEmailFlag=false;
     			      return;
     		   }
+    		  	if(regex.test(memberEmail+"@"+memberEmail2) == false) {
+    	    		  $("#emailCheckView").html("잘못된 이메일 형식입니다.").css(
+    		                  "color","red");      
+    	    		  checkEmailFlag=false;
+    	    	 return false;
+    	    	} else {
+    	    		  $("#emailCheckView").html("");
+    	    		  checkEmailFlag=true;
+    	    	}
     		   $.ajax({
     		      type:"POST",
     		      url:"emailcheck.do",            
@@ -188,18 +210,19 @@
       if(!chkPwd($('#pass').val().trim()))
       {
          $("#chkpwd").css("color","red").text("비밀번호를 확인하세요.(영문,숫자를 혼합하여 6~12자 이내)");
-         p=0;
+         checkPassFlag=false;
        return false;
       }else{
          $('#chkpwd').text("")
       }
      });
      $("#checkPass").keyup(function(){
-    	   if($("#pass").val()!=$("#checkPass").val()){
+    	 $('#checkPass').val($('#checkPass').val().trim()); 
+    	   if($("#pass").val()!=$("#checkPass").val()&&$("#pass").val()!=""){
     	      $("#checkPassword").css("color","red").text("비밀번호가 서로 다릅니다.")
     	      checkPassFlag=false;
     	      return false;
-    	   }else if($("#pass").val()==$("#checkPass").val()){
+    	   }else if($("#pass").val()==$("#checkPass").val()&&$("#pass").val()!=""){
     		   checkPassFlag=true;
     	      $("#checkPassword").css("color","Lime").text("비밀번호가 서로 일치합니다")
     	      
@@ -208,14 +231,62 @@
     	$("#pass").keyup(function(){
     		   if($("#pass").val()!=$("#checkPass").val() && $("#checkPass").val() != ""){
     		      $("#checkPassword").css("color","red").text("비밀번호가 서로 다릅니다.")
+    		          $("#checkPass").val("").focus();
     		      checkPassFlag=false;
     		      return false;
-    		   }else if($("#pass").val()==$("#checkPass").val() && $("#checkPass").val() != ""){
+    		   }else if($("#pass").val()==$("#checkPass").val() && $("#checkPass").val() != ""&&!chkPwd($('#pass').val().trim())){
     			   checkPassFlag=true;
     		      $("#checkPassword").css("color","Lime").text("비밀번호가 서로 일치합니다")
     		      
     		   }
-    		});
+    		});  
+    		 function chkName(str)
+    	     {
+    	      var reg_Name =/^[가-힣a-zA-Z]+$/;
+    	      if(!reg_Name.test(str))
+    	      {
+    	       return false;
+    	      }
+    	      return true;
+    	     }
+    	$("#name").keyup(function(){
+    		 $('#name').val($('#name').val().trim()); 
+    		 if(!chkName($('#name').val().trim())){
+    		      $("#nameCheckView").html("이름은 한글또는 영문으로 입력해주세요!").css(
+    	    	            "color","red");
+    		      checkNameFlag=false;
+    		      return false;
+    		 }else{
+    			 $("#nameCheckView").html("");
+    			 checkNameFlag=true;
+    		 }
+    	});
+    	
+    	$("#address").keyup(function(){
+    		$("#address").val($("#address").val().trim());
+    	});
+    	$("#email1").keyup(function(){
+    		$("#email1").val($("#email1").val().trim());
+    	});
+    	$("#join_email2").keyup(function(){
+    		$("#join_email2").val($("#join_email2").val().trim());
+    	});
+    	$("#height").keyup(function(){
+    		$("#height").val($("#height").val().trim());
+    		if($("#height").val().length > 3){
+    			alert("3자를 넘기지 마시오");
+    			$(this).val($(this).val().replace(/[0-9]|[^\!-z]/gi,""));
+    			return false;
+    		}
+    	});
+    	$("#weight").keyup(function(){
+    		$("#weight").val($("#weight").val().trim());
+    		if($("#weight").val().length > 3){
+    			alert("3자를 넘기지 마시오");
+    			$(this).val($(this).val().replace(/[0-9]|[^\!-z]/gi,""));
+    			return false;
+    		}
+    	});
      $("#momentorRegister").submit(function(){
     	   if($("#id").val()==""){
     	      alert("아이디를 입력하세요.");
@@ -302,6 +373,10 @@
     	     alert("이메일을 확인해주세요!");
     	     return false;
     	  }
+    	 if(checkNameFlag!=true){
+    		 alert("이름을 확인해주세요!");
+    		 return false;
+    	 }
      });
      $("#closeRegister").click(function(){
          $("#id").val("");
@@ -339,26 +414,29 @@
 		키 : ${sessionScope.pnvo.memberHeight}cm <br>
 		몸무게 : ${sessionScope.pnvo.memberWeight}kg  <br>
 		<c:choose>
-			<c:when test="${sessionScope.pnvo.bmi < 18.5}">
+			<c:when test="${sessionScope.pnvo.bmi >= 0 && sessionScope.pnvo.bmi < 18.5}">
 				<a href="#" data-html="true" data-title="저체중" data-placement="bottom">
-				<font color="red" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="red">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 18.5 && sessionScope.pnvo.bmi < 23}">
 				<a href="#" data-html="true" data-title="정상" data-placement="bottom">
-				<font color="greenyellow" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="greenyellow">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 23 && sessionScope.pnvo.bmi < 25}">
 				<a href="#" data-html="true" data-title="과체중" data-placement="bottom">
-				<font color="yellow" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="yellow">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 25 && sessionScope.pnvo.bmi < 30}">
 				<a href="#" data-html="true" data-title="비만" data-placement="bottom">
-				<font color="orange" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="orange">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
 			<c:when test="${sessionScope.pnvo.bmi >= 30}">
 				<a href="#" data-html="true" data-title="고도비만" data-placement="bottom">
-				<font color="red" style="background-color: black;">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
+				<font color="red">bmi : ${sessionScope.pnvo.bmi}</font><br></a>
 			</c:when>
+			<c:otherwise>
+				bmi : ${sessionScope.pnvo.bmi}<br>
+			</c:otherwise>
 		</c:choose>
     </font><hr>
 </c:when>
@@ -380,10 +458,10 @@
    <!-- button class="btn btn-sm btn-primary btn-block" type="submit" id="register">회원가입</button>-->
 <!-- Button trigger modal -->
 <a data-toggle="modal" href="#registerModal"class="btn btn-sm btn-primary btn-block">회원가입</a>
-<div><h6><a data-toggle="modal" href="#idModal">아이디찾기</a>
+<div><h6><a data-toggle="modal" href="#myModal">아이디찾기</a>
 | <a data-toggle="modal" href="#passModal">비밀번호찾기</a></h6></div>
 <!-- Modal -->
-<div class="modal fade" id="idModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
   <div class="modal-dialog">
   <div class="idFindCheck">
     <div class="modal-content">   
@@ -405,13 +483,13 @@
   </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="idModalLabel" aria-hidden="true">
   <div class="modal-dialog">
   <div class="idFindCheck">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="passModalLabel">비밀번호찾기</h4>
+        <h4 class="modal-title" id="idModalLabel">비밀번호찾기</h4>
       </div>
       <div class="modal-body">
           ID : <input type="text" class="form-control"  name="memberId" id="idPass"><br>
@@ -452,7 +530,7 @@
       </div>
             <div class="form-group">
          <label for="">이름</label>
-        <input type="text" name="memberName" id="name" class="form-control"placeholder="이름">
+        <input type="text" name="memberName" id="name" class="form-control"placeholder="이름"><span id="nameCheckView"></span>
          </div>
          <div class="form-group">
             <label for="">생년월일</label>

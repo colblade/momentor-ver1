@@ -78,12 +78,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<delete id="myPageDeleteMemberPhysicalInfo">
 		delete from MOMEMTOR_MEMBER_PHYSICAL where memberId=#{value}
 	</delete>
-		<select id="managerGetAllMember" resultMap="physicalRM">
+			<select id="managerGetAllMember" resultMap="physicalRM">
         	select M.MEMBERID,M.MEMBERPASSWORD,M.MEMBERNAME,M.BIRTHYEAR,M.BIRTHMONTH,M.BIRTHDAY,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.MEMBEREMAIL,M.GENDER,M.MEMBERADDRESS,P.BMI from (
         select MEMBERID,MEMBERPASSWORD,MEMBERNAME,BIRTHYEAR,BIRTHMONTH,BIRTHDAY,NICKNAME,memberEmail,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
-               select MEMBERID,MEMBERPASSWORD AS memberPassword,MEMBERNAME,BIRTHYEAR as birthyEar,BIRTHMONTH as birthMonth,BIRTHDAY as birthDay,NICKNAME,MEMBEREMAIL AS memberEmail,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER  order by MEMBERID desc
+               select MEMBERID,MEMBERPASSWORD AS memberPassword,MEMBERNAME,BIRTHYEAR as birthyEar,BIRTHMONTH as birthMonth,BIRTHDAY as birthDay,NICKNAME,MEMBEREMAIL AS memberEmail,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where AUTH=2
            )
-       ) M,MOMEMTOR_MEMBER_PHYSICAL P where M.MEMBERID=P.MEMBERID and page=#{value} AND M.AUTH=2
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where M.MEMBERID=P.MEMBERID   and page=#{value}
 	</select>
 		<!-- 멤버토탈 -->
      <select id="totalMemberContent" resultType="int">
@@ -93,25 +93,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="managerFindMemberById" resultMap="physicalRM" parameterType="map" >
 	   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
         select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
-               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERID like '%'||#{memberId}||'%' order by MEMBERID desc
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERID like '%'||#{memberId}||'%'  AND AUTH=2 
            )
-       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.AUTH=2 AND M.MEMBERID=P.MEMBERID   
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.MEMBERID=P.MEMBERID   
 	</select>
-		<!-- 관리자가 이름으로 회원검색 -->
+			<!-- 관리자가 이름으로 회원검색 -->
 	<select id="managerFindMemberByName" resultMap="physicalRM"  parameterType="map" >
 		   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
         select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
-               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERNAME like '%'||#{memberName}||'%' order by MEMBERNAME desc
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERNAME like '%'||#{memberName}||'%'  AND AUTH=2
            )
-       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.AUTH=2 AND M.MEMBERID=P.MEMBERID   
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.MEMBERID=P.MEMBERID   
 	</select>
 		<!-- 관리자가 닉네임으로 회원검색 -->
 	<select id="managerFindMemberByNickName" resultMap="physicalRM" parameterType="map" >
 		   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
         select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
-               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  NICKNAME like '%'||#{nickName}||'%' order by NICKNAME desc
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  NICKNAME like '%'||#{nickName}||'%'AND AUTH=2
            )
-       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.AUTH=2 AND M.MEMBERID=P.MEMBERID   
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo}  AND M.MEMBERID=P.MEMBERID   
 	</select> 
 		<select id="totalMemberFindByIdContent" resultType="int">
 	 select count(*) from MOMENTOR_MEMBER where auth=2 and memberId like '%'||#{value}||'%'
@@ -125,4 +125,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<select id="emailOverlappingCheck" resultType="int">
       select count(*) from MOMENTOR_MEMBER where memberEmail=#{value}
       </select> 
+            <update id="deleteMemberByAdmin" parameterType="mvo">
+      update MOMENTOR_MEMBER
+		set auth=8
+		where memberId=#{momentorMemberVO.memberId}
+      </update>
  </mapper>

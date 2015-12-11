@@ -26,7 +26,7 @@ public interface MomentorMemberDAO {
 	// 표준체중 공식 : 키(m) x 키(m) x bmi(여자는 21, 남자는 22)
 	// 브로카법 표준체중 : 키(cm) - 100 x (여자는 0.85, 남자는 0.9)
 	// bmi 공식 찾다 보니까 저런것도 나오길래 정보 공유겸 넣어 놓음
-	public MomentorMemberVO deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
+	public int deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
 	public void deleteMemeber(MomentorMemberVO vo); // 회원탈퇴
 	public int totalMemberContent();
 	public int totalMemberFindByIdContent(String memberId);
