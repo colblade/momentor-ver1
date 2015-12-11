@@ -3,6 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="info" value="${requestScope.info }" />
 <script type="text/javascript">
+
 $(document).ready(function(){
     /*  게시글 삭제 버튼 클릭시 */
     $("#deleteBtn").click(function(){
@@ -61,20 +62,20 @@ $(document).ready(function(){
    		 alert("내용을 입력해주세요");
    		 return false;
    	 }else{
+   		 var sendText=encodeURIComponent($('[name=content]').val());
    		 $.ajax({
    			 type:"post",
    			 url:"my_registReply.do",
-   			 data:"momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&communityBoardVO.momentorMemberVO.memberId=${info.momentorMemberVO.memberId}&communityBoardVO.boardNo=${info.boardNo}&content="+$('[name=content]').val(),
+   			 data:"momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&communityBoardVO.momentorMemberVO.memberId=${info.momentorMemberVO.memberId}&communityBoardVO.boardNo=${info.boardNo}&content="+sendText,
    			 success:function(result){
-   				 $("#replyView").show();
+       			$("#replyView").show();			 
           			  showReplyList(result);
-          			  $("[name=content]").val("");
           			$("#replyBtn").val("접기▲");
+          			$("[name=content]").val("");
           		  }//success
    		 });//ajax
    	 }//else
     });
-    
   //추천
  	$("#recommendImg").on("click", "#recImg", function(){
  	
@@ -146,25 +147,31 @@ function updateReply(replyNo){
 		  type:"get",
 		  url:"my_getReplyList.do?boardNo=${info.boardNo}",
 		  success:function(result){
-			 var mess="<table>";
+			  var decodeText="";
+			 var mess="<table width='765' style='table-layout:fixed;'>";
 			  	$.each(result,function(index,replyList){
 				 //덧글 리스트 만큼 돌린다
+				 var Ca = /\+/g; //문자열 " "을 의미하는 문자열
 				 if(replyNo==replyList.replyNo){//돌리는 도중 클릭한 repNo와 each로 돌고있는 repNo가 일치하면 댓글 대신 수정공간 제공
-					mess+="<tr><td><h5>"+replyList.momentorMemberVO.nickName+"</h5>";
-   	   		mess+="<textarea style='resize:none' rows='3' cols='50' class='form-control' name='updateReplyContent' >"+replyList.content+"</textarea>";
-   	   		mess+="<input type='button' id='updateBtn' value='수정' onclick='updateReplyFinal("+replyNo+")'></td></tr>";
+					decodeText=decodeURIComponent(replyList.content.replace(Ca, " "));
+					mess+="<tr><td colspan='2'><h5>"+replyList.momentorMemberVO.nickName+"</h5></td></tr>";
+		   	   		mess+="<tr><td colspan='2'><textarea style='resize:none' rows='3' cols='40' class='form-control' name='updateReplyContent' >"+decodeText+"</textarea>";
+		   	   		mess+="&nbsp;<input class='btn btn-default' type='button' id='updateBtn' value='수정' onclick='updateReplyFinal("+replyNo+")'></td></tr>";
 				 }else{//일반 댓글 출력
-				  mess+="<tr><td><h5>"+replyList.momentorMemberVO.nickName+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+replyList.replyDate;
-				  var pnvo="${sessionScope.pnvo.momentorMemberVO.memberId}"
-				  var pnvo2=replyList.momentorMemberVO.memberId
-				  if(pnvo==pnvo2){
-						  mess+="&nbsp;&nbsp;<input type='button' class='updateReply' value='수정' onclick='updateReply("+replyList.replyNo+")'>";
-						  mess+="&nbsp;&nbsp;<input type='button' class='deleteReply' value='삭제' onclick='deleteReply("+replyList.replyNo+")'>";
-					  }   //본인 댓글 비	교 if             				 
-  				  mess+="</h5><pre>&nbsp;"+replyList.content+"</pre></td></tr>";       					       					 
+					mess+="<tr><td><h5>"+replyList.momentorMemberVO.nickName+"</td>";
+					mess+="<td align='right'>작성일시 : "+replyList.replyDate+"</h5>&nbsp;&nbsp;&nbsp;"
+					var pnvo="${sessionScope.pnvo.momentorMemberVO.memberId}"
+					var pnvo2=replyList.momentorMemberVO.memberId
+				if(pnvo==pnvo2){
+					  mess+="<input type='button' class='btn btn-default' value='수정' onclick='updateReply("+replyList.replyNo+")'>";//수정버튼
+					  mess+="&nbsp;&nbsp;<input type='button' class='btn btn-default' value='삭제' onclick='deleteReply("+replyList.replyNo+")'></td></tr>";//삭제버튼
+					  }   //본인 댓글 비	교 if             	
+					  // jquery ajax 에서 controller로 부터 받을때 디코딩 처리
+					  decodeText=decodeURIComponent(replyList.content.replace(Ca, " ")); //공백문자(" ")가 "+"로 출력되므로 replace를 통해 변환
+					  mess+="<tr><td colspan='2'><pre style='word-break: break-all;'>&nbsp;"+decodeText+"</pre></td></tr>";//덧글내용				       					 
 					 }//else
 				  });//each
-				  mess+="</table>";
+				  mess+="</table>"
 				 $("#replyView").html(mess);
  			}//success   			
  		});
@@ -174,35 +181,52 @@ function updateReply(replyNo){
 }
 /* 디비에서 댓글 수정 */
 function updateReplyFinal(replyNo){
-	var content = $("[name=updateReplyContent]").val();
-  $.ajax({
-	  type:"get",
-	  url:"my_updateReply.do",
-	  data:"boardNo=${info.boardNo}&replyNo="+replyNo+"&updateReplyContent="+content,
-	  success:function(result){
-		  $("#replyView").show();
-			  showReplyList(result);
-			$("#replyBtn").val("접기▲");
-	  }
-  });
+	if($('[name=updateReplyContent]').val()==""){
+		alert("수정 내용을 입력해 주세요");
+		return false;
+	}else{
+		var updateText=encodeURIComponent($('[name=updateReplyContent]').val());
+		  $.ajax({
+			  type:"post",
+			  url:"my_updateReply.do",
+			  data:"boardNo=${info.boardNo}&replyNo="+replyNo+"&updateReplyContent="+updateText,
+			  success:function(result){
+				  $("#replyView").show();
+					  showReplyList(result);
+					$("#replyBtn").val("접기▲");
+			  }
+		  });	
+	}
 }
 /* 목록 출력 공통 사항 */
 function showReplyList(result){
-  var mess="<table>";
+  var mess="";
+  if(result.length==0){
+	  $("#replyView").html("<pre>작성된 댓글이 없습니다. 댓글을 작성해 보세요!</pre>");
+	  return false
+  }else{
+	  var decodeText="";
+	  var Ca = /\+/g;
+	  mess+="<table width='765' style='table-layout:fixed;'>";
 	  $.each(result,function(index,replyList){
 		 // alert(replyList); 리턴 받는 값은 replyVO
-		  mess+="<td id='rep_"+replyList.replyNo+"'><h5>"+replyList.momentorMemberVO.nickName+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+replyList.replyDate;
+		  mess+="<tr><td><h5>"+replyList.momentorMemberVO.nickName+"</td>";//닉네임
+		  mess+="<td align='right'>작성일시 : "+replyList.replyDate+"</h5>&nbsp;&nbsp;&nbsp;";//일시
 		  var pnvo="${sessionScope.pnvo.momentorMemberVO.memberId}"
 		  var pnvo2=replyList.momentorMemberVO.memberId
-		  if(pnvo==pnvo2){
-			  mess+="&nbsp;&nbsp;<input type='button' class='updateReply' value='수정' onclick='updateReply("+replyList.replyNo+")'>";
-			  mess+="&nbsp;&nbsp;<input type='button' class='deleteReply' value='삭제' onclick='deleteReply("+replyList.replyNo+")'>";
-		  }                				 
-		  mess+="</h5><pre>&nbsp;"+replyList.content+"</pre></td></table>";
+		  if(pnvo==pnvo2){//본인 유무
+			  mess+="<input type='button' class='btn btn-default' value='수정' onclick='updateReply("+replyList.replyNo+")'>";//수정버튼
+			  mess+="&nbsp;&nbsp;<input type='button' class='btn btn-default' value='삭제' onclick='deleteReply("+replyList.replyNo+")'></td></tr>";//삭제버튼
+		  }       
+		  decodeText=decodeURIComponent(replyList.content.replace(Ca, " "));
+		  mess+="<tr><td colspan='2'><pre style='word-break: break-all;'>&nbsp;"+decodeText+"</pre></td></tr>";//덧글내용
 	  });
+	  mess+="</table>";
 	  $("#replyView").html(mess);//html로 mess를 넣을때 jQuery형식으로 넘겨주면 인식 불가 -> undefined 출력된다
 	  											// -> onclick으로 메서드가 넘어간 상태에서 textarea의 val을 받아온다
- }
+ 	}//else, 덧글이 있을경우
+}//function
+
 </script>
 <div class="container">
 
@@ -256,12 +280,13 @@ function showReplyList(result){
                  <br>
        <input type ="hidden" value = "${sessionScope.pnvo.momentorMemberVO.memberId }" id = "memberId">
         <input type='hidden' value='${info.boardNo}' name='boardNo' id = "boardNo">
-            </p>
+            </p>        
              <div class="row marketing">
-               <div class="col-lg-6" id="replyView">
+               <div id="replyView" >
                </div>
-               <textarea style="resize:none" rows="3" cols="50" class="form-control" name="content"></textarea>
-	                  <input type="button" id="registReply" value="확인">
+               <hr>
+               <textarea style="resize:none" rows="3" cols="40" class="form-control" name="content"></textarea>
+	                  <input type="button" class="btn btn-default" id="registReply" value="등록하기" >
 	                  <hr>
 	           </div>
 	           <div class="row marketing">
@@ -274,9 +299,9 @@ function showReplyList(result){
                </p>
                <p align="right"><input class="btn btn-default" type="button" value="목록으로" id="listBtn"></p>
                <form id="passCheckForm" action="my_deleteCommunity.do"></form>
-            </div>
-         </div>
-      </div>
+            </div><!-- 글 삭제/수정 버튼 div -->
+         </div><!-- 전체 post div -->
+      </div><!-- 전체 post div -->
       <!-- /.blog-sidebar -->
    </div>
    <!-- /.row -->

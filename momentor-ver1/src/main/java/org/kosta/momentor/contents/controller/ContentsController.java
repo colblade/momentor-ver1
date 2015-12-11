@@ -1,6 +1,8 @@
 package org.kosta.momentor.contents.controller;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -248,44 +250,78 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 	/* 덧글 리스트 반환 */
 	@RequestMapping("my_getReplyList.do")
 	@ResponseBody
-	public List<ReplyVO> getReplyList(int boardNo) {
+	public List<ReplyVO> getReplyList(int boardNo){
 		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		for(int i=0;i<replyList.size();i++){
+			try {
+				replyList.get(i).setContent(URLEncoder.encode(replyList.get(i).getContent(),"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		return replyList;
 	}
 	/* 덧글 번호로 덧글 반환 */
 	@RequestMapping("my_getReplyByNo.do")
 	@ResponseBody
-	public ReplyVO getReplyByNo(int replyNo) {
+	public ReplyVO getReplyByNo(int replyNo){
 		ReplyVO rvo = communityBoardService.getReplyByNo(replyNo);
+		try {
+			rvo.setContent(URLEncoder.encode(rvo.getContent(),"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return rvo;
 	}
 
 	/* 덧글 수정 */
-	@RequestMapping("my_updateReply.do")
+	@RequestMapping(value="my_updateReply.do", method = RequestMethod.POST)
 	@ResponseBody
-	public List<ReplyVO> updateReply(int replyNo, String updateReplyContent,int boardNo) {
+	public List<ReplyVO> updateReply(int replyNo, String updateReplyContent,int boardNo){
 		System.out.println(boardNo);
 		ReplyVO rvo = new ReplyVO();
 		rvo.setReplyNo(replyNo);
 		rvo.setContent(updateReplyContent);
 		communityBoardService.updateReply(rvo);
 		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		for(int i=0;i<replyList.size();i++){
+			try {
+				replyList.get(i).setContent(URLEncoder.encode(replyList.get(i).getContent(),"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		return replyList;
 	}
 	/* 덧글 등록(커뮤니티) */
 	@RequestMapping(value = "my_registReply.do", method = RequestMethod.POST)
 	@ResponseBody
-	public List<ReplyVO> registReply(ReplyVO rvo) {
+	public List<ReplyVO> registReply(ReplyVO rvo){
+		System.out.println(rvo);
 		communityBoardService.postingReply(rvo);
 		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(rvo.getCommunityBoardVO().getBoardNo());
+		for(int i=0;i<replyList.size();i++){
+			try {
+				replyList.get(i).setContent(URLEncoder.encode(replyList.get(i).getContent(),"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		return replyList;
 	}
 	/* 덧글 삭제(커뮤니티) */
 	@RequestMapping("my_deleteReply.do")
 	@ResponseBody
-	public List<ReplyVO> deleteReply(int replyNo, int boardNo) {
+	public List<ReplyVO> deleteReply(int replyNo, int boardNo){
 		communityBoardService.deleteReply(replyNo);
 		List<ReplyVO> replyList = communityBoardService.getReplyListByNo(boardNo);
+		for(int i=0;i<replyList.size();i++){
+			try {
+				replyList.get(i).setContent(URLEncoder.encode(replyList.get(i).getContent(),"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		return replyList;
 	}
 	/* 히트수 증가하지 않고 커뮤니티 글 보기 */
