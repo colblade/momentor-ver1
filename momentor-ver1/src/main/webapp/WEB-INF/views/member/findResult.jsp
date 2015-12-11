@@ -5,11 +5,25 @@
 +검색 결과+ <hr>
 <c:choose>
 	<c:when test="${fn:length(requestScope.ebList)==0}">
-		<h3>'${requestScope.word}'에 대한 Momentor Guide 검색결과 없음</h3>	
+	<c:choose>
+		<c:when test="${fn:contains(requestScope.word, '`')}">
+			<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 Momentor Guide 검색결과 없음</h3>
+		</c:when>
+		<c:otherwise>
+			<h3>'${requestScope.word}'에 대한 Momentor Guide 검색결과 없음</h3>
+		</c:otherwise>
+	</c:choose>	
 	</c:when>
 	<c:when test="${fn:length(requestScope.ebList)>0 && fn:length(requestScope.ebList)<5}">
-		<h3>'${requestScope.word}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>
-		 <div class="table-responsive">
+		<c:choose>
+			<c:when test="${fn:contains(requestScope.word, '`')}">
+				<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>	
+			</c:when>
+			<c:otherwise>
+				<h3>'${requestScope.word}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>
+			</c:otherwise>
+		</c:choose>
+		<div class="table-responsive">
 		<table class="table table-striped">
 		<thead>
 		<tr><th>NO</th><th>TITLE</th><th>글쓴이</th><th>작성일</th><th>조회수</th></tr>
@@ -29,7 +43,14 @@
 		</div>
 	</c:when>
 	<c:otherwise>
-		<h3>'${requestScope.word}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>
+		<c:choose>
+			<c:when test="${fn:contains(requestScope.word, '`')}">
+				<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>	
+			</c:when>
+			<c:otherwise>
+				<h3>'${requestScope.word}'에 대한 Momentor Guide <font color="red">${fn:length(requestScope.totalEbList)}개</font> 검색</h3><br>
+			</c:otherwise>
+		</c:choose>
 		<div class="table-responsive">
 		<table class="table table-striped">
 		<thead>
@@ -54,10 +75,24 @@
 <hr>
 <c:choose>
 	<c:when test="${fn:length(requestScope.cbList)==0}">
-		<h3>'${requestScope.word}'에 대한 커뮤니티 검색결과 없음</h3>	
+	<c:choose>
+		<c:when test="${fn:contains(requestScope.word, '`')}">
+			<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 커뮤니티 검색결과 없음</h3>	
+		</c:when>
+		<c:otherwise>
+			<h3>'${requestScope.word}'에 대한 커뮤니티 검색결과 없음</h3>
+		</c:otherwise>
+	</c:choose>	
 	</c:when>
 	<c:when test="${fn:length(requestScope.cbList)>0 && fn:length(requestScope.cbList)<5}">
-		<h3>'${requestScope.word}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>
+	<c:choose>
+		<c:when test="${fn:contains(requestScope.word, '`')}">
+			<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>	
+		</c:when>
+		<c:otherwise>
+			<h3>'${requestScope.word}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>
+		</c:otherwise>
+	</c:choose>	
 		<div class="table-responsive">
 		<table class="table table-striped">
 		<thead>
@@ -84,7 +119,14 @@
 		</div>
 	</c:when>
 	<c:otherwise>
-		<h3>'${requestScope.word}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>
+	<c:choose>
+		<c:when test="${fn:contains(requestScope.word, '`')}">
+			<h3>'${fn:replace(requestScope.word, '`', '')}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>	
+		</c:when>
+		<c:otherwise>
+			<h3>'${requestScope.word}'에 대한 커뮤니티 <font color="red">${fn:length(requestScope.totalCbList)}개</font> 검색</h3><br>
+		</c:otherwise>
+	</c:choose>	
 		<div class="table-responsive">
 		<table class="table table-striped">
 		<thead>

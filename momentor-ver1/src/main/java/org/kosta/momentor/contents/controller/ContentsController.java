@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.kosta.momentor.cart.model.ExerciseVO;
@@ -26,7 +24,6 @@ import org.kosta.momentor.contents.model.ReplyVO;
 import org.kosta.momentor.member.model.MomentorMemberPhysicalVO;
 import org.kosta.momentor.member.model.MomentorMemberVO;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -405,6 +402,11 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 		
 		@RequestMapping("member_findResult.do") // 전체 검색하기
 		public ModelAndView findByTitle(String word){
+			if(word.equals("%")){
+				word = "`" + word;
+			} else if(word.equals("_")){
+				word = "`" + word;
+			}
 			List<ExerciseBoardVO> ebList = exerciseBoardService.findByTitle(word); // 운동게시판 검색
 			List<CommunityBoardVO> cbList = communityBoardService.findByTitle(word); // 커뮤니티 검색
 			List<ExerciseBoardVO> elist = new ArrayList<ExerciseBoardVO>(); // 운동게시판 5개씩 검색

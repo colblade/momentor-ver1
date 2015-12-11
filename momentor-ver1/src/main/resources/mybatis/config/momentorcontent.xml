@@ -376,57 +376,57 @@ WHERE RANKING<=5 ]]>
 	</delete>
 <!-- 운동게시판 검색 -->
   <select id="findByExerciseTitle" resultMap="ebvoMap" resultType="ebvo">
-  SELECT B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH
+  <![CDATA[  
+	SELECT B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH
 FROM exercise_board B, MOMENTOR_MEMBER M
-WHERE B.memberId = M.memberId and title like '%${value}%' order by exercise_no desc
-<!-- 커뮤니티 검색 --> 
+WHERE B.memberId = M.memberId and title like '%'||#{word}||'%' ESCAPE '`' order by exercise_no desc
+  ]]>
   </select>
+  
+<!-- 커뮤니티 검색 --> 
   <select id="findByCommunityTitle" resultType="cbvo" resultMap="cbvoMap">
+  <![CDATA[  
    SELECT C.MEMBER_NO, C.TITLE, C.MEMBER_DATE, C.MEMBER_HITS, M.NICKNAME,M.AUTH
 FROM MEMBER_BOARD C, MOMENTOR_MEMBER M
-WHERE C.memberId = M.memberId and title like '%${value}%' order by c.MEMBER_NO desc
+WHERE C.memberId = M.memberId and title like '%'||#{word}||'%' ESCAPE '`' order by c.MEMBER_NO desc
+    ]]>
   </select>
  <!-- 커뮤니티 검색 개수 -->
  <select id="searchContent" resultType="int">
 SELECT count(*)
 FROM MEMBER_BOARD C, MOMENTOR_MEMBER M
-WHERE C.memberId = M.memberId and title like '%${value}%'
+WHERE C.memberId = M.memberId and title like '%'||#{word}||'%' ESCAPE '`'
  </select>
  
  <select id="getSearchCommunityList" resultMap="cbvoMap" >
-   SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
-      FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/5) AS PAGE
-      FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
-      FROM MEMBER_BOARD where title like '%${word}%' ORDER BY MEMBER_NO DESC)
-      )where page=#{pageNo}
-   </select>
-   
-<select id="findByCbNickName" resultMap="cbvoMap" >
- 	SELECT C.MEMBER_NO, C.MEMBERID, M.NICKNAME, C.TITLE, C.MEMBER_DATE, C.CONTENT, C.MEMBER_HITS, C.RECOMMEND, C.NOTRECOMMEND
-		FROM (SELECT MEMBER_NO, MEMBERID, TITLE, MEMBER_DATE, CONTENT, MEMBER_HITS, RECOMMEND, NOTRECOMMEND, CEIL(ROWNUM/6) AS PAGE
-		FROM (SELECT MEMBER_NO, MEMBERID, TITLE, TO_CHAR(MEMBER_DATE, 'YYYY.MM.DD') AS MEMBER_DATE, CONTENT, MEMBER_HITS, RECOMMEND, NOTRECOMMEND
-		FROM MEMBER_BOARD
-		ORDER BY MEMBER_DATE DESC)
-		) C, MOMENTOR_MEMBER M where C.MEMBERID = M.MEMBERID and page=#{pageNo} and NICKNAME like '%${word}%'
-</select>
-   
-   <!-- 운동게시판 검색 개수 -->
+ <![CDATA[  
+	SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,CEIL(ROWNUM/5) AS PAGE
+		FROM (SELECT MEMBER_NO ,MEMBERID,TITLE,TO_CHAR(MEMBER_DATE,'YYYY.MM.DD') AS MEMBER_DATE, CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND
+		FROM MEMBER_BOARD where title like '%'||#{word}||'%' ESCAPE '`' ORDER BY MEMBER_NO DESC)
+		)where page=#{pageNo}
+   ]]>
+	</select>
+	
+	<!-- 운동게시판 검색 개수 -->
  <select id="searchExerciseContent" resultType="int">
 SELECT count(*)
 FROM exercise_board B, MOMENTOR_MEMBER M
-WHERE B.memberId = M.memberId and title like '%${value}%'
+WHERE B.memberId = M.memberId and title like '%'||#{word}||'%' ESCAPE '`'
  </select>
  
  <select id="getSearchExerciseList" resultMap="ebvoMap" >
+ <![CDATA[  
 SELECT B.EXERCISENAME,B.EXERCISE_NO, B.TITLE, B.EXERCISE_DATE, B.MEMBERID,B.EXERCISE_HITS, M.MEMBERNAME,M.AUTH FROM(
 SELECT EXERCISE_NO, TITLE, EXERCISE_DATE, CEIL(ROWNUM/5) AS PAGE, MEMBERID,EXERCISENAME ,EXERCISE_HITS FROM(
 SELECT EXERCISE_NO, TITLE, TO_CHAR(EXERCISE_DATE,'YYYY.MM.DD') AS EXERCISE_DATE, MEMBERID,EXERCISENAME,EXERCISE_HITS
-FROM EXERCISE_BOARD where title like '%${word}%' ORDER BY EXERCISE_NO DESC
+FROM EXERCISE_BOARD where title like '%'||#{word}||'%' ESCAPE '`' ORDER BY EXERCISE_NO DESC
 )
 ) B, MOMENTOR_MEMBER M,EXERCISE E
 WHERE B.EXERCISENAME = E.EXERCISENAME AND
 M.MEMBERID = B.MEMBERID AND PAGE=#{pageNo} 
-   </select>
+   ]]>
+	</select>
 	
 	<!-- img 등록 -->
 	<insert id="registerImgFile" parameterType="map">

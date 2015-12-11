@@ -59,8 +59,6 @@
 	<div class="col-lg-6">
 		<h4>커뮤니티 게시판 추천수 TOP5!</h4>
 		<div class="table-responsive">
-
-			<p>
 			<table class="table table-striped">
 				<thead>
 					<tr>

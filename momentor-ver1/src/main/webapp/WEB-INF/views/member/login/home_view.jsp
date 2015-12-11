@@ -29,7 +29,6 @@
         		$.ajax({
                		type:"get",
         			url:"my_getPlannerListByDate.do?momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&plannerDate=" + $("#selectDay").val(),
-        			dataType:"json",
         			success:function(data){
         				var txt = "";
         				$("#showList").html("");
@@ -41,17 +40,19 @@
         					});
         				}
         				if($("#showList").html() == ""){
-        					if(confirm("등록된 운동이 없습니다. 플래너로 이동하시겠습니까?")){
-    							location.href="my_planner.do?momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&plannerDate=" + $("#selectDay").val();
-        					}
-    					}       
+        					$("#showList").html("등록된 운동이 없습니다!");
+    					}
+        				if($("#showList").html() == "등록된 운동이 없습니다!"){
+        					$("#detailPlan").val("플래너");
+        				} else{
+        					$("#detailPlan").val("상세보기");
+        				}
         			}
                	}); 
         	});   
         	$.ajax({
            		type:"get",
     			url:"my_getPlannerList.do?momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}",
-    			dataType:"json",
     			success:function(data){	    
     				var d = $('#calendar').fullCalendar("getDate"); 
     	        	var calDay = "";     
@@ -63,7 +64,7 @@
     	    				} else{
     	    					calDay = $("td").children().children().siblings().eq(2*j).text();
     	    				}
-							if(parseInt(calDay) < 15 && parseInt(calDay) >= 1 && j > 28){
+							if(parseInt(calDay) < 15 && parseInt(calDay) >= 1 && j > 28){								
 	    						$("td").children().children().children().eq(j).html("");
 	    					} else if(parseInt(calDay) <= 31 && parseInt(calDay) > 20 && j < 6){
 	    						$("td").children().children().children().eq(j).html("");
@@ -81,13 +82,15 @@
          }
       });    
       $("#detailPlanForm").submit(function(){
-    	  if($("#showList").html() == ""){
-    		  alert("운동을 먼저 등록하세요!");
-    		  return false;
-    	  }
-    	  if(confirm("상세보기로 넘어가시겠습니까?") == false){
-    		  return false;
-    	  }
+    	  if($("#detailPlan").val() == "플래너"){
+    		  if(confirm("플래너로 이동하시겠습니까?")){
+	    		  location.href="my_planner.do?memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&&plannerDate=" + $("#selectDay").val();
+       		  }
+    	  } else if($("#detailPlan").val() == "상세보기"){
+    		  if(confirm("상세보기로 넘어가시겠습니까?") == false){
+        		  return false;
+        	  }
+    	  }    	  
       });
    });
 </script>
@@ -133,12 +136,9 @@
 	<div class="col-lg-6">
 		<h4>커뮤니티 게시판 추천수 TOP5!</h4>
 		<div class="table-responsive">
-
-			<p>
 			<table class="table table-striped">
 				<thead>
 					<tr>
-
 						<th colspan="2">제목</th>
 						<th>작성자</th>
 						<th>조회수</th>
@@ -151,7 +151,7 @@
 					<c:forEach items="${requestScope.communityTop5List }" var="list">
 						<tr>
 							<td>${list.ranking }</td>
-							<td><a href="${initParam.root }my_getCommunityByNo.do?boardNo=${list.boardNo}">${fn:substring(list.boardTitle,0,4)}..</a></td>
+							<td>${fn:substring(list.boardTitle,0,4)}..</td>
 							<td>${list.momentorMemberVO.nickName }</td>
 							<td>${list.memberHits }</td>
 							<td>${list.recommend }</td>
@@ -199,13 +199,13 @@
         <h4 class="modal-title" id="planModalLabel">플래너</h4>
       </div>
       <form action="my_planner.do" id="detailPlanForm">
-		   <div class="modal-body">	   	 
+		   <div class="modal-body">	 
 		       <input type="hidden" name="momentorMemberVO.memberId" value="${sessionScope.pnvo.momentorMemberVO.memberId}">
 		       선택날짜 : <input type="text" class="form-control" name="plannerDate" id="selectDay" readonly><br>
-		       운동목록 : <span id="showList"></span>     	   
+		       <span id="compareExercise">운동목록</span> : <span id="showList"></span>     	   
 		   <div class="modal-footer">
 		      <button type="button" class="btn btn-default" data-dismiss="modal" id="closePlan">Close</button>
-		      <input type="submit" class="btn btn-primary" id="detailPlan" value="상세보기">
+		      <input type="submit" class="btn btn-primary" id="detailPlan">
 		   </div>
 	      </div>
       </form>
