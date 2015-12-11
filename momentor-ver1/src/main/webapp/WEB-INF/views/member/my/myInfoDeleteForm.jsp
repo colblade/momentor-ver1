@@ -40,15 +40,17 @@ $(document).ready(function(){
 	});
 });
 </script>
-
+<div class="container, text-center">
 <form method="post" name="myInfo" id="myInfo" action="my_myInfoDelete.do">
 패스워드를 입력해야 탈퇴가능 합니다 <input type="password" name="memberPasswordCheck" id="memberPasswordCheck">
 <span id="memberPasswordCheckView"></span>
 <br><br>
 <input type="hidden" name="auth" value="${requestScope.pnvo.momentorMemberVO.auth}">
-<table border="1" class="tableForm">
-	<tr><td><input type="hidden" name="id" value="${requestScope.pnvo.momentorMemberVO.memberId}"></td></tr>
-	<tr><td>탈퇴사유를 입력하시오</td><td><input type="text" name="DeleteReason" id="DeleteReason"></td></tr>
-	<tr><td colspan="2"><input type="submit" value="탈퇴완료" id="myInfoDelete"></td></tr>
+<table align="center" class="table-hover">
+	<tr><td class="text-center"><input type="hidden" name="id" value="${requestScope.pnvo.momentorMemberVO.memberId}"></td></tr>
+	<tr><td class="text-center">탈퇴사유를 입력하시오</td><td class="text-center"><input type="text" name="DeleteReason" id="DeleteReason"></td></tr>
+	
+	<tr align="center"><td colspan="2" class="text-center"><br><br><input type="submit" value="탈퇴완료" id="myInfoDelete"></td></tr>
 	</table>
 </form>
+</div>

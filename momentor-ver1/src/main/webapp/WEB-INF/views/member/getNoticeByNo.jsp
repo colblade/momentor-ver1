@@ -18,16 +18,15 @@ $(document).ready(function(){
 });
 </script>
 <body>
-<div id="noticeContentsArea">
-<p class="noticeInform">공지글 상세 페이지</p>
+<div class="table-responsive" class="text-center" align="center">
 <form method="post" name="noticeInfo" action="#" >
-<table class="tableForm" id="noticeByNoTable" class="noticeByNo">
+<table class="table table-striped" style="width: 50%" >
 	<tbody>
-	<tr><td class="noticeNum">공지글번호</td><td>${requestScope.nvo.boardNo}</td></tr>
-	<tr><td class="noticeTitle">제목</td><td>${requestScope.nvo.boardTitle }</td></tr>
-	<tr><td class="noticeDate">작성일</td><td>${requestScope.nvo.boardWdate}</td></tr>
-	<tr><td class="noticeMemberId">작성자</td><td>${requestScope.nvo.momentorMemberVO.memberId }</td></tr>
-	<tr><td class="noticeContent">내용</td><td>${requestScope.nvo.boardContent }</td></tr>
+	<tr><td class="text-center">NO</td><td>${requestScope.nvo.boardNo}</td></tr>
+	<tr><td class="text-center">제목</td><td>${requestScope.nvo.boardTitle }</td></tr>
+	<tr><td class="text-center">작성일</td><td>${requestScope.nvo.boardWdate}</td></tr>
+	<tr><td class="text-center">작성자</td><td>${requestScope.nvo.momentorMemberVO.memberId }</td></tr>
+	<tr><td class="text-center">내용</td><td><pre style="border: none; background-color: #f9f9f9;">${requestScope.nvo.boardContent }</pre></td></tr>
 	</tbody>
 </table>
 <input type="hidden" name="memberName" value="${requestScope.nvo.momentorMemberVO.memberName }">
@@ -36,25 +35,16 @@ $(document).ready(function(){
 
 <c:choose>
 	<c:when test="${sessionScope.pnvo!=null&&sessionScope.pnvo.momentorMemberVO.auth==1}">
-		<p class="noticeBtn">
-		<a id ="noticeUpdateBtn" href="#"><img  src="${initParam.root}image/modify_btn.jpg" border="0"></a>
-		<a id="noticeDeleteBtn" href="#"><img  src="${initParam.root}image/delete_btn.jpg" border="0"></a>
+		<p align="center">
+		<input type="button" class="btn btn-default" id="noticeUpdateBtn" value="수정하기">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="button" class="btn btn-default" id="noticeDeleteBtn" value="삭제하기">
 		</p>
 
 	</c:when>
 </c:choose>
 <br><br><br><br>
-<p class="noticeLink">
-<c:choose>
-	<c:when test="${sessionScope.pnvo!=null&&sessionScope.pnvo.momentorMemberVO.auth==1}">
-			<a href="${initParam.root}admin_home.do">홈으로</a><br>
-			<a href="${initParam.root}admin_getAllNoticeList.do ">목록으로</a>
-	</c:when>
-		<c:otherwise>
-			<a href="${initParam.root}login_home.do">홈으로</a><br>
-			<a href="${initParam.root}member_getAllNoticeList.do ">목록으로</a>
-		
-		</c:otherwise>
-</c:choose>
-</p>
+<div align="left">
+	<a href="${initParam.root}login_home.do">홈으로</a><br>
+	<a href="${initParam.root}member_getAllNoticeList.do ">목록으로</a>
+</div>
 </body>

@@ -3,7 +3,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
     <!-- Custom styles for this template -->
     
+<br>
+    <h3><a href="my_myInfo.do">회원정보 보기</a></h3>
     
+    <hr>
+    <br>
 <h2 class="sub-header">나의 게시글 보기 | <a href="${initParam.root }my_getMyReplyList.do?pageNo=1&memberId=${sessionScope.pnvo.momentorMemberVO.memberId}">나의 댓글 보기</a></h2>
  <div class="table-responsive">
  <table class="table table-striped">

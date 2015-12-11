@@ -286,8 +286,8 @@ WHERE RANKING<=5 ]]>
 	<select id="getAllNoticeList" resultType="nvo" resultMap="nvoMap"> 
 		select notice_No, title,notice_Date,memberId from (
 		select notice_No,Title,notice_Date,ceil(rownum/5) as page, memberId from (
-			select notice_No,Title,TO_CHAR(notice_Date,'YYYY.MM.DD HH:MM:SS') AS notice_Date,
-				memberId from NOTICE_BOARD order by notice_Date DESC
+			select notice_No,Title,TO_CHAR(notice_Date,'YYYY.MM.DD HH24:MI:SS') AS notice_Date,
+				memberId from NOTICE_BOARD order by notice_No DESC
 		     )
        ) where page=#{value}
 	

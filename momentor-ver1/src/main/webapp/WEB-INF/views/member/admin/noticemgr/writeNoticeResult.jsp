@@ -3,7 +3,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		alert("공지사항 글 작성이 완료되었습니다.");
-		location.href="${initParam.root}admin_getAllNoticeList.do";
+		location.href="${initParam.root}member_getAllNoticeList.do";
 	});
 </script>
 공지사항 글작성 완료

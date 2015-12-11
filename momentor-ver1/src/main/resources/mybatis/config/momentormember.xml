@@ -60,9 +60,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="myPasswordCheck" resultType="int">
 		select count(*) from MOMENTOR_MEMBER where memberPassword=#{memberPassword}
 	</select>
+	<select id="myNickNameCheck" resultType="int">
+		select count(*) from MOMENTOR_MEMBER where nickName=#{nickName}
+	</select>
 	<update id="myPageMemberInfoUpdate" parameterType="mvo">
 		update MOMENTOR_MEMBER
-		set memberPassword=#{memberPassword}, memberName=#{memberName}, nickName=#{nickName}, memberEmail=#{memberEmail}, memberAddress=#{memberAddress}
+		set memberPassword=#{memberPassword}, memberName=#{memberName}, birthYear=#{birthYear}, birthMonth=#{birthMonth}, birthDay=#{birthDay}, nickName=#{nickName}, memberEmail=#{memberEmail}, gender=#{gender}, memberAddress=#{memberAddress}
 		where memberId=#{memberId}  
 	</update>
 	<update id="myPageMemberPhysicalInfoUpdate" parameterType="pnvo">

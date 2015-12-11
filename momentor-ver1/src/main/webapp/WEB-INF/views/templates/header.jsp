@@ -36,7 +36,7 @@
             <li><a href="${initParam.root }admin_myPage.do">My Page</a></li>
             </c:when>
             <c:otherwise>
-             <li><a href="${initParam.root }my_getMyCommnunityBoardList.do?memberId=${sessionScope.pnvo.momentorMemberVO.memberId}">My Page</a></li>
+             <li><a href="${initParam.root }my_getMyCommnunityBoardList.do?memberId=${sessionScope.pnvo.momentorMemberVO.memberId}">My Page</a></li>          
             </c:otherwise>
 		</c:choose>
             <li><a href="${initParam.root }member_exerciseBoard.do?pageNo=1">Momentor Guide</a></li>

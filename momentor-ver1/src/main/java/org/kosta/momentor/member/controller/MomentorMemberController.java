@@ -323,11 +323,12 @@ public class MomentorMemberController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("my_myInfoUpdate.do")
-	public ModelAndView myPageMemberInfoUpdate(MomentorMemberVO mvo,MomentorMemberPhysicalVO pnvo) throws Exception{
+	public ModelAndView myPageMemberInfoUpdate(HttpServletRequest request, String myBirthDate, MomentorMemberVO mvo,MomentorMemberPhysicalVO pnvo) throws Exception{
 		pnvo.setMomentorMemberVO(mvo);
 		MomentorMemberPhysicalVO mpvo = pnvo;
 		mpvo.setMomentorMemberVO(mvo);
-		momentorMemberService.updateMember(mvo,mpvo);
+		request.getSession().setAttribute("pnvo", pnvo);
+		momentorMemberService.updateMember(myBirthDate,mvo,mpvo);
 		return new ModelAndView("my_myInfoUpdate","pnvo",pnvo);
 	}
 

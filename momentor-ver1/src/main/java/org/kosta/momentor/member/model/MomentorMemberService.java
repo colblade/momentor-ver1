@@ -35,7 +35,7 @@ public interface MomentorMemberService {
 	public String idOverlappingCheck(String idcheck);
 	public String emailOverlappingCheck(String memberEmail,String memberEmail2) ; 
 	
-	public String updateMember(MomentorMemberVO vo,MomentorMemberPhysicalVO pnvo) throws Exception; //회원이 자기정보 수정부분 vo와 pnvo를 같이 업데이트하기위해 추가
+	public String updateMember(String myBirthDate,MomentorMemberVO vo,MomentorMemberPhysicalVO pnvo) throws Exception; //회원이 자기정보 수정부분 vo와 pnvo를 같이 업데이트하기위해 추가
 	public String myPasswordCheck(String password, String memberId) ;
 	public String deleteMemeber(String memberId) throws Exception;	 //회원 탈퇴 하는데 id만 있으면 될꺼 같아서 이걸로 사용
 	public MomentorMemberPhysicalVO myPageMemberInfo(String memberId); ////회원이 마이페이지에서 내정보 조회 

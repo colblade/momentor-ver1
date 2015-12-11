@@ -15,19 +15,26 @@
 		});
 	});
 </script>
-<body>
-<p class="noticeInform">공지사항 수정</p>
-<form method="post" name="noticeUpdateForm" id="noticeUpdateForm" action="${initParam.root} admin_noticemgr_noticeUpdate.do">
+<form method="post" name="noticeUpdateForm" id="noticeUpdateForm" action="${initParam.root} admin_noticemgr_noticeUpdate.do" class="form-horizontal">
 	<input type="hidden" name="memberId" value="${sessionScope.mvo.memberId}">
 	<input type="hidden" name="boardNo" value="${requestScope.nvo.boardNo }">
-<table id="noticeUpdateTable" class="noticeUpdateTableByAdmin">
-	<tr><td>제목<td><td colspan="4"><input type="text" size="52" name="boardTitle" id="boardTitle" value="${requestScope.nvo.boardTitle}"></td></tr>
-	<tr><td>내용</td><td colspan="4" align="left"><pre><textarea rows="15" cols="53" name="boardContent" id="boardContent" >${requestScope.nvo.boardContent }</textarea></pre></td></tr>
-	<tr>
-     <td colspan="5" align="center">
-     <input type="button" value="수정하기" id="updateBtn">
-     </td>
-     </tr>
-</table>
+<div class="form-group">
+<label for="boardTitle" class="col-sm-2 control-label">제목 : </label>
+	<div class="col-sm-10">
+         <input type="text" class="form-control" name="boardTitle" id="boardTitle" 
+            value="${requestScope.nvo.boardTitle}" placeholder="제목">
+    </div>
+   </div>
+   <div class="form-group">
+      <label for="boardContent" class="col-sm-2 control-label">내용 :
+      </label>
+    <div class="col-sm-10">
+         <pre><textarea style="resize:none" rows="7" cols="30" class="form-control" name="boardContent" id="boardContent" >${requestScope.nvo.boardContent }</textarea></pre>
+    </div>
+	</div>
+   <div class="form-group" align="right">
+      <div class="col-sm-offset-2 col-sm-10">
+     <input type="button" value="수정하기" id="updateBtn" class="btn btn-default">
+      </div>
+   </div>
 </form>
-</body>

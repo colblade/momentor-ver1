@@ -244,12 +244,25 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 		//transaction 처리해주고 exception throws 해줌
 		@Transactional
 		@Override
-		public String updateMember(MomentorMemberVO vo, MomentorMemberPhysicalVO pnvo) throws Exception {
+		public String updateMember(String myBirthDate,MomentorMemberVO vo, MomentorMemberPhysicalVO pnvo) throws Exception {
+			SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat ( "yyyy", Locale.KOREA );
+			Date currentTime = new Date ( );
+			String mTime = mSimpleDateFormat.format ( currentTime );
+			int mT=Integer.parseInt(mTime);
+			int birthYear=Integer.parseInt(myBirthDate.substring(0,4));
+			int birthMonth=Integer.parseInt(myBirthDate.substring(5,7));
+			int birthDay=Integer.parseInt(myBirthDate.substring(8,10));
+			vo.setBirthYear(birthYear);
+			vo.setBirthMonth(birthMonth);
+			vo.setBirthDay(birthDay);
 			momentorMemberDAO.updateMember(vo);
-	        double bmi=(double) pnvo.getMemberHeight()/((double)pnvo.getMemberWeight()*(double)pnvo.getMemberWeight())*(double)10000;
+	        double bmi=(double) pnvo.getMemberWeight()/((double)pnvo.getMemberHeight()*(double)pnvo.getMemberHeight())*(double)10000;
 	        double b = Math.round(bmi*100d) / 100d;
+	        int age=mT-birthYear;
+	        pnvo.setAge(age);
 	        pnvo.setBmi(b);
 	        momentorMemberDAO.updateMemberPhysical(pnvo);
+	        
 			return "myInfoUpdate";
 		}
 		
