@@ -32,6 +32,7 @@ $(document).ready(function(){
 	
 	$("#nickName").keyup(function(){
 		var nickName=$("#nickName").val().trim();
+		var pnvo="${sessionScope.pnvo.momentorMemberVO.nickName}";
 		if(nickName.length==0){
 			$("#checkResultNickNameView").html("닉네임을 입력하세요").css("color","orange");
 			checkResultNickName="";
@@ -41,7 +42,10 @@ $(document).ready(function(){
 			type:"POST",
 			url:"nickNameCheck.do",
 			data:"nickName="+$("#nickName").val(),
-			success:function(data){						
+			success:function(data){
+				if(nickName==pnvo){
+					data="ok";
+				}
 				if(data=="fail"){
 				$("#checkResultNickNameView").html("닉네임 사용 불가").css("color","red");
 				checkResultNickName="";
@@ -112,6 +116,7 @@ $(document).ready(function(){
 <input type="hidden" name="auth" value="${requestScope.pnvo.momentorMemberVO.auth}">
 <input type="hidden" name="bmi" value="${requestScope.pnvo.bmi}">
 	<input type="hidden" name="id" value="${requestScope.pnvo.momentorMemberVO.memberId}">
+	<input type = "hidden" name = "nickNameCheck" value="${requestScope.pnvo.momentorMemberVO.nickName}">
 	<p class="blog-post-meta">아이디 : <input type="text" name="memberId" value="${requestScope.pnvo.momentorMemberVO.memberId}" readonly="readonly" style="color: red"></p>
 	<hr>
 	<p class="blog-post-meta">패스워드 : <input type="password" name="memberPassword" id="memberPassword" value=${requestScope.pnvo.momentorMemberVO.memberPassword }></p>
@@ -120,7 +125,7 @@ $(document).ready(function(){
 	<hr>
     <p class="blog-post-meta">생년월일 : <input type="text" class="datepicker" name="myBirthDate" id="myBirthDate"class="form-control"></p>     
 	<hr>
-	<p class="blog-post-meta">별명 : <input type="text" name="nickName" id="nickName">
+	<p class="blog-post-meta">별명 : <input type="text" name="nickName" id="nickName" value="${requestScope.pnvo.momentorMemberVO.nickName}">
 	<span id="checkResultNickNameView"></span>
 	</p>
 	<hr>

@@ -14,10 +14,24 @@
             return false;
          }
       });
+      var count =1;
+      
+      $("#addFileBtn").click(function(){
+    	  if(count>4){
+    		  
+    		 alert("사진은 5개까지 추가할 수 있습니다.");
+    		 $(this).attr("readonly","readonly");
+    		  return;
+    	  }
+    	  $("#fileSpan").append("<input type = 'file' name = 'file["+count+"]'>");
+    	  count++;
+      })
+      
+   
    });
 </script>
 <form class="form-horizontal" action="my_postingCommunity.do"
-   method="post" id="writeForm">
+   method="post" id="writeForm" enctype="multipart/form-data">
    <input type="hidden" name="momentorMemberVO.memberId" value="${sessionScope.pnvo.momentorMemberVO.memberId}">
    <div class="form-group">
       <label for="boardTitle" class="col-sm-2 control-label">제목 : </label>
@@ -32,6 +46,17 @@
          ${sessionScope.pnvo.momentorMemberVO.nickName }<br>
       </div>
    </div>
+   
+   
+      <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="col-sm-10">
+        <input type="file" name="file[0]" ><span id="fileSpan"></span> <input type="button"
+							value="사진추가하기" id="addFileBtn" class="btn btn-default">
+      </div>
+   </div>
+   
+   
    <div class="form-group">
       <label for="boardContent" class="col-sm-2 control-label">내용 :
       </label>

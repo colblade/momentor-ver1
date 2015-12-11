@@ -21,6 +21,7 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 
 	@Override
 	public void deleteCommunity(int cboardNo) {//커뮤니티 게시판 글삭제
+		communityBoardDAO.deleteCommunityImgFile(cboardNo);//해당 게시물 이미지 삭제
 		communityBoardDAO.deleteAllReply(cboardNo);//무결성에 따른 덧글 우선삭제
 		communityBoardDAO.deleteRecommend(cboardNo);//무결성에 따른 추천 우선 삭제
 		communityBoardDAO.deleteCommunity(cboardNo);//그후 게시글 번호로 게시글 삭제	
@@ -210,4 +211,29 @@ public class CommunityBoardServiceImpl implements CommunityBoardService {
 			ListVO lvo=new ListVO(list,paging);
 	      return lvo;
 	   }
+	   @Override
+		public void registerCommunityImgFile(int boardNo,String imgName, String imgPath) {
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("boardNo", String.valueOf(boardNo));
+	map.put("imgName", imgName);
+	map.put("imgPath", imgPath);
+			communityBoardDAO.registerCommunityImgFile(map);
+			
+		}
+
+		@Override
+		public List<HashMap<String, String>> getCommunityFileList(int boardNo) {
+			// TODO Auto-generated method stub
+			return communityBoardDAO.getCommunityFileList(boardNo);
+		}
+
+
+		@Override
+		public void deleteCommunityImgFileByImgName(int boardNo, String imgName) {
+
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("boardNo", String.valueOf(boardNo));
+			map.put("imgName", imgName);
+			communityBoardDAO.deleteCommunityImgFileByImgName(map);		
+		}
 }

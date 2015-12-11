@@ -239,10 +239,18 @@ function showReplyList(result){
             <h2 class="blog-post-title">${info.boardTitle }</h2>
             <hr>
             <p class="blog-post-meta">${info.boardWdate }
-               by <a href="#">${info.momentorMemberVO.nickName}</a>
-                  
+               by <a href="#">${info.momentorMemberVO.nickName}</a>  
             </p>
-
+				<c:if test="${not empty requestScope.nameList }">
+			<c:forEach items="${requestScope.nameList }" var="fileName"
+								varStatus="vs">
+			<img src="${initParam.root}communityimg/${fileName.BOARDNO}_${fileName.IMGNAME}"
+									title=" ${fileName.IMGNAME }">
+								
+						
+								</c:forEach>
+								
+								</c:if>	
             <pre>${info.boardContent }</pre>
             <br><br><br>
             <hr>

@@ -428,25 +428,52 @@ M.MEMBERID = B.MEMBERID AND PAGE=#{pageNo}
    ]]>
 	</select>
 	
-	<!-- img 등록 -->
-	<insert id="registerImgFile" parameterType="map">
+	<!-- exerciseimg 등록 -->
+	<insert id="registerExerciseImgFile" parameterType="map">
  	INSERT INTO EXERCISE_IMG (EXERCISENAME, IMGNAME, IMGPATH)
  	VALUES (#{exerciseName},#{imgName},#{imgPath})
  </insert>
 
 <!-- 해당 운동 이미지 가지고오기 -->
-<select id="selectFileList" resultType="map">
+<select id="getExerciseFileList" resultType="map">
 	SELECT EXERCISENAME , IMGNAME ,IMGPATH  FROM EXERCISE_IMG WHERE EXERCISENAME=#{value}
 </select>
 
- <!-- IMG 전체 삭제-->
+ <!-- exercise IMG 전체 삭제-->
  <delete id="deleteExerciseImgFile">
  
  DELETE FROM EXERCISE_IMG WHERE EXERCISENAME = #{exerciseName}
  </delete>
- <!-- img 개별 삭제 -->
+ <!-- exercise img 개별 삭제 -->
  <delete id = "deleteExerciseImgFileByImgName">
  DELETE FROM EXERCISE_IMG WHERE EXERCISENAME = #{exerciseName} AND IMGNAME = #{imgName}
+ </delete>
+	
+	
+		<!-- MEMBER_IMG
+		MEMBER_NO NUMBER NOT NULL,
+IMGNAME VARCHAR2(300) NOT NULL,
+IMGPATH VARCHAR2(1000) NOT NULL,
+ -->
+	<!-- community img 등록 -->
+	<insert id="registerCommunityImgFile" parameterType="map">
+ 	INSERT INTO MEMBER_IMG (MEMBER_NO, IMGNAME, IMGPATH)
+ 	VALUES (#{boardNo},#{imgName},#{imgPath})
+ </insert>
+
+<!-- 해당 커뮤니티 이미지 가지고오기 -->
+<select id="getCommunityFileList" resultType="map">
+	SELECT MEMBER_NO AS BOARDNO , IMGNAME ,IMGPATH  FROM MEMBER_IMG WHERE MEMBER_NO=#{value}
+</select>
+
+ <!-- 커뮤니티 IMG 전체 삭제-->
+ <delete id="deleteCommunityImgFile">
+ 
+ DELETE FROM MEMBER_IMG WHERE MEMBER_NO = #{boardNo}
+ </delete>
+ <!-- 커뮤니티 img 개별 삭제 -->
+ <delete id = "deleteCommunityImgFileByImgName">
+ DELETE FROM MEMBER_IMG WHERE MEMBER_NO = #{boardNo} AND IMGNAME = #{imgName}
  </delete>
 	
  </mapper>

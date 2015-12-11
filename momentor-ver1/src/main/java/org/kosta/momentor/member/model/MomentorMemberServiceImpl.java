@@ -220,6 +220,9 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 	   @Override
 	   public String nickNameOverlappingCheck(String nickName) {
 	      int count=momentorMemberDAO.nickNameOverlappingCheck(nickName);
+	      
+	      
+	      
 	      return (count==0) ? "ok":"fail"; 
 	   }
 	   @Override

@@ -1,5 +1,6 @@
 package org.kosta.momentor.contents.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 public interface CommunityBoardService {
@@ -37,4 +38,14 @@ public interface CommunityBoardService {
 	public List<CommunityBoardVO> findByTitle(String word); // 커뮤니티 검색
 	public ListVO getSearchCommunityList(String pageNo, String word); // 검색된 커뮤니티 목록
 	public String[] countRecommend(int boardNo);
+	
+	
+	//커뮤니티에서 이미지 등록
+	public void registerCommunityImgFile(int boardNo,String imgName, String imgPath);
+	//해당 게시글 커뮤니티 이미지 불러오기
+	public List<HashMap<String, String>> getCommunityFileList(int boardNo);
+
+
+	//해당 커뮤니티 게시글 img 개별 삭제 boardNo, imgName을 가지고 옵니다.
+	public void deleteCommunityImgFileByImgName(int boardNo, String imgName);
 }

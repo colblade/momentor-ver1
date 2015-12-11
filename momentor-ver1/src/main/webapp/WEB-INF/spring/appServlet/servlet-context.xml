@@ -38,10 +38,15 @@
 
 	<!-- upload path 개발시에는 workspace 경로를 주입시키고 운영시에는 실제 서버 경로를 주입시킨다. 운영 업로드 
 		경로 C:\java-kosta\WAS\momentor-tomcat\webapps\momentor-ver1\upload -->
-	<bean id="uploadPath" class="java.lang.String">
+	<bean id="exerciseUploadPath" class="java.lang.String">
 		<constructor-arg>
-			<value>C:\\java-kosta\\finalProject-momentor\\momentor-ver1\\src\\main\\webapp\\upload\\</value>
+			<value>C:\\Users\\kosta\\git\\momentor-ver1\\momentor-ver1\\src\\main\\webapp\\exerciseimg\\</value>
 		</constructor-arg>
+	</bean>
+	<bean id="communityUploadPath" class ="java.lang.String">
+	<constructor-arg>
+	<value>C:\\Users\\kosta\\git\\momentor-ver1\\momentor-ver1\\src\\main\\webapp\\communityimg\\</value>
+	</constructor-arg>
 	</bean>
 	
 	

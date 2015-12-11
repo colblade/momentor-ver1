@@ -123,7 +123,7 @@ $("#getExerciseByNo").click(function(){
 							items="${requestScope.nameList }" var="fileName" varStatus="vs">
 
 							<img id="image_${vs.index }"
-								src="${initParam.root}upload/${fileName.EXERCISENAME}_${fileName.IMGNAME}"
+								src="${initParam.root}exerciseimg/${fileName.EXERCISENAME}_${fileName.IMGNAME}"
 								title=" ${fileName.IMGNAME }">
 
 						</c:forEach> <c:if test="${fn:length(requestScope.nameList)<5 }">

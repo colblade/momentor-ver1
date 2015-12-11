@@ -115,12 +115,12 @@ public class ExerciseBoardDAOImpl implements ExerciseBoardDAO {
 	}
 	@Override
 	public void registerImgFile(Map<String, String> map) {
-		sqlSessionTemplate.insert("content.registerImgFile", map);		
+		sqlSessionTemplate.insert("content.registerExerciseImgFile", map);		
 	}
 
 	@Override
 	public List<Map<String, String>> getFileListByExerciseName(String exerciseName) {
-	return	sqlSessionTemplate.selectList("content.selectFileList", exerciseName);		
+	return	sqlSessionTemplate.selectList("content.getExerciseFileList", exerciseName);		
 	}
 
 	@Override

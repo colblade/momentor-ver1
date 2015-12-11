@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,13 +40,41 @@ public class ContentsController {
 	private ExerciseBoardService exerciseBoardService;
 	@Resource
 	private CommunityBoardService communityBoardService;
+	
+	@Resource(name = "communityUploadPath")
+	private String commuPath;
+	
+	
+	
 	/* 커뮤니티 게시판 글쓰기 등록*/ 
 	   @RequestMapping(value="my_postingCommunity.do",method=RequestMethod.POST)
-	   public ModelAndView postingCommunity(CommunityBoardVO cvo){
+	   public ModelAndView postingCommunity(CommunityBoardVO cvo,FileVO vo){
 	      communityBoardService.postingCommunity(cvo);
 	      ModelAndView mv=new ModelAndView();
 	      mv.setViewName("redirect:/member_ getCommunityNoHitByNo.do");
 	      mv.addObject("boardNo",cvo.getBoardNo());
+	      
+	      List<MultipartFile> list = vo.getFile();
+			//view 화면에 업로드 된 파일 목록을 전달하기 위한 리스트
+			ArrayList<String> nameList = new ArrayList<String>();
+			for (int i = 0; i < list.size(); i++) {
+				// 만약 업로드 파일이 없으면 파일명은 공란처리 된다.
+				String fileName = (list.get(i).getOriginalFilename());
+				// 업로드 파일이 있으면 파일을 특정 경로로 업로드한다.
+				if (!fileName.equals("")) {
+					try {File f = new File(commuPath+cvo.getBoardNo()+"_"+fileName);
+					
+						list.get(i).transferTo(f);
+						
+						communityBoardService.registerCommunityImgFile(cvo.getBoardNo(), fileName, commuPath+cvo.getBoardNo()+"_"+fileName);
+						System.out.println(fileName +"업로드 완료");
+						nameList.add(fileName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
 	      return mv;
 	   }
 	   /*커뮤니티 게시판 게시글 보여주기*/
@@ -87,7 +116,10 @@ public class ContentsController {
 		      }
 		      mv.addObject("info", vo);
 		      mv.addObject("replyList", list);
-		      
+		      List<HashMap<String, String>> nameList = communityBoardService.getCommunityFileList(boardNo);
+		      if(nameList!=null){
+		    	  mv.addObject("nameList", nameList);
+		      }  
 	      return mv;
 	      
 	   }
@@ -134,7 +166,7 @@ public class ContentsController {
 		return  mv;
 	}
 	
-	/*???멤버에 노히트가 필요합니까..?*/
+	/*관리자가 운동게시물을 쓰고 난 뒤 조회수가 올라가지 않은 상태로 상세보기*/
 	@RequestMapping("admin_getExerciseNoHitByNo.do")
 	public ModelAndView getExerciseNoHitByNo(int boardNo){
 		Map<String, Object> map  = exerciseBoardService.getExerciseByNo(boardNo);
@@ -238,12 +270,42 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 	@RequestMapping("my_updateCommunityForm.do")
 	public ModelAndView updateForm(int boardNo){
 		CommunityBoardVO cvo = communityBoardService.getCommunityByNo(boardNo);
-		return new ModelAndView("my_updateCommunityForm", "cvo", cvo);
+		ModelAndView mv = new ModelAndView("my_updateCommunityForm");
+		List<HashMap<String, String>> nameList = communityBoardService.getCommunityFileList(boardNo);
+	      if(nameList!=null){
+	    	  mv.addObject("nameList", nameList);
+	      }
+		mv.addObject("cvo", cvo);
+		return mv;
 	}
 	/* 커뮤니티 게시판 게시물 수정 */
 	@RequestMapping(value = "my_updateCommunity.do", method = RequestMethod.POST)
-	public ModelAndView updateCommunity(CommunityBoardVO cvo) {
+	public ModelAndView updateCommunity(CommunityBoardVO cvo, FileVO vo) {
 		communityBoardService.updateCommunity(cvo);
+		
+		
+		 List<MultipartFile> list = vo.getFile();
+			//view 화면에 업로드 된 파일 목록을 전달하기 위한 리스트
+			ArrayList<String> nameList = new ArrayList<String>();
+			for (int i = 0; i < list.size(); i++) {
+				// 만약 업로드 파일이 없으면 파일명은 공란처리 된다.
+				String fileName = (list.get(i).getOriginalFilename());
+				// 업로드 파일이 있으면 파일을 특정 경로로 업로드한다.
+				if (!fileName.equals("")) {
+					try {File f = new File(commuPath+cvo.getBoardNo()+"_"+fileName);
+					
+						list.get(i).transferTo(f);
+						
+						communityBoardService.registerCommunityImgFile(cvo.getBoardNo(), fileName, commuPath+cvo.getBoardNo()+"_"+fileName);
+						System.out.println(fileName +"업로드 완료");
+						nameList.add(fileName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		
 		return new ModelAndView("redirect:/member_ getCommunityNoHitByNo.do","boardNo", cvo.getBoardNo());
 	}
 	
@@ -334,6 +396,10 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 		ModelAndView mv = new ModelAndView("my_community_info");
 		mv.addObject("info", vo);
 		mv.addObject("replyList", list);
+		List<HashMap<String, String>> nameList = communityBoardService.getCommunityFileList(boardNo);
+	      if(nameList!=null){
+	    	  mv.addObject("nameList", nameList);
+	      }  
 		return mv;
 	}
 	
@@ -496,22 +562,9 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 		}
 		
 		
-		@Resource(name = "uploadPath")
+		@Resource(name = "exerciseUploadPath")
 		private String path;
 		
-		/*운동게시물 상세보기 (사진포함)
-		@RequestMapping("member_getExerciseByNo.do")
-		public ModelAndView member_getExerciseByNo(int boardNo,String pageNo){
-			ModelAndView mv = new ModelAndView("member_exerciseFile_info");
-		
-			Map<String, Object> map = 
-			exerciseBoardService.getExerciseByNo(boardNo);
-			
-			mv.addObject("exerciseInfo", map.get("exerciseInfo"));
-			mv.addObject("nameList", map.get("nameList"));
-				exerciseBoardService.updateExerciseHits(boardNo);
-			return  mv;
-		}*/
 		
 		
 		/*ajax 운동게시물 사진 개별 삭제*/
@@ -543,5 +596,16 @@ exerciseBoardService.updateExerciseByAdmin(ebvo, evo);
 			}
 			mv.setViewName("member_showSearchCommunity");
 			return mv;
+		}
+		
+		/*ajax 커뮤니티 게시물 사진 개별 삭제*/
+		@RequestMapping("my_deleteCommunityImgFileByImgName.do")
+		@ResponseBody
+		public List<HashMap<String, String>> deleteCommunityImgFileByImgName(int boardNo,String imgName){
+			System.out.println("아니 왜애애애");
+		communityBoardService.deleteCommunityImgFileByImgName(boardNo, imgName);
+		List<HashMap<String, String>> list = communityBoardService.getCommunityFileList(boardNo);
+			System.out.println(list);
+		return list;
 		}
 }

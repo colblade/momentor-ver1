@@ -91,7 +91,7 @@ $(function(){
 			<c:if test="${not empty requestScope.nameList }">
 			<c:forEach items="${requestScope.nameList }" var="fileName"
 								varStatus="vs">
-			<img src="${initParam.root}upload/${fileName.EXERCISENAME}_${fileName.IMGNAME}"
+			<img src="${initParam.root}exerciseimg/${fileName.EXERCISENAME}_${fileName.IMGNAME}"
 									title=" ${fileName.IMGNAME }">
 									
 								</c:forEach>

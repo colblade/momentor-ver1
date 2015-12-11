@@ -105,6 +105,7 @@ public class MomentorMemberController {
 		return "member_register";
 	}
 	@RequestMapping("register_result.do")
+	@ResponseBody
 	public ModelAndView register(HttpServletRequest request,String date, String memberEmail,String memberEmail2,MomentorMemberVO vo,String memberWeight,String memberHeight){
          HttpSession session=request.getSession();
          momentorMemberService.registerMember(vo, date, memberEmail, memberEmail2,memberWeight,memberHeight);

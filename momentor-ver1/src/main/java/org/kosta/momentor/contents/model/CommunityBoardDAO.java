@@ -44,6 +44,20 @@ public interface CommunityBoardDAO {
 	public List<CommunityBoardVO> findByTitle(String word); // 커뮤니티 검색
 	public List<CommunityBoardVO> getSearchCommunityList(HashMap<String, String> paramMap); // 검색된 커뮤니티 목록
 	public int searchContent(String word); // 검색된 커뮤니티 총 개수
+	
+//커뮤니티에서 이미지 등록
+public void registerCommunityImgFile(HashMap<String, String> map);
+//해당 게시글 커뮤니티 이미지 불러오기
+public List<HashMap<String, String>> getCommunityFileList(int boardNo);
+
+//해당게시글 커뮤니티 img 전체 삭제
+public void deleteCommunityImgFile(int boardNo);
+
+//해당 커뮤니티 게시글 img 개별 삭제 boardNo, imgName을 가지고 옵니다.
+public void deleteCommunityImgFileByImgName(HashMap<String, String> map);
+
+
+
 }
 
 

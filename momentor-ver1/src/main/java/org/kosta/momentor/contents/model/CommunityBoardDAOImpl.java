@@ -172,4 +172,28 @@ public class CommunityBoardDAOImpl implements CommunityBoardDAO {
 			// 커뮤니티 게시판 검색 총 개수
 			return sqlSessionTemplate.selectOne("content.searchContent", word);
 		}
+
+		@Override
+		public void registerCommunityImgFile(HashMap<String, String> map) {
+			sqlSessionTemplate.insert("content.registerCommunityImgFile", map);
+			
+		}
+
+		@Override
+		public List<HashMap<String, String>> getCommunityFileList(int boardNo) {
+			
+			return sqlSessionTemplate.selectList("content.getCommunityFileList",boardNo);
+		}
+
+		@Override
+		public void deleteCommunityImgFile(int boardNo) {
+				sqlSessionTemplate.delete("content.deleteCommunityImgFile", boardNo);			
+		}
+
+		@Override
+		public void deleteCommunityImgFileByImgName(HashMap<String, String> map) {
+			sqlSessionTemplate.delete("content.deleteCommunityImgFileByImgName", map);
+			
+		}
+
 }
