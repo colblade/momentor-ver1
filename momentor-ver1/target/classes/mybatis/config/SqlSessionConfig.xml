@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- MyBatis  DataSource에 대한 설정 및  SQL 정의 xml 에 대한 매핑-->
+<configuration>	
+	<!-- 사용할 클래스에 대한 별칭을 명시한다.  -->
+	<typeAliases>
+		<typeAlias type="org.kosta.momentor.member.model.MomentorMemberVO" alias="mvo"/>	
+		<typeAlias type="org.kosta.momentor.member.model.MomentorMemberPhysicalVO" alias="pnvo"/>
+		<typeAlias type="org.kosta.momentor.contents.model.CommunityBoardVO" alias="cbvo"/>	
+		<typeAlias type="org.kosta.momentor.contents.model.ReplyVO" alias ="rvo"/>
+		<typeAlias type="org.kosta.momentor.contents.model.BoardVO" alias ="bvo"/>
+	<typeAlias type="org.kosta.momentor.contents.model.NoticeBoardVO" alias="nvo"/>
+		
+		
+		 	<!-- - - - - - - - - - - - -2015-11-28- - - - - - - - - - -->
+		<typeAlias type="org.kosta.momentor.contents.model.ExerciseBoardVO" alias="ebvo"/>
+		<typeAlias type="org.kosta.momentor.cart.model.ExerciseVO" alias="evo"/>
+
+
+		<typeAlias type="org.kosta.momentor.planner.model.PlannerVO" alias="planvo"/>
+		<typeAlias type="org.kosta.momentor.cart.model.CartVO" alias="cartvo"/>
+	</typeAliases>	
+    <!-- mybatis sql 정의 xml을 mapping  -->
+	<mappers>
+		<mapper resource="mybatis/config/momentormember.xml"></mapper>
+		<mapper resource="mybatis/config/momentorcontent.xml"></mapper>
+		
+		<mapper resource="mybatis/config/momentorplan.xml"></mapper>
+		<mapper resource="mybatis/config/momentorcart.xml"></mapper>
+	</mappers>
+</configuration>
+
+
+
+
+
+
+
+
+
+

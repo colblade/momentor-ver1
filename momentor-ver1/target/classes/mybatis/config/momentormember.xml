@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- MyBatis에서 namespace는 필수적으로 명시해야 함 -->
+ <mapper namespace="member">   
+ 	<sql id="selectMomentorMember">
+      		select memberId, memberPassword, memberName, birthYear, birthMonth, birthDay, nickName, memberEmail, gender, memberAddress
+		from  MOMENTOR_MEMBER 
+   </sql>
+   <resultMap type="pnvo" id="physicalRM">
+      <result property="momentorMemberVO.memberId" column="memberId" />
+		<result property="momentorMemberVO.memberPassword" column="memberPassword" />
+	    <result property="momentorMemberVO.memberName" column="memberName" />   
+	    <result property="momentorMemberVO.birthYear" column="birthYear"/>
+		<result property="momentorMemberVO.birthMonth" column="birthMonth"/>
+		<result property="momentorMemberVO.birthDay" column="birthDay"/>
+	    <result property="momentorMemberVO.nickName" column="nickName" />   
+	    <result property="momentorMemberVO.auth" column="auth"/>
+	    <result property="momentorMemberVO.memberEmail" column="memberEmail"/>
+		<result property="momentorMemberVO.gender" column="gender"/>
+		<result property="momentorMemberVO.memberAddress" column="memberAddress"/>
+   </resultMap>
+   
+   <select id="login" parameterType="mvo" resultMap="physicalRM">
+		select m.memberId, m.memberPassword, m.memberName, m.birthYear, m.birthMonth, m.birthDay, m.nickName, m.memberEmail, m.gender, m.memberAddress, m.auth, 
+		p.MEMBERWEIGHT, p.MEMBERHEIGHT, p.age, p.bmi
+		from momentor_member m, MOMEMTOR_MEMBER_PHYSICAL p
+		where m.memberId=p.memberId and m.memberId=#{memberId} and m.memberPassword=#{memberPassword} and m.auth!=8
+</select>   
+	<insert id="registerMember" parameterType="mvo" >
+		  INSERT INTO MOMENTOR_MEMBER 
+      (MEMBERID, MEMBERPASSWORD, MEMBERNAME, BIRTHYEAR,BIRTHMONTH, BIRTHDAY, NICKNAME, MEMBEREMAIL, GENDER, MEMBERADDRESS)
+      VALUES (#{memberId},#{memberPassword},#{memberName},#{birthYear},#{birthMonth},#{birthDay},#{nickName},#{memberEmail},#{gender},#{memberAddress})</insert>
+   <insert id="registerPhysicalMember" parameterType="pnvo">
+	    INSERT INTO MOMEMTOR_MEMBER_PHYSICAL
+      (MEMBERWEIGHT,MEMBERHEIGHT,AGE,BMI,MEMBERID)
+      VALUES(#{memberWeight},#{memberHeight},#{age},#{bmi},#{momentorMemberVO.memberId})
+</insert>
+
+	<select id="idCheck" resultType="mvo">
+		select memberId from momentor_member where memberName=#{memberName} and memberEmail=#{memberEmail}
+	</select>
+	<select id="passCheck" resultType="mvo">
+		select memberId, memberEmail, memberPassword from momentor_member where memberId=#{memberId} and memberEmail=#{memberEmail}
+	</select>
+	<select id="idOverlappingCheck" resultType="int">
+      select count(*) from MOMENTOR_MEMBER where memberId=#{value}
+      </select>
+         <select id="nickNameOverlappingCheck" resultType="int">
+      select count(*) from MOMENTOR_MEMBER where nickName=#{value}
+      </select>
+      
+           <select id="myPageMemberInfo" resultMap="physicalRM">
+		
+		select m.memberId, m.memberPassword, m.memberName, m.birthYear, m.birthMonth, m.birthDay, m.nickName, m.memberEmail, m.gender, m.memberAddress, mf.memberWeight, mf.memberHeight, mf.age, mf.bmi
+		from MOMENTOR_MEMBER m, MOMEMTOR_MEMBER_PHYSICAL mf
+		where m.memberId=mf.memberId and m.memberId=#{memberId}
+	</select>
+	<select id="myPasswordCheck" resultType="int">
+		select count(*) from MOMENTOR_MEMBER where memberPassword=#{memberPassword}
+	</select>
+	<select id="myNickNameCheck" resultType="int">
+		select count(*) from MOMENTOR_MEMBER where nickName=#{nickName}
+	</select>
+	<update id="myPageMemberInfoUpdate" parameterType="mvo">
+		update MOMENTOR_MEMBER
+		set memberPassword=#{memberPassword}, memberName=#{memberName}, birthYear=#{birthYear}, birthMonth=#{birthMonth}, birthDay=#{birthDay}, nickName=#{nickName}, memberEmail=#{memberEmail}, gender=#{gender}, memberAddress=#{memberAddress}
+		where memberId=#{memberId}  
+	</update>
+	<update id="myPageMemberPhysicalInfoUpdate" parameterType="pnvo">
+		update MOMEMTOR_MEMBER_PHYSICAL
+		set memberWeight=#{memberWeight}, memberHeight=#{memberHeight}, bmi=#{bmi}
+		where memberId=#{momentorMemberVO.memberId}
+	</update>
+	<update id="myPageDeleteMemberInfo">
+		update MOMENTOR_MEMBER 
+		set auth = 8
+		where memberId=#{value}
+	</update>
+	<delete id="myPageDeleteMemberPhysicalInfo">
+		delete from MOMEMTOR_MEMBER_PHYSICAL where memberId=#{value}
+	</delete>
+			<select id="managerGetAllMember" resultMap="physicalRM">
+        	select M.MEMBERID,M.MEMBERPASSWORD,M.MEMBERNAME,M.BIRTHYEAR,M.BIRTHMONTH,M.BIRTHDAY,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.MEMBEREMAIL,M.GENDER,M.MEMBERADDRESS,P.BMI from (
+        select MEMBERID,MEMBERPASSWORD,MEMBERNAME,BIRTHYEAR,BIRTHMONTH,BIRTHDAY,NICKNAME,memberEmail,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
+               select MEMBERID,MEMBERPASSWORD AS memberPassword,MEMBERNAME,BIRTHYEAR as birthyEar,BIRTHMONTH as birthMonth,BIRTHDAY as birthDay,NICKNAME,MEMBEREMAIL AS memberEmail,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where AUTH=2
+           )
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where M.MEMBERID=P.MEMBERID   and page=#{value}
+	</select>
+		<!-- 멤버토탈 -->
+     <select id="totalMemberContent" resultType="int">
+		select count(*) from MOMENTOR_MEMBER where auth=2
+	</select>
+	<!-- 관리자가 아이디로 회원검색 -->
+	<select id="managerFindMemberById" resultMap="physicalRM" parameterType="map" >
+	   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
+        select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERID like '%'||#{memberId}||'%'  AND AUTH=2 
+           )
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.MEMBERID=P.MEMBERID   
+	</select>
+			<!-- 관리자가 이름으로 회원검색 -->
+	<select id="managerFindMemberByName" resultMap="physicalRM"  parameterType="map" >
+		   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
+        select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  MEMBERNAME like '%'||#{memberName}||'%'  AND AUTH=2
+           )
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo} AND M.MEMBERID=P.MEMBERID   
+	</select>
+		<!-- 관리자가 닉네임으로 회원검색 -->
+	<select id="managerFindMemberByNickName" resultMap="physicalRM" parameterType="map" >
+		   	select M.MEMBERID,M.MEMBERNAME,P.MEMBERHEIGHT,P.MEMBERWEIGHT,P.AGE,M.NICKNAME,M.GENDER,M.MEMBERADDRESS from (
+        select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH,ceil(rownum/5) as page from (
+               select MEMBERID,MEMBERNAME,NICKNAME,GENDER,MEMBERADDRESS,AUTH AS AUTH  from MOMENTOR_MEMBER where  NICKNAME like '%'||#{nickName}||'%'AND AUTH=2
+           )
+       ) M,MOMEMTOR_MEMBER_PHYSICAL P where  page=#{pageNo}  AND M.MEMBERID=P.MEMBERID   
+	</select> 
+		<select id="totalMemberFindByIdContent" resultType="int">
+	 select count(*) from MOMENTOR_MEMBER where auth=2 and memberId like '%'||#{value}||'%'
+	</select>
+	<select id="totalMemberFindByNameContent" resultType="int">
+	 select count(*) from MOMENTOR_MEMBER where auth=2 and memberName like '%'||#{value}||'%'
+	</select>
+	<select id="totalMemberFindByNickNameContent" resultType="int">
+	 select count(*) from MOMENTOR_MEMBER where auth=2 and nickName like '%'||#{value}||'%'
+	</select>
+		<select id="emailOverlappingCheck" resultType="int">
+      select count(*) from MOMENTOR_MEMBER where memberEmail=#{value}
+      </select> 
+            <update id="deleteMemberByAdmin" parameterType="mvo">
+      update MOMENTOR_MEMBER
+		set auth=8
+		where memberId=#{momentorMemberVO.memberId}
+      </update>
+ </mapper>
