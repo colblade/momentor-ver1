@@ -43,6 +43,6 @@ p.paging{
 		text-align: center;
 	} 
 	
-.plannerTable td{
+.plannerTable, .plannerTable th{
 	text-align: center;
 }

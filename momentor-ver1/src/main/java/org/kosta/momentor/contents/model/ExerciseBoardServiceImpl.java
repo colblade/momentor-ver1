@@ -138,6 +138,15 @@ public class ExerciseBoardServiceImpl implements ExerciseBoardService {
 			
 			return result;
 		}
+		
+	@Override
+	public Map<String, Object> getExerciseInfoByExName(String exerciseName){
+		Map<String, Object> result = new HashMap<String, Object>();
+		ExerciseBoardVO ebvo = exerciseBoardDAO.getExerciseInfoByExName(exerciseName);
+		result.put("exerciseInfo", ebvo);
+		result.put("nameList",exerciseBoardDAO.getFileListByExerciseName(exerciseName));
+		return result;
+	}
 
 		@Override
 		public void deleteExerciseImgFileByImgName(String exerciseName,

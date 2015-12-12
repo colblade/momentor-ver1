@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -12,6 +13,11 @@ import java.util.List;
 
 
 
+
+
+
+
+import java.util.Map;
 
 
 
@@ -165,13 +171,36 @@ public class MomentorMemberController {
 		int intTypeToday = Integer.parseInt(today.replaceAll("-", "")); // 날짜 비교를 위해 오늘을 int 타입으로 변환
 		mv.addObject("intTypeSelectDate", intTypeSelectDate);
 		mv.addObject("intTypeToday", intTypeToday);
+		ArrayList<HashMap<String, Object>> imgCartList = new ArrayList<HashMap<String,Object>>();
+		for(int i=0;i<cartList.size();i++){
+			String exerciseName = cartList.get(i).getExerciseBoardVO().getExerciseVO().getExerciseName();
+			List<Map<String, String>> map = (ArrayList)exerciseBoardService.getFileListByExerciseName(exerciseName);
+			if(map != null){
+				HashMap<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put(exerciseName, map);
+				imgCartList.add(paramMap);
+				System.out.println(paramMap.get(exerciseName));
+			}else{
+				HashMap<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put(exerciseName, null);
+				imgCartList.add(paramMap);
+			}
+		}
 		
 		mv.addObject("today", today);
 		mv.addObject("selectDate", pvo.getPlannerDate());
 		mv.addObject("cartList", cartList);
 		mv.addObject("plannerListByDate", plannerListByDate);
+		mv.addObject("imgCartList", imgCartList);
 		mv.setViewName("my_planner");
 		return mv;
+	}
+		
+	@RequestMapping("my_getExerciseInfoByExName.do")
+	@ResponseBody
+	public Map<String, Object> getExerciseInfoByExName(HttpServletRequest request){
+		Map<String, Object> map = exerciseBoardService.getExerciseInfoByExName(request.getParameter("exerciseVO.exerciseName"));
+		return map;
 	}
 
 	@RequestMapping("my_registerInPlanner.do")
@@ -199,15 +228,31 @@ public class MomentorMemberController {
 	@ResponseBody
 	public ArrayList<CartVO> registerExerciseInCart(CartVO cvo){
 		plannerService.registerExerciseInCart(cvo);
-		System.out.println((ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId()));
 		return (ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId());
 	}
 	
 	@RequestMapping("my_deleteExcerciseInCart.do")
 	@ResponseBody
-	public ArrayList<CartVO> deleteExcerciseInCart(CartVO cvo){
+	public Map<String, Object> deleteExcerciseInCart(CartVO cvo){
 		plannerService.deleteExcerciseInCart(cvo);
-		return (ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId());
+		Map<String, Object> deleteMap = new HashMap<String, Object>();
+		ArrayList<CartVO> cartList = (ArrayList<CartVO>) plannerService.getCartList(cvo.getMomentorMemberVO().getMemberId());
+		ArrayList<HashMap<String, Object>> imgCartList = new ArrayList<HashMap<String,Object>>();
+		for(int i=0; i<cartList.size(); i++){
+			String exerciseName = cartList.get(i).getExerciseBoardVO().getExerciseVO().getExerciseName();
+			List<Map<String, String>> fileListMap = (ArrayList)exerciseBoardService.getFileListByExerciseName(exerciseName);
+			HashMap<String, Object> paramMap = new HashMap<String, Object>();
+			if(fileListMap != null){
+				paramMap.put(exerciseName, fileListMap);
+				imgCartList.add(paramMap);
+			}else{
+				paramMap.put(exerciseName, null);
+				imgCartList.add(paramMap);
+			}
+		}
+		deleteMap.put("cartList", cartList);
+		deleteMap.put("imgCartList", imgCartList);
+		return deleteMap;
 	}
 	
 	@RequestMapping("my_deleteExerciseInPlanner.do")

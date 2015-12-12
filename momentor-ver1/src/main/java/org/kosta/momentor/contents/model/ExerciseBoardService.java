@@ -29,6 +29,8 @@ public interface ExerciseBoardService {
 	
 	//운동게시물 상세보기
 	public Map<String, Object> getExerciseByNo(int boardNo);
+	//운동명으로 해당 운동게시물 불러오기
+	public Map<String, Object> getExerciseInfoByExName(String exerciseName);
 	
 	//사진 개별 삭제
 	public void deleteExerciseImgFileByImgName(String exerciseName, String imgName);

@@ -25,6 +25,8 @@ public int checkExerciseByExerciseName(String exerciseName);
 public void registerExercise(ExerciseVO evo);
 //운동 상세보기
 public ExerciseBoardVO getExerciseByNo(int boardNo);
+//운동명으로 해당 운동게시물 불러오기
+public ExerciseBoardVO getExerciseInfoByExName(String exerciseName);
 //운동게시물의 조회수 증가
 public void updateExerciseHits(int boardNo);
 //운동 삭제

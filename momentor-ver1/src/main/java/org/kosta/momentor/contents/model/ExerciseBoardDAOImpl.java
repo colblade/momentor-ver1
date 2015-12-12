@@ -69,10 +69,14 @@ public class ExerciseBoardDAOImpl implements ExerciseBoardDAO {
 
 	@Override
 	public ExerciseBoardVO getExerciseByNo(int boardNo) {
-		// TODO Auto-generated method stub
 		return sqlSessionTemplate.selectOne("content.getExerciseByNo", boardNo);
 	}
 
+	@Override
+	public ExerciseBoardVO getExerciseInfoByExName(String exerciseName){
+		return sqlSessionTemplate.selectOne("content.getExerciseInfoByExName", exerciseName);
+	}
+	
 	@Override
 	public void registerExercise(ExerciseVO evo) {
 		sqlSessionTemplate.insert("content.registerExercise", evo);

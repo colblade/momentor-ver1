@@ -209,6 +209,13 @@ M.MEMBERID = B.MEMBERID AND PAGE  =#{value}
   EB.EXERCISENAME = EX.EXERCISENAME AND 
   EXERCISE_NO = #{value}
   </select>
+  
+  <!-- 운동명으로 해당 운동게시물 불러오기 -->
+  <select id="getExerciseInfoByExName" resultType="ebvo" resultMap="ebvoMap">
+  	SELECT EB.EXERCISENAME, EB.EXERCISE_NO, EB.TITLE, TO_CHAR(EB.EXERCISE_DATE, 'YYYY.MM.DD') AS EXERCISE_DATE, EB.CONTENT, EB.MEMBERID, EX.EXERCISEBODY
+  	FROM EXERCISE_BOARD EB, EXERCISE EX
+  	WHERE EB.EXERCISENAME = EX.EXERCISENAME AND EX.EXERCISENAME = #{value}
+  </select>
  
  	<!-- 운동게시판 조회수 증가 -->
  	<update id="updateExerciseHits" parameterType="int">

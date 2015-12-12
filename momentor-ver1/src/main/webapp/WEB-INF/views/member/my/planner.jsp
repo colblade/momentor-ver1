@@ -5,6 +5,7 @@
 
 <script src="${initParam.root}dist/js/jquery.easy-pie-chart.js"></script>
 <link href="${initParam.root}dist/css/jquery.easy-pie-chart.css" rel="stylesheet" media="screen">
+<%-- <link href="${initParam.root}dist/css/bootstrap-theme.css" rel="stylesheet" media="screen"> --%>
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -15,8 +16,7 @@
 		// select로 선택된 value(1~targetSet)를 achievement 에 담아야 한다.
 		// 실시 button 클릭시 로그인한 사용자의 memberId, 해당 plannerDate, achievement, exerciseName를 담아 보내주어야 한다.
 		$("#plannerListTable").on("click", ".achiveBtn", function(){
-			//alert($(this).parent().siblings().next().eq(0).text().trim()); // 수정보완 기간에 text값에 trim붙여서 글자만 추출하도록 수정할 예정.
-			var updateAchiveEx = $(this).parent().siblings().next().html();
+			var updateAchiveEx = $(this).parent().siblings().next().eq(0).text().trim();
 			var achievementValue = $(this).parent().siblings().next().next().find(".exSelect").val();
 			if(confirm("등록 후에는 수정/삭제가 불가능합니다.\n등록하시겠습니까?") == false){
 				return;
@@ -83,6 +83,10 @@
 			if(confirm("삭제하시겠습니까?") == false){
 				return;
 			}
+			if(parseInt($(".panel-heading").text().substring(0, 10).replace(/-/g, "")) < parseInt(todayVal.replace(/-/g, ""))){
+				alert("지나간 날의 운동은 삭제할 수 없습니다.");
+				return;
+			}
 			var deleteCheckCompArray = "";
 			for(var i=0; i<deleteCheckComp.length; i++){
 				deleteCheckCompArray += "&exerciseVO.exerciseName="+$(deleteCheckComp[i]).val();
@@ -123,7 +127,7 @@
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 찜 카트 내 운동 삭제하기
 		$("#cartListTable").on("click", ".deleteInCartBtn", function(){
-			var deleteExcerciseName = $(this).parent().siblings().eq(3).text();
+			var deleteExcerciseName = $(this).parent().siblings().eq(3).text().trim();
 			if(confirm("삭제하시겠습니까?") == false){
 				return;
 			}
@@ -131,19 +135,34 @@
 				type:"get",
 				url:"my_deleteExcerciseInCart.do",
 				data:"momentorMemberVO.memberId=${sessionScope.pnvo.momentorMemberVO.memberId}&exerciseBoardVO.exerciseVO.exerciseName="+deleteExcerciseName,
+				dataType:"json",
 				success:function(cartListResult){
 					// 찜 카트가 비어있지 않을때만 table의 틀 출력
 					var cartTableFrame = "찜 된 운동이 없습니다.";
-					if(cartListResult.length != 0){
+					if(cartListResult.cartList.length != 0){
 						cartTableFrame = "<table class='table table-hover'>" + 
 												"<thead><tr><th>선택</th><th>번호</th><th colspan='2'>운동명</th><th>삭제</th></tr></thead>" + 
 												"<tbody id='cartListBody'>";
-						$.each(cartListResult, function(index, list){
+
+						 $.each(cartListResult.cartList, function(index, list){
 							var exName = list.exerciseBoardVO.exerciseVO.exerciseName;
+							var exImg = "";
+							$.each(cartListResult.imgCartList, function(index, imgMap){
+								$.each(imgMap, function(key, value){
+									//alert(value.IMGNAME);
+									$.each(value, function(i, imgList){
+										//alert(imgList.IMGNAME);
+										exImg += "<img src = '${initParam.root}upload/" + imgList.EXERCISENAME + "_" + imgList.IMGNAME + "' style='width: 10%; height: 10%;'>";
+									});
+								});
+							});
 							cartTableFrame += "<tr><td><input type='radio' name='tempExerciseName' value=" + exName + "></td>" + 
-																"<td>" + (index+1) + "</td><td>운동img</td><td>" + exName + "</td>" + 
+																"<td>" + (index+1) + "</td>" + 
+																"<td>" + exImg + "</td>" + 
+																"<td>" + exName + "</td>" + 
 																"<td><input type='button' class='deleteInCartBtn' value='삭제'></td></tr>";
 						});
+						
 						cartTableFrame += "<tr><td colspan='5'>목표 set <input type='text' name='tempTargetSet' id='tempTargetSet' style='text-align: right'>" + 
 													" <input type='button' id='selectExerciseBtn' value='선택'></td></tr>" + 
 													"</tbody></table>";
@@ -253,7 +272,21 @@
 		});
 		
 		// 운동 상세보기 modal
-		$(".exViewModal").click(function(){
+		$("#plannerListTable").on("click", ".exViewModal", function(){
+			$.ajax({
+				type:"post",
+				url:"my_getExerciseInfoByExName.do",
+				data:"exerciseVO.exerciseName=" + $(this).text().trim(),
+				success:function(result){
+					var showExeciseInfoComp = "<h2>" + result.exerciseInfo.exerciseVO.exerciseName + "</h2><hr>";
+					$.each(result.nameList, function(index, fileName){
+						showExeciseInfoComp += "<img src='${initParam.root}upload/" + fileName.EXERCISENAME + "_" + fileName.IMGNAME + "' title='" + fileName.IMGNAME + "' style='width: 70%; height: 70%;'>"
+					});
+					showExeciseInfoComp += "<h3>" + result.exerciseInfo.boardTitle + "</h3>" + 
+														"<br><pre>" + result.exerciseInfo.boardContent + "</pre><br>";
+					$("#showExeciseInfo").html(showExeciseInfoComp);
+				}
+			});
 			$("#exView").modal();
 		});
 	});
@@ -287,7 +320,7 @@
 				$.each(resultList, function(index, list){
 					listTableFrame += "<tr>";
 					listTableFrame += "<td><input type='checkbox' name='deleteCheck' value=" + list.exerciseVO.exerciseName + "></td>" + 
-												"<td>" + list.exerciseVO.exerciseName + "</td>";
+												"<td><a href='#' class='exViewModal'>" + list.exerciseVO.exerciseName + "</a></td>";
 					if(list.achievement != 0){
 						listTableFrame += "<td>" + list.achievement + "</td>";
 					} else {
@@ -297,7 +330,7 @@
 							for(var i=1; i<list.targetSet+1; i++){
 								selectTable += "<option value=" + i + ">" + i + "</option>";
 							}
-							listTableFrame += "<td><select class='exSelect'>" + selectTable + "</select><input type='button' class='achiveBtn' value='달성'></td>";
+							listTableFrame += "<td><select class='exSelect'>" + selectTable + "</select> <input type='button' class='achiveBtn' value='달성'></td>";
 						} else {
 							listTableFrame += "<td>" + list.achievement + "</td>";
 						}
@@ -347,7 +380,7 @@
 			<c:forEach items="${requestScope.plannerListByDate}" var="plist" varStatus="status1">
 				<tr>
 					<td><input type="checkbox" name="deleteCheck" value="${plist.exerciseVO.exerciseName}"></td>
-					<td><a href="#" class="exViewModal" >${plist.exerciseVO.exerciseName}</a></td>
+					<td><a href="#" class="exViewModal">${plist.exerciseVO.exerciseName}</a></td>
 					<td>
 					<c:choose>
 						<c:when test="${plist.achievement != 0}">
@@ -399,7 +432,7 @@
 </c:choose>
 </span>
 
-<input type="button" id="commentBtn" value="코멘트">
+<input type="button" id="commentBtn" value="코멘트 ">
 <span id="commentIcon"><i class="glyphicon glyphicon-resize-full" aria-hidden="true"></i></span>
 <br>
 <span id="commentView">
@@ -432,11 +465,17 @@
 				</tr>
 			</thead>
 			<tbody id='cartListBody'>
-				<c:forEach items="${requestScope.cartList}" var="clist">
+				<c:forEach items="${requestScope.cartList}" var="clist" varStatus="status">
 				<tr>
 					<td><input type="radio" name="tempExerciseName" value="${clist.exerciseBoardVO.exerciseVO.exerciseName}"></td>
-					<td>1</td>
-					<td>운동img</td>
+					<td>${status.count }</td>
+					<td>
+						<c:forEach items="${requestScope.imgCartList}" var ="imgList">
+							<c:forEach items="${imgList.get(clist.exerciseBoardVO.exerciseVO.exerciseName) }" var = "map">
+								<img src = "${initParam.root}upload/${map.EXERCISENAME}_${map.IMGNAME}" style="width: 10%; height: 10%;">
+							</c:forEach>
+						</c:forEach>
+					</td>
 					<td>${clist.exerciseBoardVO.exerciseVO.exerciseName}</td>
 					<td><input type="button" class="deleteInCartBtn" value="삭제"></td>
 				</tr>	
@@ -463,7 +502,7 @@
         <h4 class="modal-title" id="exViewModalLabel">상세보기</h4>
       </div>
       <div class="modal-body">
-          운동 내용 넣어야 함
+          <span id="showExeciseInfo"></span>
       </div>
       <div class="modal-footer">
          <button type="button" class="btn btn-default" data-dismiss="modal" id="closePass">Close</button>
