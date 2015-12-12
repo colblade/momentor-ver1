@@ -24,7 +24,7 @@ public interface MomentorMemberService {
 	public double bmi(MomentorMemberPhysicalVO vo);
 	public int deleteMemberByAdmin(String id); // 관리자가 회원아이디를 통해 회원강퇴
 	public void deleteMemeber(MomentorMemberVO vo); // 회원탈퇴
-
+	public MomentorMemberPhysicalVO getMemberInfoByNickName(String nickName);//커뮤니티게시판에서 닉네임을 통해 회원정보 보기
 
 	public ListVO getMyCommnunityBoardList(String memberId,String pageNo);
 	public ReListVO getMyReplyList(String memberId,String pageNo);

@@ -88,7 +88,6 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 
 	@Override
 	public void registerMember(MomentorMemberVO vo, String date, String memberEmail, String memberEmail2,String memberWeight,String memberHeight) {
-		momentorMemberDAO.registerMember(vo);
 		MomentorMemberPhysicalVO pnvo=new MomentorMemberPhysicalVO();
 	    SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat ( "yyyy", Locale.KOREA );
         Date currentTime = new Date ( );
@@ -115,6 +114,7 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
            pnvo.setAge(age+1);
         }
         pnvo.setBmi(b);
+    	momentorMemberDAO.registerMember(vo);
 		momentorMemberDAO.registerPhysicalMember(pnvo);
 	}
 
@@ -292,5 +292,10 @@ public class MomentorMemberServiceImpl implements MomentorMemberService {
 			System.out.println("서비스 : "+memberEmail+"@"+memberEmail2);
 			  int count=momentorMemberDAO.emailOverlappingCheck(memberEmail+"@"+memberEmail2);
 			   return (count==0) ? "ok":"fail";
+		}
+
+		@Override
+		public MomentorMemberPhysicalVO getMemberInfoByNickName(String nickName) {
+			return momentorMemberDAO.getMemberInfoByNickName(nickName);
 		}
 }

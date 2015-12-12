@@ -22,6 +22,7 @@ $(function (){
      </c:when>
      <c:otherwise>
  <table class="table table-striped">
+  <thead>
   <tr>
     <th>아이디</th>
     <th>이름</th>
@@ -33,6 +34,8 @@ $(function (){
     <th>주소</th>
       <th>회원강퇴</th>
   </tr>
+  </thead>
+  <tbody>
 <c:forEach items="${requestScope.list.list}" var="memberList">
    <tr>
      <c:choose>
@@ -55,6 +58,7 @@ $(function (){
 		</form>
    </tr>
 </c:forEach>
+</tbody>
 </table>
 </c:otherwise>
 </c:choose>

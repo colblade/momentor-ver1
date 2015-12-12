@@ -450,4 +450,10 @@ public class MomentorMemberController {
 		}
 		return mv;
 	}
+	@RequestMapping("getMemberInfoByNickName.do")
+	@ResponseBody
+	public MomentorMemberPhysicalVO getMemberInfoByNickName(HttpServletRequest request){
+		String nickName = request.getParameter("momentorMemberVO.nickName");
+		return momentorMemberService.getMemberInfoByNickName(nickName);
+	}
 }

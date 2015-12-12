@@ -192,4 +192,9 @@ public class MomentorMemberDAOImpl implements MomentorMemberDAO {
 		System.out.println("DAO "+memberEmail);
 		return sqlSessionTemplate.selectOne("member.emailOverlappingCheck",memberEmail);
 	}
+
+	@Override
+	public MomentorMemberPhysicalVO getMemberInfoByNickName(String nickName) {
+		return sqlSessionTemplate.selectOne("member.getMemberInfoByNickName",nickName);
+	}
 }

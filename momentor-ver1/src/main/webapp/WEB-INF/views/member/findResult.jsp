@@ -106,7 +106,7 @@
 				       <c:when test="${sessionScope.pnvo==null }">
 				          <td>${cbList.boardTitle}</td>
 				       </c:when>
-				       <c:otherwise><td><a href="member_getCommunityByNo.do?boardNo=${cbList.boardNo}">${cbList.boardTitle}</a></td>
+				       <c:otherwise><td><a href="my_getCommunityByNo.do?boardNo=${cbList.boardNo}">${cbList.boardTitle}</a></td>
 				       </c:otherwise>
 				    </c:choose>
 				    <td>${cbList.momentorMemberVO.nickName}</td>

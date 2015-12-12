@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	<result column="MEMBER_HITS" property="memberHits"/>
  	<result column="RECOMMEND" property="recommend"/>
  	<result column="NOTRECOMMEND" property="notRecommend"/>
+ 	<result column="AUTH" property="momentorMemberVO.auth"/>
  </resultMap>
  <!-- 커뮤니티 게시판 글쓰기 -->
 	<insert id="postingCommunity" parameterType="cbvo">
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<!-- 모든 글 리스트 출력 -->
 	<select id="getAllPostingList" resultMap="cbvoMap">
-	 select b.MEMBER_NO,b.MEMBERID,m.NICKNAME,b.TITLE,b.MEMBER_DATE,b.CONTENT,b.MEMBER_HITS,b.RECOMMEND,b.NOTRECOMMEND from (
+	 select b.MEMBER_NO,b.MEMBERID,m.NICKNAME,m.AUTH,b.TITLE,b.MEMBER_DATE,b.CONTENT,b.MEMBER_HITS,b.RECOMMEND,b.NOTRECOMMEND from (
 			select MEMBER_NO,MEMBERID,TITLE,MEMBER_DATE,CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND,ceil(rownum/5) as page from (
 					select MEMBER_NO,MEMBERID,TITLE,to_char(MEMBER_DATE,'YYYY.MM.DD') as MEMBER_DATE,
 					CONTENT,MEMBER_HITS,RECOMMEND,NOTRECOMMEND from MEMBER_BOARD  order by MEMBER_NO desc

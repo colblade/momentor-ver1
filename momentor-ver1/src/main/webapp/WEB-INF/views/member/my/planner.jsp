@@ -280,7 +280,7 @@
 				success:function(result){
 					var showExeciseInfoComp = "<h2>" + result.exerciseInfo.exerciseVO.exerciseName + "</h2><hr>";
 					$.each(result.nameList, function(index, fileName){
-						showExeciseInfoComp += "<img src='${initParam.root}upload/" + fileName.EXERCISENAME + "_" + fileName.IMGNAME + "' title='" + fileName.IMGNAME + "' style='width: 70%; height: 70%;'>"
+						showExeciseInfoComp += "<img src='${initParam.root}exerciseimg/" + fileName.EXERCISENAME + "_" + fileName.IMGNAME + "' title='" + fileName.IMGNAME + "' style='width: 70%; height: 70%;'>"
 					});
 					showExeciseInfoComp += "<h3>" + result.exerciseInfo.boardTitle + "</h3>" + 
 														"<br><pre>" + result.exerciseInfo.boardContent + "</pre><br>";
@@ -312,7 +312,7 @@
 										"<div class='panel-body'>등록된 운동이 없습니다.</div></div>";
 		if(resultList.length != 0){
 			listTableFrame = "<div class='panel panel-primary'>" + 
-									"<div class='panel-heading'><h4>" + todayVal + "</h4></div>" + 
+									"<div class='panel-heading'><h4>" + resultList[0].plannerDate + "</h4></div>" + 
 									"<div class='panel-body'>" + 
 									"<table class='table table-bordered plannerTable'>" + 
 									"<thead><tr><th><input type='checkbox' name='allCheck'></th><th>운동명</th><th>달성세트</th><th colspan='2'>목표세트</th><th>달성도</th><th>당일 달성도</th><th>당월 달성도</th>" + 
@@ -472,7 +472,7 @@
 					<td>
 						<c:forEach items="${requestScope.imgCartList}" var ="imgList">
 							<c:forEach items="${imgList.get(clist.exerciseBoardVO.exerciseVO.exerciseName) }" var = "map">
-								<img src = "${initParam.root}upload/${map.EXERCISENAME}_${map.IMGNAME}" style="width: 10%; height: 10%;">
+								<img src = "${initParam.root}exerciseimg/${map.EXERCISENAME}_${map.IMGNAME}" style="width: 10%; height: 10%;">
 							</c:forEach>
 						</c:forEach>
 					</td>

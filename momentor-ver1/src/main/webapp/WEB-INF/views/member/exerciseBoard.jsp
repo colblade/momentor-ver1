@@ -22,7 +22,7 @@
                   <td>${list.boardNo }</td>
                   <td><a href="${initParam.root }member_getExerciseByNo.do?boardNo=${list.boardNo}&pageNo=${param.pageNo}">${list.boardTitle }</a></td>
                   <td>${list.exerciseVO.exerciseName }</td>
-                  <td>${list.momentorMemberVO.memberName }</td>
+                  <td>관리자</td>
                    <td>${list.boardWdate }</td>
                    <td>${list.exerciseHits }</td>
                 </tr>

@@ -133,4 +133,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		set auth=8
 		where memberId=#{momentorMemberVO.memberId}
       </update>
+      <select id="getMemberInfoByNickName" resultMap="physicalRM">
+      	SELECT  M.MEMBERID, M.MEMBERNAME, P.MEMBERHEIGHT, P.MEMBERWEIGHT, P.BMI , P.AGE , M.NICKNAME
+  	FROM MOMENTOR_MEMBER M , MOMEMTOR_MEMBER_PHYSICAL P
+  	WHERE M.MEMBERID=P.MEMBERID AND M.NICKNAME=#{value}
+      </select>
  </mapper>

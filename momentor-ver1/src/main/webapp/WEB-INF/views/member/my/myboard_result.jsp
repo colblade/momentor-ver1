@@ -25,7 +25,7 @@
 <c:forEach items="${requestScope.boardList }" var="list">
   <tr>
                   <td>${list.boardNo }</td>
-                  <td><a href="${initParam.root }member_getCommunityByNo.do?boardNo=${list.boardNo}">${list.boardTitle }</a></td>
+                  <td><a href="${initParam.root }my_getCommunityByNo.do?boardNo=${list.boardNo}">${list.boardTitle }</a></td>
                   <td>${list.memberHits }</td>
                   <td>${list.recommend }</td>
                   <td>${list.notRecommend }</td>

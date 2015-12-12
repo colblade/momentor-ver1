@@ -22,6 +22,7 @@ public interface MomentorMemberDAO {
 	public MomentorMemberVO findMemberById(String name,String email);		//회원이 이름과 이메일로 아이디 찾기
 	public MomentorMemberVO findMemberByPassword(String id, String name,String email);		//회원이 아이디, 이름, 이메일로 비밀번호 찾기	
 	public double bmi(MomentorMemberPhysicalVO vo);			//신체 정보 키와 몸무게를 이용하여 bmi 계산
+	public MomentorMemberPhysicalVO getMemberInfoByNickName(String nickName);//커뮤니티게시판에서 닉네임을 통해 회원정보 보기
 	// bmi 공식 : 체중(kg) / 키(m) x 키(m)
 	// 표준체중 공식 : 키(m) x 키(m) x bmi(여자는 21, 남자는 22)
 	// 브로카법 표준체중 : 키(cm) - 100 x (여자는 0.85, 남자는 0.9)
