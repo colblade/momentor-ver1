@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
- <mapper namespace="cart">   
+<mapper namespace="cart">   
 	<resultMap type="cartvo" id="cartvomap">
 		<result column="MEMBERID" property="momentorMemberVO.memberId"/>
 		<result column="EXERCISENAME" property="exerciseBoardVO.exerciseVO.exerciseName"/>
@@ -13,13 +13,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT MEMBERID, EXERCISENAME FROM EXERCISE_CART WHERE MEMBERID=#{value}
 	</select>
 	
+	<insert id="registerExerciseInCart">
+		insert into EXERCISE_CART(MEMBERID, EXERCISENAME) values(#{momentorMemberVO.memberId}, #{exerciseBoardVO.exerciseVO.exerciseName})
+	</insert>
+	
 	<delete id="deleteExcerciseInCart">
 		DELETE FROM EXERCISE_CART
 		WHERE MEMBERID=#{momentorMemberVO.memberId}
 		AND EXERCISENAME=#{exerciseBoardVO.exerciseVO.exerciseName}
 	</delete>
-
-	<insert id="registerExerciseInCart">
-		insert into EXERCISE_CART(MEMBERID, EXERCISENAME) values(#{momentorMemberVO.memberId}, #{exerciseBoardVO.exerciseVO.exerciseName})
-	</insert>
- </mapper>
+</mapper>

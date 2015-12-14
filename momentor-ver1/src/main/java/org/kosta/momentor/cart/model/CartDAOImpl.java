@@ -12,6 +12,11 @@ public class CartDAOImpl implements CartDAO {
 	private SqlSessionTemplate sqlSessionTemplate;
 	
 	@Override
+	public List<CartVO> getCartList(String id) {
+		return sqlSessionTemplate.selectList("cart.getCarList", id);
+	}
+	
+	@Override
 	public void registerExerciseInCart(CartVO cvo) {
 		sqlSessionTemplate.insert("cart.registerExerciseInCart", cvo);
 	}
@@ -20,17 +25,4 @@ public class CartDAOImpl implements CartDAO {
 	public void deleteExcerciseInCart(CartVO cvo) {
 		sqlSessionTemplate.delete("cart.deleteExcerciseInCart", cvo);
 	}
-
-	@Override
-	public List<CartVO> getCartList(String id) {
-		return sqlSessionTemplate.selectList("cart.getCarList", id);
-	}
-
-	@Override
-	public int checkExercise(CartVO cvo) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	
 }

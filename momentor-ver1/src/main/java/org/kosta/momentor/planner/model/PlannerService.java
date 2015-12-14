@@ -5,31 +5,16 @@ import java.util.List;
 import org.kosta.momentor.cart.model.CartVO;
 
 public interface PlannerService {
-	// 플래너에 등록(오늘을 기준으로 이후일 경우만), 달성세트는 입력 불가능
-	public void registerExerciseInPlanner(PlannerVO pvo);
-	// 목표세트 수정(오늘을 기준으로 이전일 경우만)
-	public void updateTargetSetInPlanner(PlannerVO pvo);
-	// 코멘트 불러오기
-	public String getPlannerContentByDate(PlannerVO pvo);
-	// 코멘트 업데이트
-	public int updateCommentInPlanner(PlannerVO pvo);
-	// 코멘트 등록
-	public void registerCommentInPlanner(PlannerVO pvo);
-	// 달성세트 입력(오늘만)
-	public void updateAchievementInPlanner(PlannerVO pvo);
-	// 플래너 리스트 불러오기
-	public List<PlannerVO> getPlannerList(String id);
-	// 플래너 상세보기 (그 날짜 기준으로)
-	public PlannerVO getPlannerByDate(PlannerVO pvo);
-	// 플래너 삭제(오늘을 기준으로 이전일 경우만)
-	public void deleteExerciseInPlanner(PlannerVO pvo);
-	// 플래너 리스트 상세보기 (그 날짜 기준으로) - 그날 운동 한 것들
-	public List<PlannerVO> getPlannerListByDate(PlannerVO pvo);
-	
-	// 카트 리스트 불러오기
-	public List<CartVO> getCartList(String id);
-	// 카트에 운동 등록하기
-	public void registerExerciseInCart(CartVO cvo);
-	// 카트 내 운동 삭제하기
-	public void deleteExcerciseInCart(CartVO cvo);
+	public List<PlannerVO> getPlannerList(String id); // 홈에서 해당회원의 각 날짜별 플래너 리스트 출력
+	public List<PlannerVO> getPlannerListByDate(PlannerVO pvo); // 해당일의 플래너에 등록된 운동 리스트 출력
+	public void registerExerciseInPlanner(PlannerVO pvo); // 플래너에 운동 등록(오늘과 오늘 이후일에만 가능)
+	public void deleteExerciseInPlanner(PlannerVO pvo); // 플래너에서 운동 삭제(오늘과 오늘 이후일에만 가능)
+	public void updateAchievementInPlanner(PlannerVO pvo); // 플래너에서 달성도 등록(오늘만 가능)
+	public void updateTargetSetInPlanner(PlannerVO pvo); // 플래너의 목표세트 수정(오늘을 기준으로 이전일 경우만 가능)
+	public String getPlannerContentByDate(PlannerVO pvo); // 해당일의 플래너 코멘트 불러오기
+	public void registerCommentInPlanner(PlannerVO pvo); // 해당일의 플래너에 코멘트 등록
+	public int updateCommentInPlanner(PlannerVO pvo);	 // 해당일의 플래너에 코멘트 수정
+	public List<CartVO> getCartList(String id); // 찜바구니 리스트 출력
+	public void registerExerciseInCart(CartVO cvo); // 찜바구니에 운동 담기
+	public void deleteExcerciseInCart(CartVO cvo); // 찜바구니에서 운동 삭제
 }

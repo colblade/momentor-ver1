@@ -16,55 +16,6 @@ public class PlannerServiceImpl implements PlannerService {
 	private CartDAO cartDAO;
 
 	@Override
-	public void registerExerciseInPlanner(PlannerVO pvo) {
-		plannerDAO.registerExerciseInPlanner(pvo);
-	}
-
-	@Override
-	public void updateTargetSetInPlanner(PlannerVO pvo) {
-		plannerDAO.updateTargetSetInPlanner(pvo);
-	}
-	
-	@Override
-	public String getPlannerContentByDate(PlannerVO pvo){
-		String plannerContent = "";
-		// 코멘트가 미등록되어있는 상태일 경우에는 null이 반환되므로
-		// NullPointerException 발생시에는 공백문자를 반환한다.
-		try{
-			PlannerVO planvo = plannerDAO.getPlannerContentByDate(pvo);
-			plannerContent = planvo.getPlannerContent();
-		} catch(NullPointerException e) {
-			return plannerContent;
-		}
-		return plannerContent;
-	}
-
-	@Override
-	public int updateCommentInPlanner(PlannerVO pvo) {
-		return plannerDAO.updateCommentInPlanner(pvo);
-	}
-	
-	@Override
-	public void registerCommentInPlanner(PlannerVO pvo) {
-		plannerDAO.registerCommentInPlanner(pvo);
-	}
-
-	@Override
-	public void updateAchievementInPlanner(PlannerVO pvo) {
-		plannerDAO.updateAchievementInPlanner(pvo);
-	}
-
-	@Override
-	public PlannerVO getPlannerByDate(PlannerVO pvo) {
-		return plannerDAO.getPlannerByDate(pvo);
-	}
-
-	@Override
-	public void deleteExerciseInPlanner(PlannerVO pvo) {
-		plannerDAO.deleteExerciseInPlanner(pvo);
-	}
-
-	@Override
 	public List<PlannerVO> getPlannerList(String id) {
 		return plannerDAO.getPlannerList(id);		
 	}
@@ -120,6 +71,50 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 	
 	@Override
+	public void registerExerciseInPlanner(PlannerVO pvo) {
+		plannerDAO.registerExerciseInPlanner(pvo);
+	}
+	
+	@Override
+	public void deleteExerciseInPlanner(PlannerVO pvo) {
+		plannerDAO.deleteExerciseInPlanner(pvo);
+	}
+	
+	@Override
+	public void updateAchievementInPlanner(PlannerVO pvo) {
+		plannerDAO.updateAchievementInPlanner(pvo);
+	}
+
+	@Override
+	public void updateTargetSetInPlanner(PlannerVO pvo) {
+		plannerDAO.updateTargetSetInPlanner(pvo);
+	}
+	
+	@Override
+	public String getPlannerContentByDate(PlannerVO pvo){
+		String plannerContent = "";
+		// 코멘트가 미등록되어있는 상태일 경우에는 null이 반환되므로
+		// NullPointerException 발생시에는 공백문자를 반환한다.
+		try{
+			PlannerVO planvo = plannerDAO.getPlannerContentByDate(pvo);
+			plannerContent = planvo.getPlannerContent();
+		} catch(NullPointerException e) {
+			return plannerContent;
+		}
+		return plannerContent;
+	}
+
+	@Override
+	public void registerCommentInPlanner(PlannerVO pvo) {
+		plannerDAO.registerCommentInPlanner(pvo);
+	}
+	
+	@Override
+	public int updateCommentInPlanner(PlannerVO pvo) {
+		return plannerDAO.updateCommentInPlanner(pvo);
+	}
+	
+	@Override
 	public List<CartVO> getCartList(String id) {
 		return cartDAO.getCartList(id);
 	}
@@ -133,5 +128,4 @@ public class PlannerServiceImpl implements PlannerService {
 	public void deleteExcerciseInCart(CartVO cvo) {
 		cartDAO.deleteExcerciseInCart(cvo);
 	}
-
 }
